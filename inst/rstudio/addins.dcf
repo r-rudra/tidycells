@@ -1,0 +1,25 @@
+Name: Crop Cells
+Description: Interactive way to crop or delete cells
+Binding: visual_crop
+Interactive: true
+
+Name: Cell Analysis Inspection
+Description: Interactive way to inspect cell analysis
+Binding: visual_data_block_inspection
+Interactive: true
+
+Name: Orientation Modification
+Description: Interactive way to modify attribute orientation in a cell analysis
+Binding: visual_orientation_modification
+Interactive: true
+
+Name: Traceback Composition
+Description: Interactive way to see how the cell analysis is composed
+Binding: visual_traceback
+Interactive: true
+
+Name: Classify Value/Attribute
+Description: Interactive way to classify cells in value/attribute
+Binding: visual_va_classify
+Interactive: true
+

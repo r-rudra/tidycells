@@ -1,0 +1,65 @@
+Package: tidycells
+Type: Package
+Title: Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to 'Tidyverse'
+Version: 0.1.0
+Authors@R: c(
+    person("Indranil", "Gayen", 
+    email = "nil.gayen@gmail.com", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0003-0197-1944"))
+    )
+Description: It provides utilities to read, cells from complex 
+    tabular data and heuristic detection based structural assignment of those 
+    cells to a columnar or tidy format.
+    Read functionality has the ability to read (in a unified manner) 
+    structured, partially structured or unstructured tabular data (usually 
+    spreadsheets for public data dissemination and aimed for common human 
+    understanding) from various types of documents. The tabular information 
+    is read as cells.
+    The 'structure assignment' functionality has both supervised and 
+    unsupervised way of assigning cells data to columnar/tidy format. 
+    Multiple disconnected blocks of tables in a single sheet are also handled 
+    appropriately.
+    These tools are suitable for unattended conversation of (maybe a pile of)
+    messy tables (like government data) into a consumable format(usable 
+    for further analysis and data wrangling).
+URL: https://github.com/r-rudra/tidycells
+BugReports: https://github.com/r-rudra/tidycells/issues
+Depends:
+    R (>= 3.2.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+Imports: 
+    magrittr,
+    dplyr (>= 0.8.1),
+    purrr (>= 0.3.2),
+    stringr (>= 1.4.0),
+    ggplot2,
+    tibble,
+    cli,
+    tidyr,
+    rlang,
+    unpivotr (>= 0.5.1),
+    methods,
+    utils,
+    graphics
+Suggests: 
+    testthat (>= 2.1.0),
+    readr,
+    tidyxl,
+    plotly,
+    DT,
+    shiny,
+    miniUI,
+    rstudioapi,
+    knitr,
+    rmarkdown,
+    XML,
+    docxtractr,
+    readxl,
+    tabulizer,
+    xlsx
+VignetteBuilder: knitr
