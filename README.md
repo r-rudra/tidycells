@@ -409,12 +409,9 @@ level only.
 
 ## Current State of Development and Way Forward
 
-  - [x] Put it on GitHub
-  - [ ] Test it in [r-hub](https://builder.r-hub.io/)
+  - [x] Test it in [r-hub](https://builder.r-hub.io/)
   - [ ] Write more tests (increase coverage)
   - [ ] Write more vignettes on other topics
-  - [ ] Adding codecov, travis-ci and other related badges (of course
-    integration is required)
   - [ ] Releasing this package to CRAN
   - [ ] Making a pkgdown site
   - [ ] Making cell analysis little faster

@@ -9,3 +9,4 @@ os:
   - linux
 after_success:
     - Rscript -e 'covr::codecov()'
+    - Rscript -e 'covr::coveralls()'
