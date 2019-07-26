@@ -1,6 +1,4 @@
 
-library(dplyr)
-library(purrr)
 
 test_that("read_cells for NULL works", {
   expect_output(read_cells(), "Support present for following type of files")
@@ -13,13 +11,21 @@ test_that("read_cells for external packages works", {
     "tabulizer", "XML"
   )
 
-  ext_pkgs %>% map(~ {
+  if (rlang::is_installed("cli")) {
+    cli_tick <- cli::symbol$tick
+    cli_cross <- cli::symbol$cross
+  } else {
+    cli_tick <- "V"
+    cli_cross <- "X"
+  }
+
+  ext_pkgs %>% purrr::map(~ {
     if (!rlang::is_installed(.x)) {
       expect_output(read_cells(), "These packages are required")
       expect_output(read_cells(), .x)
-      expect_output(read_cells(), paste0(.x, " +x"))
+      expect_output(read_cells(), paste0(.x, " +", cli_cross))
     } else {
-      expect_output(read_cells(), paste0(.x, " +v"))
+      expect_output(read_cells(), paste0(.x, " +", cli_tick))
     }
   })
 })
@@ -29,8 +35,8 @@ test_that("read_cells: csv works", {
   fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
   fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
   dcomp <- read_cells(fn) %>%
-    select(value, major_1, major_2) %>%
-    arrange(value)
+    dplyr::select(value, major_1, major_2) %>%
+    dplyr::arrange(value)
 
 
   # strict check
@@ -61,26 +67,26 @@ test_that("read_cells: (for csv) chains works", {
   lvls <- 0:5
   lvl <- 0:6
 
-  lvlsd <- lvls %>% map(~ read_cells(fn, at_level = .x, simplify = TRUE))
-  lvld <- lvl %>% map(~ read_cells(fn, at_level = .x, simplify = FALSE))
+  lvlsd <- lvls %>% purrr::map(~ read_cells(fn, at_level = .x, simplify = TRUE))
+  lvld <- lvl %>% purrr::map(~ read_cells(fn, at_level = .x, simplify = FALSE))
 
-  lvlsdchk <- lvlsd[1:5] %>% map(read_cells)
-  lvldchk <- lvld %>% map(read_cells)
+  lvlsdchk <- lvlsd[1:5] %>% purrr::map(read_cells)
+  lvldchk <- lvld %>% purrr::map(read_cells)
 
   expect_error(read_cells(lvlsd[[6]]), "No 'read_cells_stage' attribute found!")
-  expect_true(lvlsdchk %>% map_lgl(~ identical(.x, lvlsdchk[[1]])) %>% all())
-  expect_true(lvldchk %>% map_lgl(~ identical(.x, lvldchk[[1]])) %>% all())
+  expect_true(lvlsdchk %>% purrr::map_lgl(~ identical(.x, lvlsdchk[[1]])) %>% all())
+  expect_true(lvldchk %>% purrr::map_lgl(~ identical(.x, lvldchk[[1]])) %>% all())
   expect_equal(lvld[[6]], lvld[[7]])
   expect_true(is.data.frame(lvld[[6]]$final_composition))
   expect_equal(
-    lvld %>% map_chr(~ .x$stage),
+    lvld %>% purrr::map_chr(~ .x$stage),
     c(
       "init", "detect_and_read", "make_cells", "va_classify", "analyze",
       "compose", "compose"
     )
   )
   expect_identical(
-    lvlsd %>% map(~ attr(.x, "read_cells_stage")),
+    lvlsd %>% purrr::map(~ attr(.x, "read_cells_stage")),
     list(
       "init", "detect_and_read", "make_cells", "va_classify",
       "analyze", NULL
@@ -89,7 +95,7 @@ test_that("read_cells: (for csv) chains works", {
 })
 
 # optional tests depending on package installed
-test_that("read_cells: external packages works", {
+test_that("read_cells: external packages works (except pdf)", {
   skip_if_not_installed("readr")
   skip_if_not_installed("readxl")
   skip_if_not_installed("xlsx")
@@ -100,32 +106,76 @@ test_that("read_cells: external packages works", {
 
 
   fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-  dm <- tibble(fn = list.files(fold, full.names = T))
+  dm <- tibble::tibble(fn = list.files(fold, full.names = T))
 
   dm <- dm %>%
-    mutate(original = dm$fn %>%
-      map_chr(~ basename(.x) %>%
+    dplyr::mutate(original = dm$fn %>%
+      purrr::map_chr(~ basename(.x) %>%
         stringr::str_split("\\.") %>%
-        map_chr(1)))
+        purrr::map_chr(1)))
+
+  # remove pdf
+  # for known issue https://github.com/ropensci/tabulizer/issues/106
+  dm <- dm %>% dplyr::filter(original != "pdf")
+
   dm <- dm %>%
-    group_by(original) %>%
-    sample_n(1) %>%
-    ungroup()
+    dplyr::group_by(original) %>%
+    dplyr::sample_n(1) %>%
+    dplyr::ungroup()
 
-  dtypes <- dm$fn %>% map(~ read_cells(.x, 1, simplify = FALSE))
+  dtypes <- dm$fn %>% purrr::map(~ read_cells(.x, 1, simplify = FALSE))
 
-  dcomps <- dm$fn %>% map(read_cells)
+  dcomps <- dm$fn %>% purrr::map(read_cells)
   dcomps_sel <- dcomps %>%
-    map(~ .x %>%
-      select(value, major_1, major_2) %>%
-      arrange(value))
+    purrr::map(~ .x %>%
+      dplyr::select(value, major_1, major_2) %>%
+      dplyr::arrange(value))
 
-  expect_equal(dtypes %>% map_chr(~ .x$info$type), dm$original)
+  expect_equal(dtypes %>% purrr::map_chr(~ .x$info$type), dm$original)
   expect_false(identical(
     read_cells(dm$fn[dm$original == "csv"], at_level = 1),
     read_cells(dm$fn[dm$original == "csv"], at_level = 1, omit = "csv")
   ))
-  expect_true(dcomps_sel %>% map_lgl(~ identical(.x, dcomps_sel[[1]])) %>% all())
+  expect_true(dcomps_sel %>% purrr::map_lgl(~ identical(.x, dcomps_sel[[1]])) %>% all())
+})
+
+test_that("read_cells: external packages works (for pdf)", {
+
+  # perform this only in windows
+  skip_on_os("mac")
+  skip_on_os("linux")
+  skip_on_os("solaris")
+
+  skip_if_not_installed("tabulizer")
+
+  fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
+  dm <- tibble::tibble(fn = list.files(fold, full.names = T))
+
+  dm <- dm %>%
+    dplyr::mutate(original = dm$fn %>%
+      purrr::map_chr(~ basename(.x) %>%
+        stringr::str_split("\\.") %>%
+        purrr::map_chr(1)))
+
+  # this tested on only windows
+  # for known issue https://github.com/ropensci/tabulizer/issues/106
+  dm <- dm %>% dplyr::filter(original %in% c("pdf", "csv"))
+
+  dm <- dm %>%
+    dplyr::group_by(original) %>%
+    dplyr::sample_n(1) %>%
+    dplyr::ungroup()
+
+  dtypes <- dm$fn %>% purrr::map(~ read_cells(.x, 1, simplify = FALSE))
+
+  dcomps <- dm$fn %>% purrr::map(read_cells)
+  dcomps_sel <- dcomps %>%
+    purrr::map(~ .x %>%
+      dplyr::select(value, major_1, major_2) %>%
+      dplyr::arrange(value))
+
+  expect_equal(dtypes %>% purrr::map_chr(~ .x$info$type), dm$original)
+  expect_true(dcomps_sel %>% purrr::map_lgl(~ identical(.x, dcomps_sel[[1]])) %>% all())
 })
 
 

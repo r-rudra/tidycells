@@ -39,7 +39,6 @@ Imports:
     stringr (>= 1.4.0),
     ggplot2,
     tibble,
-    cli,
     tidyr,
     rlang,
     unpivotr (>= 0.5.1),
@@ -62,5 +61,6 @@ Suggests:
     readxl,
     tabulizer,
     xlsx,
-    covr
+    covr,
+    cli
 VignetteBuilder: knitr

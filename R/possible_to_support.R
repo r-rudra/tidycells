@@ -135,8 +135,8 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
     xst_msg[1] <- cli_b(xst_msg[1])
 
     xst_msg <- xst_msg %>%
-      stringr::str_replace_all("TRUE", paste0("  ", cli::col_green(cli::symbol$tick), "")) %>%
-      stringr::str_replace_all("FALSE", paste0("  ", cli::col_red(cli::symbol$cross), ""))
+      stringr::str_replace_all("TRUE", paste0("  ", cli_g(cli_tick), "")) %>%
+      stringr::str_replace_all("FALSE", paste0("  ", cli_r(cli_cross), ""))
 
 
     msg <- paste0(st_ok_msg, "\n", st_not_ok_msg)
@@ -145,7 +145,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
     }
     cat(msg)
     cat("\nDetails: \n")
-    cli::cat_boxx(xst_msg, col = "cyan")
+    cli_box(xst_msg, col = "cyan")
   }
 
   return(invisible(st))
