@@ -1,0 +1,13 @@
+language: R
+r:
+  - oldrel
+  - release
+  - devel
+cache: packages
+warnings_are_errors: true
+os:
+  - linux
+  - osx
+after_success:
+    - Rscript -e 'covr::codecov()'
+    - Rscript -e 'covr::coveralls()'

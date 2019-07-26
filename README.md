@@ -2,6 +2,25 @@
 
 #### *Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to ‘Tidyverse’*
 
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tidycells?color=red)](https://cran.r-project.org/package=tidycells)
+[![Travis build
+status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://travis-ci.org/r-rudra/tidycells)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?branch=master&svg=true)](https://ci.appveyor.com/project/r-rudra/tidycells)
+[![Codecov test
+coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
+[![Coveralls test
+coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg)](https://coveralls.io/r/r-rudra/tidycells?branch=master)
+[![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+<!-- badges: end -->
+
+## Author
+
+Indranil Gayen
+
 ## TL;DR
 
 Given a `file_name` which is a path of a file that contains table(s).

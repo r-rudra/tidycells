@@ -61,5 +61,6 @@ Suggests:
     docxtractr,
     readxl,
     tabulizer,
-    xlsx
+    xlsx,
+    covr
 VignetteBuilder: knitr
