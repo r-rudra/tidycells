@@ -1,7 +1,10 @@
 
-shiny_check <- function() {
-  if (!interactive()) {
-    abort("need an interactive session for this functionality.")
+shiny_check <- function(force_load = FALSE) {
+
+  if(!force_load){
+    if (!interactive()) {
+      abort("need an interactive session for this functionality.")
+    }
   }
 
   if (!rlang::is_installed("shiny")) {

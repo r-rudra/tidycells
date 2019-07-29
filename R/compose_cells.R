@@ -6,6 +6,7 @@
 #' @param post_process logical scalar. If disabled a list will be returned without performing post-processing. (Default `TRUE`)
 #' @param attr_sep a character string to separate the attributes. (Default is `<space>::<space>`)
 #' @param discard_raw_cols logical scalar. By default `FALSE` if enabled only main processed columns will be returned.
+#' @param print_attribute_overview print the overview of the attributes (4 distint values from each attibute of each block)
 #'
 #' @return a data.frame (as tibble) in tidy form.
 #' @export
@@ -19,19 +20,22 @@
 #' ca <- analyze_cells(cd)
 #'
 #' compose_cells(ca)
-compose_cells <- function(ca, post_process = TRUE, attr_sep = " :: ", discard_raw_cols = FALSE) {
+compose_cells <- function(ca, post_process = TRUE, attr_sep = " :: ", discard_raw_cols = FALSE, 
+                          print_attribute_overview = FALSE) {
   compose_cells_raw(
     ca = ca,
     post_process = post_process,
     attr_sep = attr_sep,
-    discard_raw_cols = discard_raw_cols
+    discard_raw_cols = discard_raw_cols,
+    print_col_info = print_attribute_overview
   )
 }
 
 compose_cells_raw <- function(ca, post_process = TRUE, attr_sep = " :: ",
                               discard_raw_cols = FALSE,
                               trace_it_back = FALSE,
-                              details = FALSE) {
+                              details = FALSE,
+                              print_col_info = FALSE) {
   if (!inherits(ca, "cell_analysis")) {
     abort("A 'Cell Analysis' expected.")
   }
@@ -63,6 +67,18 @@ compose_cells_raw <- function(ca, post_process = TRUE, attr_sep = " :: ",
       group_split() %>%
       map(~ stitch_direction(.x, ca$cell_df, trace_it = trace_it_back)) %>%
       reduce(fj_this))
+  
+  if(print_col_info){
+    
+    dlinf <- dcomp %>% map(~.x %>% select(-row, -col, -value, -data_block) %>% map(~.x %>% unique %>% sort %>% .[1:min(length(.),4)]))
+    
+    dlinfc <- dlinf %>% map(~.x %>% purrr::imap_chr(~paste0("  ",cli_bb(.y),"\n     ",paste0(cli_g(.x), collapse = ", "))))
+    names(dlinfc) <- paste0("data_block = ", seq_along(dlinfc))
+    
+    xmsg <- dlinfc %>% purrr::imap_chr(~paste0(cli_br(.y), "\n", paste0(.x, collapse = "\n"))) %>% paste0(collapse = "\n")
+    
+    cat(xmsg)
+  }
 
   if (!post_process) {
     return(invisible(dcomp))

@@ -1,7 +1,7 @@
 Package: tidycells
 Type: Package
-Title: Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to 'Tidyverse'
-Version: 0.1.0
+Title: Read Natural Tabular Data from Diverse Sources and Transform Them into a Format Compatible to 'Tidyverse'
+Version: 0.1.4
 Authors@R: c(
     person("Indranil", "Gayen", 
     email = "nil.gayen@gmail.com", 
@@ -62,5 +62,6 @@ Suggests:
     tabulizer,
     xlsx,
     covr,
-    cli
+    cli,
+    shinytest
 VignetteBuilder: knitr

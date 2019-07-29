@@ -33,7 +33,7 @@ analyze_cells <- function(d, silent = TRUE) {
   if (!hasName(d, "type")) {
     abort(paste("The type column not found.",
       "(You may like to do 'Value Attribute Classification'.",
-      "Check basic_classifier, sample_based, numeric_values for details.",
+      "Check basic_classifier, sample_based_classifier, numeric_values_classifier for details.",
       sep = "\n"
     ))
   }

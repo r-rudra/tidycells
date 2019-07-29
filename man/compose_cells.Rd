@@ -5,7 +5,7 @@
 \title{Compose a Cell Analysis to a tidy form}
 \usage{
 compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
-  discard_raw_cols = FALSE)
+  discard_raw_cols = FALSE, print_attribute_overview = FALSE)
 }
 \arguments{
 \item{ca}{a cell_analysis to process}
@@ -15,6 +15,8 @@ compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
 \item{attr_sep}{a character string to separate the attributes. (Default is \code{<space>::<space>})}
 
 \item{discard_raw_cols}{logical scalar. By default \code{FALSE} if enabled only main processed columns will be returned.}
+
+\item{print_attribute_overview}{print the overview of the attributes (4 distint values from each attibute of each block)}
 }
 \value{
 a data.frame (as tibble) in tidy form.

@@ -36,10 +36,10 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
 
   if (print_info) {
     st_ok <- st %>%
-      filter(pkg_installed) %>%
+      filter(support_possible) %>%
       pull(file_type)
     st_not_ok <- st %>%
-      filter(!pkg_installed) %>%
+      filter(!support_possible) %>%
       pull(file_type)
     pkg_need <- st %>%
       filter(!pkg_installed) %>%
@@ -56,7 +56,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       if ("doc" %in% st_ok) {
         extra_msg0 <- paste0(
           "LibreOffice present so doc files will be supported but it may take little longer time to read/detect.",
-          "\n You may need to open LibreOffice outside this R-Session manually to speed it up."
+          "\n  You may need to open LibreOffice outside this R-Session manually to speed it up."
         )
       } else {
         if (st$pkg_installed[st$file_type == "doc"] == TRUE) {

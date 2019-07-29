@@ -184,6 +184,8 @@ cell_composition_traceback(ca, trace_row = 10)
 knitr::include_graphics("ext/pr/p5.png")
 ```
 
+(Above is pre-rendered plots. You'll get two plots.)
+
 There is an optional interactive version of it, which is explained in the subsequent section _Interactive Modules_.
 
 That's all. These are the process flow followed by `read_cells` A half-done item can be further manipulated and after the same, we can give it back to `read_cells` again to finish further processing (or simply can do it ourselves). Here is a sample manipulation example.
@@ -203,16 +205,106 @@ rc_part[[1]] <- rc_part[[1]] %>% sample_based_classifier(empty_sample = "6")
 rc_part %>% read_cells(from_level = 3)
 ```
 
+Let's take a quick look at another example as given in 
+```{r, eval=FALSE}
+system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE)
+```
+
+
+The data looks like (in excel)
+
+```{r, out.width = "451px", echo=FALSE, eval=TRUE}
+knitr::include_graphics("ext/marks.png")
+```
+
+Let's try our luck in this data
+
+```{r, eval=FALSE}
+# if you have tidyxl installed
+d <- system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
+  read_cells(at_level = "make_cells") %>% 
+  .[[1]]
+```
+```{r}
+# or you may do
+d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) %>% 
+  readRDS()
+d <- numeric_values_classifier(d)
+da <- analyze_cells(d)
+```
+```{r, echo=TRUE, eval=FALSE}
+dc <- compose_cells(da, print_attribute_overview = TRUE)
+```
+```{r, out.width = "451px", echo=FALSE, eval=TRUE}
+knitr::include_graphics("ext/compose_cells_cli1.png")
+dc <- compose_cells(da)
+```
+
+```{r}
+# bit tricky and tedious unless you do print_attribute_overview = TRUE in above line
+dcfine <- dc %>% 
+  dplyr::mutate(name = dplyr::case_when(
+    data_block == 1 ~ major_row_left_2_1,
+    data_block == 2 ~ major_col_bottom_1_1,
+    data_block == 3 ~ major_row_left_1_1
+  ),
+  sex = dplyr::case_when(
+    data_block == 1 ~ major_row_left_1_1,
+    data_block == 2 ~ major_col_bottom_2_1,
+    data_block == 3 ~ minor_row_right_1_1
+  ),
+  school = dplyr::case_when(
+    data_block == 1 ~ minor_col_top_1_1,
+    data_block == 2 ~ minor_corner_topLeft_1_1,
+    data_block == 3 ~ minor_col_top_1_1
+  )) %>% 
+  dplyr::select(school,sex, name, value)
+
+```
+
+`dcfine` looks like
+```{r, echo=FALSE}
+knitr::kable(dcfine, align = c(rep("l", 3), "c"))
+```
+
 
 ### 3. Support for Multiple Formats
 When coming to support for multiple formats (assuming you have all the required packages as specified by `read_cells`) you can run following set of command to test the multi-format support in `read_cells`.
 ```{r}
 dm <- tibble::tibble(fn = list.files(fold, full.names = T))
+dm$fn %>% basename()
+```
+
+```{r, echo=FALSE, include=FALSE}
+# filter based on file-type
+dm <- dm %>%
+    dplyr::mutate(original = dm$fn %>%
+      purrr::map_chr(~ basename(.x) %>%
+        stringr::str_split("\\.") %>%
+        purrr::map_chr(1)))
+if(!(rlang::is_installed("readxl") | rlang::is_installed("xlsx"))){
+  dm <- dm %>% dplyr::filter(original!="xls")
+}
+if(!(rlang::is_installed("tidyxl"))){
+  dm <- dm %>% dplyr::filter(original!="xlsx")
+}
+if(!(rlang::is_installed("docxtractr"))){
+  dm <- dm %>% dplyr::filter(original!="docx" & original!="doc")
+}
+if(!(rlang::is_installed("tabulizer"))){
+  dm <- dm %>% dplyr::filter(original!="pdf")
+}
+if(!(rlang::is_installed("XML"))){
+  dm <- dm %>% dplyr::filter(original!="html")
+}
+```
+
+```{r}
 dcomps <- dm$fn %>% purrr::map(read_cells)
 dcomps_sel <- dcomps %>%
     purrr::map(~ .x %>%
       dplyr::select(value, major_1, major_2))
-# all of them are same [intentionaly made. but the file types are totally diffwrent]
+# all of them are same [intentionaly made. but the file types are totally different]
 dcomps_sel %>% purrr::map_lgl(~identical(.x, dcomps_sel[[1]]))
 # check one sample
 dcomps_sel[[1]]

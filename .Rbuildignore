@@ -7,3 +7,5 @@
 ^README\.Rmd$
 ^doc$
 ^Meta$
+^cran-comments\.md$
+^dev-notes\.md$
