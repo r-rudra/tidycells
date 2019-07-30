@@ -42,6 +42,9 @@ temp_app_create <- function(es, name){
 
 # if set options(LOCAL_TEST_IN_SHINYTEST = TRUE)
 # it will be tested from project root instead of "tests/testthat/"
+#  this is required as GitHub "LF will be replaced by CRLF"
+## The file will have its original line endings in your working directory.
+## warning: LF will be replaced by CRLF 
 
 untar_tests <- function(){
   td_this <- tempdir(check = TRUE)

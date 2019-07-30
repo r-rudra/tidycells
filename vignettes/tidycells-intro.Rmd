@@ -24,7 +24,7 @@ library(tidycells)
 ```
 
 # **tidycells**
-#### _Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to 'Tidyverse'_
+#### _Read Natural Tabular Data from Diverse Sources and Transform Them into a Format Compatible to 'Tidyverse'_
 
 ## TL;DR 
 Given a `file_name` which is a path of a file that contains table(s). Run this `read_cells()` in the R-console to see whether support is present for the file type. If support is present, just run
@@ -61,11 +61,24 @@ fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
 # this is because extension is intentionally given wrong  
 # while filename is actual identifier of the file type
 fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
+```
+
+Now we simply run
+
+```{r, eval=FALSE}
 read_cells(fcsv)
 ```
+```{r, echo=FALSE}
+knitr::kable(read_cells(fcsv))
+```
+
 Not a big deal for csv though. Still let's see how the file actually looks like
-```{r}
+
+```{r, eval=FALSE}
 utils::read.csv(fcsv)
+```
+```{r, echo=FALSE}
+knitr::kable(utils::read.csv(fcsv), align = "l", longtable = FALSE)
 ```
 
 
@@ -205,7 +218,9 @@ rc_part[[1]] <- rc_part[[1]] %>% sample_based_classifier(empty_sample = "6")
 rc_part %>% read_cells(from_level = 3)
 ```
 
-Let's take a quick look at another example as given in 
+**A more complicated example**
+
+Let's take a quick look at another example data as given in 
 ```{r, eval=FALSE}
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE)
 ```
@@ -232,6 +247,9 @@ d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork =
 d <- numeric_values_classifier(d)
 da <- analyze_cells(d)
 ```
+
+Then you need to run `compose_cells` with additional new argument `print_attribute_overview = TRUE`
+
 ```{r, echo=TRUE, eval=FALSE}
 dc <- compose_cells(da, print_attribute_overview = TRUE)
 ```
@@ -317,7 +335,7 @@ Each file is with the wrong extension and the original extension should be the f
 The package also provides shiny based interactive visualisations for understanding how the heuristic is functioning and also provides object (like `cell-df` or `cell-analysis`) editing capabilities. 
 
 The [shiny](https://shiny.rstudio.com/) package is required for these functions. Most of the features are self-explanatory and guided. 
-Check out interactive documentation of any of these functions listed below.
+Check out interactive documentation of any of these functions listed below. All of these functions are available as [RStudio Addins](https://rstudio.github.io/rstudioaddins/).
 Here are screenshots of each interactive widgets. 
 
 1. Plot tune (part of all modules)

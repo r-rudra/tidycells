@@ -18,6 +18,18 @@ environment:
   global:
     WARNINGS_ARE_ERRORS: 1
 
+matrix:
+  - R_VERSION: release
+    R_ARCH: x64
+
+  - R_VERSION: stable
+
+  - R_VERSION: patched
+
+  - R_VERSION: oldrel
+    RTOOLS_VERSION: 33
+    CRAN: http://cran.rstudio.com
+
 # Adapt as necessary starting from here
 
 build_script:

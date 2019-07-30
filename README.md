@@ -16,7 +16,9 @@ coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)
 coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg)](https://coveralls.io/r/r-rudra/tidycells?branch=master)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
-[![See DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/tests/testthat/testlib/dev-notes.md)
+[![See
+DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
+
 <!-- badges: end -->
 
 ## Author
@@ -111,25 +113,33 @@ fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
 # this is because extension is intentionally given wrong  
 # while filename is actual identifier of the file type
 fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
-read_cells(fcsv)
-#> # A tibble: 4 x 8
-#>     row   col data_block value major_1   major_2 minor_1  table_tag
-#>   <int> <int>      <dbl> <chr> <chr>     <chr>   <chr>    <chr>    
-#> 1     2     2          1 12    Nakshatra Weight  Kid Name Table_1  
-#> 2     3     2          1 16    Titas     Weight  Kid Name Table_1  
-#> 3     2     3          1 1.5   Nakshatra Age     Kid Name Table_1  
-#> 4     3     3          1 6     Titas     Age     Kid Name Table_1
 ```
+
+Now we simply
+run
+
+``` r
+read_cells(fcsv)
+```
+
+| row | col | data\_block | value | major\_1  | major\_2 | minor\_1 | table\_tag |
+| --: | --: | ----------: | :---- | :-------- | :------- | :------- | :--------- |
+|   2 |   2 |           1 | 12    | Nakshatra | Weight   | Kid Name | Table\_1   |
+|   3 |   2 |           1 | 16    | Titas     | Weight   | Kid Name | Table\_1   |
+|   2 |   3 |           1 | 1.5   | Nakshatra | Age      | Kid Name | Table\_1   |
+|   3 |   3 |           1 | 6     | Titas     | Age      | Kid Name | Table\_1   |
 
 Not a big deal for csv though. Still let’s see how the file actually
 looks like
 
 ``` r
 utils::read.csv(fcsv)
-#>    Kid.Name Weight Age
-#> 1 Nakshatra     12 1.5
-#> 2     Titas     16 6.0
 ```
+
+| Kid.Name  | Weight | Age |
+| :-------- | :----- | :-- |
+| Nakshatra | 12     | 1.5 |
+| Titas     | 16     | 6.0 |
 
 Note that `read_cells` is neutral to file extension which means if
 somehow .xls file is saved as .csv file, then also it will detect the
@@ -304,6 +314,8 @@ cell_composition_traceback(ca, trace_row = 10)
 
 <img src="vignettes/ext/pr/p5.png" width="356px" />
 
+(Above is pre-rendered plots. You’ll get two plots.)
+
 There is an optional interactive version of it, which is explained in
 the subsequent section *Interactive Modules*.
 
@@ -339,6 +351,84 @@ rc_part %>% read_cells(from_level = 3)
 #> 1     2     2          1 12    Naksha~ Weight  Age     Titas   Kid Na~
 #> # ... with 1 more variable: table_tag <chr>
 ```
+
+**A more complicated example**
+
+Let’s take a quick look at another example data as given
+in
+
+``` r
+system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE)
+```
+
+The data looks like (in excel)
+
+<img src="vignettes/ext/marks.png" width="451px" />
+
+Let’s try our luck in this data
+
+``` r
+# if you have tidyxl installed
+d <- system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
+  read_cells(at_level = "make_cells") %>% 
+  .[[1]]
+```
+
+``` r
+# or you may do
+d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) %>% 
+  readRDS()
+d <- numeric_values_classifier(d)
+da <- analyze_cells(d)
+```
+
+Then you need to run `compose_cells` with additional new argument
+`print_attribute_overview =
+TRUE`
+
+``` r
+dc <- compose_cells(da, print_attribute_overview = TRUE)
+```
+
+<img src="vignettes/ext/compose_cells_cli1.png" width="451px" />
+
+``` r
+# bit tricky and tedious unless you do print_attribute_overview = TRUE in above line
+dcfine <- dc %>% 
+  dplyr::mutate(name = dplyr::case_when(
+    data_block == 1 ~ major_row_left_2_1,
+    data_block == 2 ~ major_col_bottom_1_1,
+    data_block == 3 ~ major_row_left_1_1
+  ),
+  sex = dplyr::case_when(
+    data_block == 1 ~ major_row_left_1_1,
+    data_block == 2 ~ major_col_bottom_2_1,
+    data_block == 3 ~ minor_row_right_1_1
+  ),
+  school = dplyr::case_when(
+    data_block == 1 ~ minor_col_top_1_1,
+    data_block == 2 ~ minor_corner_topLeft_1_1,
+    data_block == 3 ~ minor_col_top_1_1
+  )) %>% 
+  dplyr::select(school,sex, name, value)
+```
+
+`dcfine` looks like
+
+| school   | sex    | name               | value |
+| :------- | :----- | :----------------- | :---: |
+| School A | Male   | Utsyo Roy          |  95   |
+| School A | Male   | Nakshatra Gayen    |  99   |
+| School A | Female | Titas Gupta        |  89   |
+| School A | Female | Ujjaini Gayen      |  100  |
+| School B | Male   | Indranil Gayen     |  70   |
+| School B | Male   | S Gayen            |  75   |
+| School B | Female | Sarmistha Senapati |  81   |
+| School B | Female | Shtuti Roy         |  90   |
+| School C | Male   | I Roy              |  50   |
+| School C | Male   | S Ghosh            |  59   |
+| School C | Female | S Senapati         |  61   |
+| School C | Female | U Gupta            |  38   |
 
 ### 3\. Support for Multiple Formats
 
