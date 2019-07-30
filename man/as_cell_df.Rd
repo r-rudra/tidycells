@@ -29,5 +29,10 @@ as_cell_df(iris)
 as_cell_df(iris, take_col_names = TRUE)
 
 # if the data is already in similar format it will not further transform
+# which is not true for ---> unpivotr::as_cells
+# check ---> unpivotr::as_cells(iris) \%>\% unpivotr::as_cells()
 unpivotr::as_cells(iris) \%>\% as_cell_df()
+}
+\seealso{
+\code{\link[unpivotr:as_cells]{as_cells}}
 }

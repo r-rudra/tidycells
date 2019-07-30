@@ -1,5 +1,5 @@
-common_finish <- function(ui, server, title, viewer_pane, test_this){
-  if(test_this){
+common_finish <- function(ui, server, title, viewer_pane, test_this) {
+  if (test_this) {
     es <- new.env()
     assign("ui", ui, envir = es)
     assign("server", server, envir = es)
@@ -8,16 +8,16 @@ common_finish <- function(ui, server, title, viewer_pane, test_this){
 
   if (viewer_pane) {
     runGadget(shinyApp(ui, server),
-              stopOnCancel = FALSE
+      stopOnCancel = FALSE
     )
   } else {
     viewer <- dialogViewer(title,
-                           width = 900,
-                           height = 700
+      width = 900,
+      height = 700
     )
     runGadget(shinyApp(ui, server),
-              viewer = viewer,
-              stopOnCancel = FALSE
+      viewer = viewer,
+      stopOnCancel = FALSE
     )
   }
 }
@@ -41,9 +41,9 @@ shiny_app_va_classify <- function(d, viewer_pane = FALSE, test_this = FALSE) {
   server <- server_va_select(d)
 
   common_finish(ui, server,
-                title = "TidyCells: Value/Attribute Classifier",
-                viewer_pane = viewer_pane, test_this = test_this)
-
+    title = "TidyCells: Value/Attribute Classifier",
+    viewer_pane = viewer_pane, test_this = test_this
+  )
 }
 
 shiny_app_crop <- function(d, viewer_pane = FALSE, test_this = FALSE) {
@@ -64,9 +64,9 @@ shiny_app_crop <- function(d, viewer_pane = FALSE, test_this = FALSE) {
   server <- server_crop(d)
 
   common_finish(ui, server,
-                title = "TidyCells: Data Crop",
-                viewer_pane = viewer_pane, test_this = test_this)
-
+    title = "TidyCells: Data Crop",
+    viewer_pane = viewer_pane, test_this = test_this
+  )
 }
 
 shiny_app_data_block <- function(x, viewer_pane = FALSE, test_this = FALSE) {
@@ -87,9 +87,9 @@ shiny_app_data_block <- function(x, viewer_pane = FALSE, test_this = FALSE) {
   server <- server_data_block(x)
 
   common_finish(ui, server,
-                title = "TidyCells: Data Blocks Inspection",
-                viewer_pane = viewer_pane, test_this = test_this)
-
+    title = "TidyCells: Data Blocks Inspection",
+    viewer_pane = viewer_pane, test_this = test_this
+  )
 }
 
 shiny_app_orientation_modification <- function(x, viewer_pane = FALSE, test_this = FALSE) {
@@ -111,16 +111,16 @@ shiny_app_orientation_modification <- function(x, viewer_pane = FALSE, test_this
   server <- server_orientation_modification(x)
 
   common_finish(ui, server,
-                title = "TidyCells: Data Blocks Orientation Modification",
-                viewer_pane = viewer_pane, test_this = test_this)
-
+    title = "TidyCells: Data Blocks Orientation Modification",
+    viewer_pane = viewer_pane, test_this = test_this
+  )
 }
 
 shiny_app_traceback <- function(x, dcomp, viewer_pane = FALSE, test_this = FALSE) {
   if (!DT_present()) {
     abort(paste("The package 'DT' is required for this functionality",
-                "If you want static plot, please use 'cell_traceback_plot'.",
-                sep = "\n"
+      "If you want static plot, please use 'cell_traceback_plot'.",
+      sep = "\n"
     ))
   }
 
@@ -141,7 +141,7 @@ shiny_app_traceback <- function(x, dcomp, viewer_pane = FALSE, test_this = FALSE
   server <- server_traceback(x, dcomp)
 
   common_finish(ui, server,
-                title = "TidyCells: Composition Traceback (Composition Viewer)",
-                viewer_pane = viewer_pane, test_this = test_this)
-
+    title = "TidyCells: Composition Traceback (Composition Viewer)",
+    viewer_pane = viewer_pane, test_this = test_this
+  )
 }

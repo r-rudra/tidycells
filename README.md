@@ -10,10 +10,10 @@ status](https://www.r-pkg.org/badges/version/tidycells?color=red)](https://cran.
 status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://travis-ci.org/r-rudra/tidycells)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?branch=master&svg=true)](https://ci.appveyor.com/project/bedantaguru/tidycells)
-[![Codecov test
-coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
-[![Coveralls test
-coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg)](https://coveralls.io/r/r-rudra/tidycells?branch=master)
+[![Codecov Coverage
+Status](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
+[![Coveralls Coverage
+Status](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master)](https://coveralls.io/github/r-rudra/tidycells?branch=master)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
 [![See
@@ -537,10 +537,10 @@ level only.
     [rexcel](https://github.com/rsheets/rexcel) (README of this project
     has a wonderful reference for excel integration with R).
 
-## Acknowledgements
+## Acknowledgement
 
 This package incomplete without following packages (apart from the
-**unpivotr** which is the core package on which **tidycells** dependes
+**unpivotr** which is the core package on which **tidycells** depends
 largely, as mentioned above ). Each of these packages are in suggests
 fields of `tidycells`. (The read\_cells basically, performs unification
 on several functions from various packages to give you support for

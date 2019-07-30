@@ -1,7 +1,7 @@
 Package: tidycells
 Type: Package
 Title: Read Natural Tabular Data from Diverse Sources and Transform Them into a Format Compatible to 'Tidyverse'
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Indranil", "Gayen", 
     email = "nil.gayen@gmail.com", 

@@ -16,7 +16,7 @@ compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
 
 \item{discard_raw_cols}{logical scalar. By default \code{FALSE} if enabled only main processed columns will be returned.}
 
-\item{print_attribute_overview}{print the overview of the attributes (4 distint values from each attibute of each block)}
+\item{print_attribute_overview}{print the overview of the attributes (4 distinct values from each attribute of each block)}
 }
 \value{
 a data.frame (as tibble) in tidy form.

@@ -25,8 +25,8 @@ library(tidycells)
 [![CRAN status](https://www.r-pkg.org/badges/version/tidycells?color=red)](https://cran.r-project.org/package=tidycells)
 [![Travis build status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://travis-ci.org/r-rudra/tidycells)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?branch=master&svg=true)](https://ci.appveyor.com/project/bedantaguru/tidycells)
-[![Codecov test coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
-[![Coveralls test coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg)](https://coveralls.io/r/r-rudra/tidycells?branch=master)
+[![Codecov Coverage Status](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
+[![Coveralls Coverage Status](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master)](https://coveralls.io/github/r-rudra/tidycells?branch=master)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
 [![See DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
@@ -368,8 +368,8 @@ Since all of these modules are entirely optional the dependency is kept at **tid
     It hosts several R packages (few of them are in CRAN already) which are in the early stages of importing spreadsheets from Excel and Google Sheets into R.  Specifically, have a look at these projects which seems closely related to these projects : [jailbreaker](https://github.com/rsheets/jailbreakr), [rexcel](https://github.com/rsheets/rexcel) (README of this project has a wonderful reference for excel integration with R).
 
 
-## Acknowledgements
-This package incomplete without following packages (apart from the **unpivotr** which is the core package on which **tidycells** dependes largely, as mentioned above ). Each of these packages are in suggests fields of `tidycells`.
+## Acknowledgement
+This package incomplete without following packages (apart from the **unpivotr** which is the core package on which **tidycells** depends largely, as mentioned above ). Each of these packages are in suggests fields of `tidycells`.
 (The read_cells basically, performs unification on several functions from various packages to give you support for different file types. These are listed below.)
 
 * [**readr**](https://cran.r-project.org/package=readr): for csv (in melted format)

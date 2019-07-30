@@ -1,5 +1,5 @@
 test_that("cell_df to DF (and vice versa) works", {
-  d0 <- data.frame(x = 1:26, letters, stringsAsFactors = F)
+  d0 <- data.frame(x = 1:26, letters, stringsAsFactors = FALSE)
   d1 <- as_cell_df(d0)
 
   d2 <- as.data.frame(d1)

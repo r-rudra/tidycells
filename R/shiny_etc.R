@@ -1,7 +1,6 @@
 
 shiny_check <- function(force_load = FALSE) {
-
-  if(!force_load){
+  if (!force_load) {
     if (!interactive()) {
       abort("need an interactive session for this functionality.")
     }

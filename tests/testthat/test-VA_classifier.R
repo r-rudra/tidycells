@@ -17,11 +17,11 @@ test_that("numeric_values_classifier works", {
   cdn1 <- numeric_values_classifier(cdn)
 
   expect_output(
-    numeric_values_classifier(cd, verbose = T),
+    numeric_values_classifier(cd, verbose = TRUE),
     "New cells detected as different type\n# A tibble: 579 x 6"
   )
   expect_output(
-    numeric_values_classifier(cdn, verbose = T),
+    numeric_values_classifier(cdn, verbose = TRUE),
     "New cells detected as different type\n# A tibble: 50 x 6"
   )
   expect_output(
@@ -62,7 +62,7 @@ test_that("sample_based_classifier works", {
 
   expect_output(summary(cdn2), "929 values, 90 attributes and 50 empty cells")
   expect_output(summary(cdn3), "838 values, 181 attributes and 50 empty cells")
-  expect_identical(summary(cdn3, no_print = T), summary(cdn0, no_print = T))
+  expect_identical(summary(cdn3, no_print = TRUE), summary(cdn0, no_print = TRUE))
   expect_output(summary(cdn4), "929 values, 90 attributes and 50 empty cells")
   expect_identical(cd1, cd2)
   expect_identical(cd1, cd3)

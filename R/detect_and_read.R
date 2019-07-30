@@ -76,7 +76,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
       lo$type <- c("xls", "doc")
 
       # try xls
-      if (!("xls" %in% omit) & !("xls{readxl}" %in% omit)) {
+      if (!("xls" %in% omit) | !("xls{readxl}" %in% omit)) {
         if (rlang::is_installed("readxl") | rlang::is_installed("xlsx")) {
           read_full <- FALSE
           if (rlang::is_installed("xlsx")) {

@@ -106,7 +106,7 @@ test_that("read_cells: external packages works (except pdf)", {
 
 
   fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-  dm <- tibble::tibble(fn = list.files(fold, full.names = T))
+  dm <- tibble::tibble(fn = list.files(fold, full.names = TRUE))
 
   dm <- dm %>%
     dplyr::mutate(original = dm$fn %>%
@@ -149,7 +149,7 @@ test_that("read_cells: external packages works (for pdf)", {
   skip_if_not_installed("tabulizer")
 
   fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-  dm <- tibble::tibble(fn = list.files(fold, full.names = T))
+  dm <- tibble::tibble(fn = list.files(fold, full.names = TRUE))
 
   dm <- dm %>%
     dplyr::mutate(original = dm$fn %>%

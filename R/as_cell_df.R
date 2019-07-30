@@ -10,6 +10,7 @@
 #' @return A object of class [`cell_df`][cell_df-class].
 #' @export
 #' @rdname as_cell_df
+#' @seealso [`as_cells`][unpivotr::as_cells()]
 #'
 #' @examples
 #'
@@ -19,6 +20,8 @@
 #' as_cell_df(iris, take_col_names = TRUE)
 #'
 #' # if the data is already in similar format it will not further transform
+#' # which is not true for ---> unpivotr::as_cells
+#' # check ---> unpivotr::as_cells(iris) %>% unpivotr::as_cells()
 #' unpivotr::as_cells(iris) %>% as_cell_df()
 as_cell_df <- function(d, take_row_names = FALSE, take_col_names = FALSE) {
   UseMethod("as_cell_df")

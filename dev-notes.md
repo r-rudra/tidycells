@@ -9,18 +9,37 @@ Also Check [CRAN Comments](https://github.com/r-rudra/tidycells/blob/master/cran
 
 The package contains optional functionality which are written as shiny widgets. These are given to the user as [`visual_*`](https://github.com/r-rudra/tidycells/blob/master/R/visual_functions.R) series of functions. Limited [tests](https://github.com/r-rudra/tidycells/blob/master/tests/testthat/test-shiny.R) for these are developed and tested in a few testing environments. These tests are based on [shinytest](https://rstudio.github.io/shinytest/) package. The [covr](https://covr.r-lib.org/) package is not yet (at least the **CRAN** version) capable to track code coverages in shinytest [Ref: r-lib/covr [#277](https://github.com/r-lib/covr/issues/277)]. Also note that shinytest is not yet taking widget-based functions [Ref: rstudio/shinytest [#157](https://github.com/rstudio/shinytest/issues/157)] (at least the **CRAN** version). That is why a set of [functions](https://github.com/r-rudra/tidycells/blob/master/tests/testthat/testlib/shiny_test.R) is introduced to run tests for shiny. 
 
-On these grounds, codecov [![Codecov test
-coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master) is used to give full coverage (_without any restiction_) (_ideally this should increase provided the support for covr is introduced in shinytest and covr both_). While the coveralls [![Coveralls test
-coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg)](https://coveralls.io/r/r-rudra/tidycells?branch=master) shows the coverage excluding `shiny_*.R` and `visual_*.R` files (_showing the coverage for only main functionality_)
+On these grounds, codecov [![Codecov test coverage](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master) is used to give full coverage (_without any restiction_) (_ideally this should increase provided the support for covr is introduced in shinytest and covr both_). While the coveralls [![Coveralls test coverage](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master)](https://coveralls.io/r/r-rudra/tidycells?branch=master) shows the coverage excluding `shiny_*.R` and `visual_*.R` files (_showing the coverage for only main functionality_)
+
+##### 2) **Where the shiny modules are tested?**
+
+The shinytest are only carried out in selected testing environments because of several difficulties. The difficulties are listed below.
+
+
+**Difficulties during shinytest:**
+
+* [shinytest](https://rstudio.github.io/shinytest/) does not directly provide testing functions like `visual_*` (which are based on shiny widgets). This is the reason a set of complicated code is used during the test.
+* The input [`plot brush`](https://shiny.rstudio.com/articles/plot-interaction.html) is changing in fractional values under different OS. Most of the functionalities are recorded with brush input which slightly differs. Since the `JSON` to `JSON` comparison is strict now, these are resulting in test failures. 
+* Sometimes GitHub push and pull is changing JSON slightly [getting `LF will be replaced by CRLF` warning.] (Full message: _The file will have its original line endings in your working directory.warning: LF will be replaced by CRLF_). It is solved using tar files (which untar on the fly). This is the reason the all recorded tests (includes JSON) are compress to tar in [tidycells/tests/testthat/testshiny/](https://github.com/r-rudra/tidycells/tree/master/tests/testthat/testshiny). 
+
+Given these difficulties, the shinytest are tested in following environments only.
+
+| Test Environment | OS                                      | R Version                                   | Screenshot Tested |
+|------------------|-----------------------------------------|---------------------------------------------|-------------------|
+| Local            | Windows 10 x86 Build 9200               | R version 3.6.1 (2019-07-05)                | yes               |
+| Local            | Windows 10 x64 Build 17134              | R version 3.6.0 (2019-04-26)                | yes               |
+| AppVeyor         | Windows Server 2012 R2 x64 (build 9600) | R version 3.6.1 Patched (2019-07-24 r76894) | no                |
+
+**Note**: the screen-shots are also tested (apart from JSON test) (can be tested if `plotly` is not present as the tests are recorded without `plotly`).
 
 
 ### Current State of Development and Way Forward
 
-  - [x] Test it in [r-hub](https://builder.r-hub.io/)
+  - [x] Test it in [**r-hub**](https://builder.r-hub.io/)
   - [x] Test for optional shiny modules (series of `visual_*` functions)
-  - [ ] Write more tests (increase coverage)
+  - [x] Write more tests (increase coverage)
+  - [ ] Releasing this package to [**CRAN**](https://cran.r-project.org/submit.html)
   - [ ] Write more vignettes on other topics
-  - [ ] Releasing this package to CRAN
   - [ ] Making a pkgdown site
   - [ ] Making cell analysis little faster
   
@@ -72,7 +91,7 @@ See other successful builds in [CRAN Comments](https://github.com/r-rudra/tidyce
 **Reason** : xml2 and httr failed to installed due to system dependency (libxml2, libssl/openssl)
 
 
-**Note** : Neither of these errors (or notes) are attributable to package as they failed because of induced system dependency or optional package dependency.
+**Note** : Neither of these errors (or notes) are attributable to the package as they failed because of induced system dependency or optional package dependency.
 
 
 ### Dependency Explained
