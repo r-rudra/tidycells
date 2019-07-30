@@ -29,29 +29,31 @@ test_that("etc works", {
   expect_identical(c1, c2 %>% dplyr::select(-omg))
 
   # read date object
-  dex <- "testdata/test.xls"
-  m1 <- read_xls_from_xlsx(dex)[[1]] %>%
-    as_cell_df() %>%
-    as.matrix()
-  m2 <- read_excel_whole_readxl(dex)[[1]] %>%
-    as_cell_df() %>%
-    as.matrix()
+  if (rlang::is_installed("xlsx") & rlang::is_installed("readxl")) {
+    dex <- "testdata/test.xls"
+    m1 <- read_xls_from_xlsx(dex)[[1]] %>%
+      as_cell_df() %>%
+      as.matrix()
+    m2 <- read_excel_whole_readxl(dex)[[1]] %>%
+      as_cell_df() %>%
+      as.matrix()
 
-  expect_identical(m1[, -3], m2[, -3])
-  expect_equal(m1[4, 2], "2019-06-15")
-  expect_equal(m1[5, 2], "1245")
+    expect_identical(m1[, -3], m2[, -3])
+    expect_equal(m1[4, 2], "2019-06-15")
+    expect_equal(m1[5, 2], "1245")
 
-  cd0 <- read_xls_from_xlsx(dex)[[1]] %>%
-    as_cell_df() %>%
-    numeric_values_classifier()
-  ca0 <- analyze_cells(cd0)
+    cd0 <- read_xls_from_xlsx(dex)[[1]] %>%
+      as_cell_df() %>%
+      numeric_values_classifier()
+    ca0 <- analyze_cells(cd0)
 
-  expect_output(print(ca0), "Potential Issues:")
+    expect_output(print(ca0), "Potential Issues:")
 
-  # test few of the plot issues section
-  g <- plot(ca0, plot_issues = TRUE)
+    # test few of the plot issues section
+    g <- plot(ca0, plot_issues = TRUE)
 
-  expect_true(inherits(g, "ggplot"))
+    expect_true(inherits(g, "ggplot"))
+  }
 
   lvls <- 1:5
 

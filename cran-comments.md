@@ -14,7 +14,10 @@
 
 ### AppVeyor
 
-* Windows Server 2012 R2 x64 (build 9600), R version 3.6.1 Patched (2019-07-24 r76894) 
+* Windows Server 2012 R2 x64 (build 9600), 
+  * R version 3.6.1 Patched (2019-07-29 r76904) 
+  * R version 3.6.1 (2019-07-05)
+  * R version 3.5.3 (2019-03-11)
 
 ### R-hub
 
