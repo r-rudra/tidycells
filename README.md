@@ -498,16 +498,6 @@ the corresponding tab will be activated. Since all of these modules are
 entirely optional the dependency is kept at **tidycells** ‘suggests’
 level only.
 
-## Current State of Development and Way Forward
-
-  - [x] Test it in [r-hub](https://builder.r-hub.io/)
-  - [ ] Write more tests (increase coverage)
-  - [ ] Write more vignettes on other topics
-  - [ ] Releasing this package to CRAN
-  - [ ] Making a pkgdown site
-  - [ ] Making cell analysis little faster
-  - [ ] Test for optional shiny modules (series of visual functions)
-
 ## Reference and Related Projects
 
   - [tidyxl](https://github.com/nacnudus/tidyxl) : **Read Untidy Excel
