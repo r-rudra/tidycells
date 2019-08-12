@@ -7,6 +7,8 @@ detect_LibreOffice <- function() {
   if (rlang::is_installed("docxtractr")) {
     get_lo <- function() {
       # an internal function of docxtractr
+      # this will work even if they change `lo_find`
+      # as then it will be operational by 2nd option below
       lo_find()
     }
     # this is to avoid docxtractr's internal lo_find

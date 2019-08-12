@@ -25,19 +25,19 @@ validate_read_cell_part_object <- function(x, level) {
       if (level == read_cell_task_orders[1]) {
         # NULL is possible
         if (is.null(x)) {
-          return(TRUE)
+          return(list(chk = TRUE, level = level))
         }
         # a df
         if (is.data.frame(x)) {
           if (nrow(x) > 0) {
-            return(TRUE)
+            return(list(chk = TRUE, level = level))
           }
         }
         # list of dfs
         if (is.list(x)) {
           if (length(x) > 0) {
             if (is.data.frame(x[[1]])) {
-              return(TRUE)
+              return(list(chk = TRUE, level = level))
             }
           }
         }
@@ -46,7 +46,7 @@ validate_read_cell_part_object <- function(x, level) {
         if (is.list(x)) {
           if (length(x) > 0) {
             if (x %>% map_lgl(is_cell_df) %>% all()) {
-              return(TRUE)
+              return(list(chk = TRUE, level = level))
             }
           }
         }
@@ -56,7 +56,7 @@ validate_read_cell_part_object <- function(x, level) {
           if (length(x) > 0) {
             if (x %>% map_lgl(is_cell_df) %>% all()) {
               if (x %>% map_lgl(~ hasName(.x, "type")) %>% all()) {
-                return(TRUE)
+                return(list(chk = TRUE, level = level))
               }
             }
           }
@@ -66,22 +66,22 @@ validate_read_cell_part_object <- function(x, level) {
         if (is.list(x)) {
           if (length(x) > 0) {
             if (x %>% map_lgl(~ inherits(.x, cell_df_analysis_class[1])) %>% all()) {
-              return(TRUE)
+              return(list(chk = TRUE, level = level))
             }
           }
         }
       }
       if (level == read_cell_task_orders[5]) {
         if (is.data.frame(x)) {
-          if (inherits(x, "rc_df")) {
-            return(TRUE)
+          if (all(utils::hasName(x, setdiff(defcols, "table_tag")))) {
+            return(list(chk = TRUE, level = level))
           }
         }
       }
     } else {
-      abort("read_cell_part object is not valid")
+      abort(paste0(level, " is not a valid level."))
     }
   }
 
-  FALSE
+  return(list(chk = FALSE, level = level))
 }

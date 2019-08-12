@@ -1,22 +1,24 @@
 
-read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "analyze", "compose")
+read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "analyze", "compose", "collate")
 
 
 
 #' Read Cells from file
 #'
 #' @description This function is designed to read cell level information
-#' (and the finally [analyze][analyze_cells()] and [compose][compose_cells()]) from many file types like xls, pdf, doc etc.
+#' (and the finally [analyze][analyze_cells()], [compose][compose_cells()] and [collate_columns][collate_columns()])
+#' from many file types like xls, pdf, doc etc.
 #' This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
 #' the installed packages. To see the list of supported files and potentially required packages (if any) just
 #' run `read_cells()` in the console. This function supports the file format based on content and not based on just the file
-#' extension. That means if a file is saved ad pdf and then extension is removed (or extension modified to say `.xlsx`)
+#' extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say `.xlsx`)
 #' then also the `read_cells` will detect it as pdf and read its content.
 #'
 #'
 #' @param x either a valid file path or a [`read_cell_part`][read_cell_part-class]
 #' @param at_level till which level to process.
-#' Should be one of `detect_and_read`, `make_cells`, `va_classify`, `analyze`, `compose`. Or simply a number.
+#' Should be one of `detect_and_read`, `make_cells`, `va_classify`, `analyze`, `compose`, `collate`.
+#' Or simply a number (like 1 means `detect_and_read`, 5 means `compose`).
 #' @param omit (Optional) the file-types to omit. A character vector.
 #' @param simplify whether to simplify the output. (Default `TRUE`). If set to `FALSE` a [`read_cell_part`][read_cell_part-class]
 #' will be returned.
@@ -32,13 +34,39 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #' If `simplify=FALSE` then it will return a [`read_cell_part`][read_cell_part-class] which you can process manually
 #' and continue again with `read_cells` (perhaps then `from_level` may be useful).
 #' @export
+#'
+#' @details
+#' It performs following set of actions if called with default `at_level`.
+#'
+#' * **detect_and_read**: Detect file type based on content and attempt to read the same in a format suitable to convert as [`cell_df`][cell_df-class].
+#' * **make_cells**: Convert the file content to [`cell_df`][cell_df-class] using [`as_cell_df`][as_cell_df()].
+#' * **va_classify**: Run [Value Attribute Classification][value_attribute_classify()] using [`numeric_values_classifier`][numeric_values_classifier()].
+#' * **analyze**: Analyze the cells using [`analyze_cells`][analyze_cells()].
+#' * **compose**: Compose the cell-analysis to a tidy form using [`compose_cells`][compose_cells()].
+#' * **collate**: Finally collate columns based on content using [`collate_columns`][collate_columns()].
+#'
+#' \if{html}{
+#'
+#' Here is the flowchart of the same:
+#'
+#' \figure{read_cells.svg}{options: width=400}
+#'
+#' }
+#'
 #' @rdname read_cells
 #'
 #' @examples
 #' # see supported files
 #' read_cells()
+#'
+#' fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
+#' # File extension is intentionally given wrong
+#' # while filename is actual identifier of the file type
+#' fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
+#' # read the data
+#' read_cells(fcsv)
 read_cells <- function(x,
-                       at_level = c("compose", "detect_and_read", "make_cells", "va_classify", "analyze"),
+                       at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                        omit = NULL,
                        simplify = TRUE,
                        compose_main_cols_only = TRUE,
@@ -49,10 +77,27 @@ read_cells <- function(x,
 }
 
 
-#' @rdname read_cells
+#' Read Cells from file
+#'
+#' @param x either a valid file path or a [`read_cell_part`][read_cell_part-class]
+#' @param at_level till which level to process.
+#' Should be one of `detect_and_read`, `make_cells`, `va_classify`, `analyze`, `compose`. Or simply a number.
+#' @param omit (Optional) the file-types to omit. A character vector.
+#' @param simplify whether to simplify the output. (Default `TRUE`). If set to `FALSE` a [`read_cell_part`][read_cell_part-class]
+#' will be returned.
+#' @param compose_main_cols_only whether to compose main columns only. (Default `TRUE`).
+#' @param from_level (Optional) override start level. (`read_cells` will process after `from_level`)
+#' @param silent if `TRUE` no message will be displayed.(Default `TRUE`)
+#' @param ... further arguments
+#'
+#' @seealso
+#' [`read_cells`][read_cells()]
+#'
+#' @rdname read_cells_internal
+#' @keywords internal
 #' @export
 read_cells.read_cell_part <- function(x,
-                                      at_level = c("compose", "detect_and_read", "make_cells", "va_classify", "analyze"),
+                                      at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                                       omit = NULL,
                                       simplify = TRUE,
                                       compose_main_cols_only = TRUE,
@@ -96,10 +141,10 @@ read_cells.read_cell_part <- function(x,
 
   out_l <- rcp
   simple <- out_l$file_name
-  # if it is in compose stage
-  if (out_l$stage == read_cell_task_orders[5]) {
-    if (is.data.frame(out_l$final_composition)) {
-      simple <- out_l$final_composition
+  # if it is in last stage
+  if (out_l$stage == read_cell_task_orders[6]) {
+    if (is.data.frame(out_l$final)) {
+      simple <- out_l$final
     }
   }
 
@@ -173,41 +218,51 @@ read_cells.read_cell_part <- function(x,
   # compose
   if (at_level >= 5 & (this_level < 5)) {
     if (!out_l$is_empty) {
-      raw_comp <- out_l$cell_analysis_list %>%
-        map(~ compose_cells_raw(.x, details = TRUE))
-      rcn <- names(raw_comp)
+      raw_comp_no_pp <- out_l$cell_analysis_list %>%
+        map(~ compose_cells_raw(.x, post_process = FALSE))
+
+      rcn <- names(raw_comp_no_pp)
       rcn <- rcn[!is.na(rcn)]
       rcn <- rcn[nchar(rcn) > 0]
       rcn <- unique(rcn)
-      if (length(rcn) == length(raw_comp)) {
-        table_tag <- names(raw_comp)
+      if (length(rcn) == length(raw_comp_no_pp)) {
+        table_tag <- names(raw_comp_no_pp)
       } else {
-        table_tag <- seq_along(raw_comp) %>% paste0("Table_", .)
+        table_tag <- seq_along(raw_comp_no_pp) %>% paste0("Table_", .)
       }
 
-      final_compositions <- seq_along(raw_comp) %>%
-        map(~ {
-          tn <- raw_comp[[.x]]
-          if (compose_main_cols_only) {
-            all_d <- NULL
-          } else {
-            all_d <- tn$raw_data[c(tn$must_cols, tn$major_col, tn$minor_col)] %>% mutate(table_tag = table_tag[.x])
-          }
-          list(
-            main = tn$raw_data[c(tn$must_cols, tn$major_col)] %>%
-              mutate(table_tag = table_tag[.x]),
-            all = all_d
-          )
-        })
+      if (simplify & at_level < 6) {
+        # compose_cells post_process if simplify = TRUE and at_level < 6
+        raw_comp <- raw_comp_no_pp %>%
+          map(~ compose_cells_raw_post_process(.x, details = TRUE))
 
+        final_compositions <- seq_along(raw_comp_no_pp) %>%
+          map(~ {
+            tn1 <- raw_comp_no_pp[[.x]]
+            ttag <- table_tag[.x]
+            raw_comp_d <- tn1 %>% map(~ mutate(.x, table_tag = ttag))
 
+            tn2 <- raw_comp[[.x]]
+            comp_d <- tn2$raw_data[c(tn2$must_cols, tn2$major_col, tn2$minor_col)] %>% mutate(table_tag = ttag)
 
-      if (compose_main_cols_only) {
-        out_l$final_composition <- final_compositions %>% map_df("main")
+            list(comp = comp_d, raw = raw_comp_d)
+          })
       } else {
-        out_l$final_composition_main <- final_compositions %>% map_df("main")
-        out_l$final_composition <- final_compositions %>% map_df("all")
+        # this means it will be going thourgh 'collate' process
+        final_compositions <- seq_along(raw_comp_no_pp) %>%
+          map(~ {
+            tn1 <- raw_comp_no_pp[[.x]]
+            ttag <- table_tag[.x]
+            raw_comp_d <- tn1 %>% map(~ mutate(.x, table_tag = ttag))
+
+            list(raw = raw_comp_d)
+          })
       }
+
+
+
+      out_l$raw_composition <- final_compositions %>% map("raw")
+      out_l$final_composition <- final_compositions %>% map_df("comp")
 
       out_l$stage <- read_cell_task_orders[5]
       if (simplify) {
@@ -216,12 +271,36 @@ read_cells.read_cell_part <- function(x,
     }
   }
 
+
+  # collate
+  if (at_level >= 6 & (this_level < 6)) {
+    if (!out_l$is_empty) {
+      raw_present <- FALSE
+      if (!is.null(out_l$raw_composition)) {
+        raw_present <- TRUE
+      }
+
+      if (raw_present) {
+        dcl <- out_l$raw_composition
+      } else {
+        dcl <- list(out_l$final_composition)
+      }
+
+      out_l$final <- dcl %>% map_df(~ collate_columns(.x) %>% as_tibble())
+
+      out_l$stage <- read_cell_task_orders[6]
+      if (simplify) {
+        simple <- out_l$final
+      }
+    }
+  }
+
   if (simplify) {
-    if (!is.null(simple) & out_l$stage != read_cell_task_orders[5]) {
+    if (!is.null(simple) & out_l$stage != read_cell_task_orders[6]) {
       # because of "attempt to set an attribute on NULL" error
       attr(simple, "read_cells_stage") <- out_l$stage
     }
-    if (out_l$stage == read_cell_task_orders[5] & !is.null(simple)) {
+    if (out_l$stage == read_cell_task_orders[6] & !is.null(simple)) {
       attr(simple, "read_cells_stage") <- NULL
     }
     simple
@@ -231,10 +310,10 @@ read_cells.read_cell_part <- function(x,
   }
 }
 
-#' @rdname read_cells
+#' @rdname read_cells_internal
 #' @export
 read_cells.character <- function(x,
-                                 at_level = c("compose", "detect_and_read", "make_cells", "va_classify", "analyze"),
+                                 at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                                  omit = NULL,
                                  simplify = TRUE,
                                  compose_main_cols_only = TRUE,
@@ -251,21 +330,29 @@ read_cells.character <- function(x,
     compose_main_cols_only = compose_main_cols_only
   )
 }
-#' @rdname read_cells
+#' @rdname read_cells_internal
 #' @export
 read_cells.default <- function(x,
-                               at_level = c("compose", "detect_and_read", "make_cells", "va_classify", "analyze"),
+                               at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                                omit = NULL,
                                simplify = TRUE,
                                compose_main_cols_only = TRUE,
                                from_level,
                                ...) {
   if (!missing(from_level)) {
-    from_level <- read_cell_task_orders[as.integer(from_level)]
-    if (validate_read_cell_part_object(x, level = from_level)) {
-      attr(x, "read_cells_stage") <- from_level
+    val <- validate_read_cell_part_object(x, level = from_level)
+    from_level_this <- val$level
+    if (val$chk) {
+      attr(x, "read_cells_stage") <- from_level_this
     } else {
-      abort(paste0("the object does not have required type for ", from_level))
+      if (from_level_this %in% read_cell_task_orders) {
+        abort(paste0("the object does not have required type for ", from_level_this))
+      } else {
+        abort(paste0(
+          "have you passed correct `from_level`. It should be one of ",
+          paste0(read_cell_task_orders, collapse = ", ")
+        ))
+      }
     }
   }
 
@@ -278,7 +365,7 @@ read_cells.default <- function(x,
   )
 }
 
-#' @rdname read_cells
+#' @rdname read_cells_internal
 #' @export
 read_cells.NULL <- function(x, ...) {
   cat(cli_b("Please provide a valid file path to process.\n"))

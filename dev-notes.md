@@ -7,7 +7,7 @@ Also Check [CRAN Comments](https://github.com/r-rudra/tidycells/blob/master/cran
 
 You are most welcome to contribute to this project in any means. 
 
-Apart from opening an issue in Github (preferably with [reprex](https://reprex.tidyverse.org/)), you can also contribute mainly in the "Heuristic Maturation" process for `tidycells::analyze_cells`. If any issue is specific to a data which you would like to share with me, there is a friendly function to mask your data using `tidycells:::mask_data` (_this function is not exported to avoid possible name conflicts_).
+Apart from opening an issue in Github (preferably with [reprex](https://reprex.tidyverse.org/)), you can also contribute mainly in the "Heuristic Maturation" process for `tidycells::analyze_cells` and `tidycells::collate_columns`. If any issue is specific to a data which you would like to share with me, there is a friendly function to mask your data using `tidycells:::mask_data` (_this function is not exported to avoid possible name conflicts_).
 
 
 ### FAQs

@@ -49,9 +49,17 @@ print.cell_df <- function(x, ...) {
       format(n = 4, width = 40L)
   }
 
-  msg <- c(msg, t_msg)
+  msg <- c(msg)
+
+  t_msg <- t_msg[-c(1, 3)]
+  t_msg[1] <- cli_b(t_msg[1])
 
   cat(paste0(paste0(msg, collapse = "\n"), "\n"))
+  cat("\n")
+  t_msg %>%
+    stringr::str_split("\n") %>%
+    unlist() %>%
+    cli_box()
 }
 
 

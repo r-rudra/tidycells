@@ -227,7 +227,9 @@ ui_part_traceback <- function(id = "ui_traceback") {
         absolutePanel(
           top = 20, left = 20, width = 500,
           draggable = TRUE,
-          wellPanel(DT::DTOutput(ns("dt_trace"), height = "100%"), style = "font-size:70%"),
+          wellPanel(DT::DTOutput(ns("dt_trace"), height = "100%"),
+            style = "font-size:70%"
+          ),
           style = "opacity: 0.90"
         ),
         plotOutput(ns("plot_traceback"),

@@ -9,3 +9,7 @@
 ^Meta$
 ^cran-comments\.md$
 ^dev-notes\.md$
+^logo\.png$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

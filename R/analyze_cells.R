@@ -3,12 +3,24 @@
 
 #' Analyze Cells
 #'
-#' @param d A cell_df after `Value Attribute Classification` done
+#' @param d A cell_df after [`Value Attribute Classification`][value_attribute_classify()] done
 #' @param silent logical scalar indicating whether to raise a warning if heuristic detection fails. (Default TRUE).
 #'
 #' @details it returns detailed analysis of the data structure including data block detection, attribute orientation detection etc.
-#' The argument `silent` is set to `TRUE` by default, as the warning will be given whenever the cell-analysis is printed.
-#' @return Detailed analysis of the cell data structure
+#' The argument `silent` is set to `TRUE` by default, as the warning will be given whenever the [`cell_analysis`][cell_analysis-class] is printed.
+#'
+#' After this step one may like to do :
+#' * [`compose_cells`][compose_cells()]
+#'
+#' If in an interactive session, following additional functions can be helpful for interactive visualizations:
+#' * [`visual_data_block_inspection`][visual_data_block_inspection()]
+#' * [`visual_orientation_modification`][visual_orientation_modification()]
+#' * [`visual_traceback`][visual_traceback()]
+#'
+#' @return Detailed analysis of the cell data structure.
+#' Which will be a [`cell_analysis`][cell_analysis-class] class object.
+#'
+#' @seealso [`compose_cells`][compose_cells()], [`collate_columns`][collate_columns()]
 #' @export
 #' @examples
 #' d <- structure(c(

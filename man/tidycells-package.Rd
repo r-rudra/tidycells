@@ -5,7 +5,7 @@
 \alias{tidycells-package}
 \title{\code{tidycells} package}
 \description{
-\strong{Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to 'Tidyverse'}
+\strong{Read Tabular Data from Diverse Sources and Easily Make Them Tidy}
 }
 \details{
 The package provides utilities to read, cells from complex tabular data and heuristic detection based structural assignment of those cells to a columnar or tidy format.

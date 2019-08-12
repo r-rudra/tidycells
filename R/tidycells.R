@@ -1,7 +1,7 @@
 
 #' `tidycells` package
 #'
-#' **Read Natural Tabular Data from Diverse Sources and Transform them into a Format Compatible to 'Tidyverse'**
+#' **Read Tabular Data from Diverse Sources and Easily Make Them Tidy**
 #'
 #' The package provides utilities to read, cells from complex tabular data and heuristic detection based structural assignment of those cells to a columnar or tidy format.
 #' Read functionality has the ability to read (in a unified manner) structured, partially structured or unstructured tabular data (usually spreadsheets for public data dissemination and aimed for common human understanding) from various types of documents. The tabular information is read as cells.
@@ -20,7 +20,7 @@ if (getRversion() >= "2.15.1") {
   gvars <- c(
 
     ########
-    # for dplyr oprations non-standard evaluation (nse)
+    # for dplyr oprations : non-standard evaluation (nse)
 
     ".", "ad", "ag",
     "aid", "attr_gid", "attr_gid_split", "attr_group",
@@ -50,7 +50,11 @@ if (getRversion() >= "2.15.1") {
     "RN", "row_a", "row_d", "row_orig",
     "sheet", "support_possible", "this_attr_max_rel", "txt",
     "txt_orig", "txt_size_", "type", "val_type",
-    "value", "value_chk", "id",
+    "value", "value_chk", "id", "block",
+    "cn_id_raw", "cr", "n1", "n2",
+    "new_name", "old_name", "tinf", "fsn",
+    "is_major", "new_cn", "sn", "sn_m",
+    "table_tag",
 
     ########
     # for shiny

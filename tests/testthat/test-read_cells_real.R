@@ -3,7 +3,7 @@ test_that("read_cells on real data works I", {
   skip_if_not_installed("tidyxl")
 
   dcpi <- system.file("extdata", "RBI_HBS_Table_No_166.xlsx", package = "tidycells", mustWork = TRUE) %>%
-    read_cells()
+    read_cells(at_level = "compose")
 
   chk1 <- dcpi$major_1 %>%
     unique() %>%
@@ -18,7 +18,7 @@ test_that("read_cells on real data works I", {
 })
 
 
-test_that("read_cells on real data works II", {
+test_that("sample analysis on real data works II", {
   dwss <- readRDS("testdata/WSS.rds")
 
   da <- analyze_cells(dwss)
@@ -37,7 +37,7 @@ test_that("read_cells on real data works II", {
 })
 
 
-test_that("read_cells on real data works III", {
+test_that("sample analysis on real data works III", {
   cd <- readRDS("testdata/enron_from_unpivotr_processed.rds")
 
   ca <- analyze_cells(cd)

@@ -7,19 +7,32 @@
 analyze_cells(d, silent = TRUE)
 }
 \arguments{
-\item{d}{A cell_df after \code{Value Attribute Classification} done}
+\item{d}{A cell_df after \code{\link[=value_attribute_classify]{Value Attribute Classification}} done}
 
 \item{silent}{logical scalar indicating whether to raise a warning if heuristic detection fails. (Default TRUE).}
 }
 \value{
-Detailed analysis of the cell data structure
+Detailed analysis of the cell data structure.
+Which will be a \code{\link[=cell_analysis-class]{cell_analysis}} class object.
 }
 \description{
 Analyze Cells
 }
 \details{
 it returns detailed analysis of the data structure including data block detection, attribute orientation detection etc.
-The argument \code{silent} is set to \code{TRUE} by default, as the warning will be given whenever the cell-analysis is printed.
+The argument \code{silent} is set to \code{TRUE} by default, as the warning will be given whenever the \code{\link[=cell_analysis-class]{cell_analysis}} is printed.
+
+After this step one may like to do :
+\itemize{
+\item \code{\link[=compose_cells]{compose_cells}}
+}
+
+If in an interactive session, following additional functions can be helpful for interactive visualizations:
+\itemize{
+\item \code{\link[=visual_data_block_inspection]{visual_data_block_inspection}}
+\item \code{\link[=visual_orientation_modification]{visual_orientation_modification}}
+\item \code{\link[=visual_traceback]{visual_traceback}}
+}
 }
 \examples{
 d <- structure(c(
@@ -36,4 +49,7 @@ ca <- analyze_cells(cd)
 
 # look at the plot for detected directions
 plot(ca)
+}
+\seealso{
+\code{\link[=compose_cells]{compose_cells}}, \code{\link[=collate_columns]{collate_columns}}
 }

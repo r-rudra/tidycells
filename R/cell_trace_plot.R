@@ -22,6 +22,7 @@ cell_trace_plot <- function(dc, trace_row, ca, prior_plot, prior_ca_plot) {
           prior_plot <- graphics::plot(ca$cell_df, no_plot = TRUE)
         }
       }
+
       d0 <- dc[trace_row, ]
 
       connected_cells <- d0[stringr::str_detect(colnames(d0), "cellAddress")]
@@ -29,14 +30,19 @@ cell_trace_plot <- function(dc, trace_row, ca, prior_plot, prior_ca_plot) {
         map_lgl(~ !is.na(.x)) %>%
         connected_cells[.]
       connected_cells <- connected_cells %>%
-        map_df(~ stringr::str_split(.x, "_")[[1]] %>%
-          as.integer() %>%
-          t()) %>%
-        t()
-      connected_cells <- as.data.frame(connected_cells) %>%
+        imap_dfr(~ .x %>%
+          stringr::str_split(" :: ") %>%
+          reduce(c) %>%
+          stringr::str_split("_") %>%
+          map(~ .x %>%
+            as.integer() %>%
+            t()) %>%
+          reduce(rbind) %>%
+          as.data.frame() %>%
+          mutate(cn_id_raw = .y))
+      connected_cells <- connected_cells %>%
         mutate(
-          cn_id = connected_cells %>%
-            rownames() %>%
+          cn_id = cn_id_raw %>%
             stringr::str_remove("cellAddress_"),
           cn = cn_id %>%
             stringr::str_extract("major|minor")
@@ -110,9 +116,10 @@ cell_trace_plot <- function(dc, trace_row, ca, prior_plot, prior_ca_plot) {
           )
       }
 
+
       this_plot <- this_plot +
         ggplot2::guides(color = FALSE) +
-        ggplot2::scale_color_manual(values = c(major = "#B5525288", minor = "#A87B4188"))
+        ggplot2::scale_color_manual(values = c(major = "#B5525288", minor = "#4156A888"))
 
 
       return(this_plot)

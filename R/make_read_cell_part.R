@@ -4,7 +4,7 @@ make_read_cell_part <- function(obj) {
   if (is.null(stage)) {
     abort(paste0(
       "No 'read_cells_stage' attribute found!",
-      "\nMake sure the 'obj' is outcome from read_cells with 'simplify = TRUE' and 'at_level<5'"
+      "\nMake sure the 'obj' is outcome from read_cells with 'simplify = TRUE' and 'at_level<6'"
     ))
   }
 

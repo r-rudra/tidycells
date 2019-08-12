@@ -69,12 +69,7 @@ compose_cells_raw <- function(ca, post_process = TRUE, attr_sep = " :: ",
       reduce(fj_this))
 
   if (print_col_info) {
-    dlinf <- dcomp %>% map(~ .x %>%
-      select(-row, -col, -value, -data_block) %>%
-      map(~ .x %>%
-        unique() %>%
-        sort() %>%
-        .[1:min(length(.), 4)]))
+    dlinf <- dcomp %>% map(get_all_col_representative, cut_th = 4, lower_it = FALSE)
 
     dlinfc <- dlinf %>% map(~ .x %>% purrr::imap_chr(~ paste0("  ", cli_bb(.y), "\n     ", paste0(cli_g(.x), collapse = ", "))))
     names(dlinfc) <- paste0("data_block = ", seq_along(dlinfc))
@@ -90,6 +85,10 @@ compose_cells_raw <- function(ca, post_process = TRUE, attr_sep = " :: ",
     return(invisible(dcomp))
   }
 
+  compose_cells_raw_post_process(dcomp, details = details, discard_raw_cols = discard_raw_cols, attr_sep = attr_sep)
+}
+
+compose_cells_raw_post_process <- function(dcomp, details = FALSE, discard_raw_cols = FALSE, attr_sep = " :: ") {
   cns <- dcomp %>%
     map(colnames) %>%
     unlist() %>%
@@ -141,6 +140,7 @@ compose_cells_raw <- function(ca, post_process = TRUE, attr_sep = " :: ",
     lo <- list(raw_data = dcomp_r, must_cols = f_cols, major_col = m_cols, minor_col = nm_cols)
     return(lo)
   }
+
   if (discard_raw_cols) {
     dcomp_r[c(f_cols, m_cols)]
   } else {

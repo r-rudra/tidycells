@@ -2,37 +2,18 @@
 % Please edit documentation in R/read_cells.R
 \name{read_cells}
 \alias{read_cells}
-\alias{read_cells.read_cell_part}
-\alias{read_cells.character}
-\alias{read_cells.default}
-\alias{read_cells.NULL}
 \title{Read Cells from file}
 \usage{
-read_cells(x, at_level = c("compose", "detect_and_read", "make_cells",
-  "va_classify", "analyze"), omit = NULL, simplify = TRUE,
+read_cells(x, at_level = c("collate", "detect_and_read", "make_cells",
+  "va_classify", "analyze", "compose"), omit = NULL, simplify = TRUE,
   compose_main_cols_only = TRUE, from_level, silent = TRUE, ...)
-
-\method{read_cells}{read_cell_part}(x, at_level = c("compose",
-  "detect_and_read", "make_cells", "va_classify", "analyze"),
-  omit = NULL, simplify = TRUE, compose_main_cols_only = TRUE,
-  from_level, silent = TRUE, ...)
-
-\method{read_cells}{character}(x, at_level = c("compose",
-  "detect_and_read", "make_cells", "va_classify", "analyze"),
-  omit = NULL, simplify = TRUE, compose_main_cols_only = TRUE, ...)
-
-\method{read_cells}{default}(x, at_level = c("compose",
-  "detect_and_read", "make_cells", "va_classify", "analyze"),
-  omit = NULL, simplify = TRUE, compose_main_cols_only = TRUE,
-  from_level, ...)
-
-\method{read_cells}{NULL}(x, ...)
 }
 \arguments{
 \item{x}{either a valid file path or a \code{\link[=read_cell_part-class]{read_cell_part}}}
 
 \item{at_level}{till which level to process.
-Should be one of \code{detect_and_read}, \code{make_cells}, \code{va_classify}, \code{analyze}, \code{compose}. Or simply a number.}
+Should be one of \code{detect_and_read}, \code{make_cells}, \code{va_classify}, \code{analyze}, \code{compose}, \code{collate}.
+Or simply a number (like 1 means \code{detect_and_read}, 5 means \code{compose}).}
 
 \item{omit}{(Optional) the file-types to omit. A character vector.}
 
@@ -57,14 +38,41 @@ and continue again with \code{read_cells} (perhaps then \code{from_level} may be
 }
 \description{
 This function is designed to read cell level information
-(and the finally \link[=analyze_cells]{analyze} and \link[=compose_cells]{compose}) from many file types like xls, pdf, doc etc.
+(and the finally \link[=analyze_cells]{analyze}, \link[=compose_cells]{compose} and \link[=collate_columns]{collate_columns})
+from many file types like xls, pdf, doc etc.
 This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
 the installed packages. To see the list of supported files and potentially required packages (if any) just
 run \code{read_cells()} in the console. This function supports the file format based on content and not based on just the file
-extension. That means if a file is saved ad pdf and then extension is removed (or extension modified to say \code{.xlsx})
+extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say \code{.xlsx})
 then also the \code{read_cells} will detect it as pdf and read its content.
+}
+\details{
+It performs following set of actions if called with default \code{at_level}.
+\itemize{
+\item \strong{detect_and_read}: Detect file type based on content and attempt to read the same in a format suitable to convert as \code{\link[=cell_df-class]{cell_df}}.
+\item \strong{make_cells}: Convert the file content to \code{\link[=cell_df-class]{cell_df}} using \code{\link[=as_cell_df]{as_cell_df}}.
+\item \strong{va_classify}: Run \link[=value_attribute_classify]{Value Attribute Classification} using \code{\link[=numeric_values_classifier]{numeric_values_classifier}}.
+\item \strong{analyze}: Analyze the cells using \code{\link[=analyze_cells]{analyze_cells}}.
+\item \strong{compose}: Compose the cell-analysis to a tidy form using \code{\link[=compose_cells]{compose_cells}}.
+\item \strong{collate}: Finally collate columns based on content using \code{\link[=collate_columns]{collate_columns}}.
+}
+
+\if{html}{
+
+Here is the flowchart of the same:
+
+\figure{read_cells.svg}{options: width=400}
+
+}
 }
 \examples{
 # see supported files
 read_cells()
+
+fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
+# File extension is intentionally given wrong
+# while filename is actual identifier of the file type
+fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
+# read the data
+read_cells(fcsv)
 }

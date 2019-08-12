@@ -794,8 +794,9 @@ sps_part_traceback_raw <- function(input, output, session, dcomp, ca, prior_ca_p
 
   output$dt_trace <- DT::renderDT({
     dc0 <- dcomp()
+
     showcols <- colnames(dc0) %>%
-      stringr::str_detect("[major|minor]_[0-9]+$") %>%
+      stringr::str_detect("[major|minor|collated]_[0-9]+$") %>%
       colnames(dc0)[.]
 
     std_opts <- list(
@@ -853,6 +854,7 @@ sps_part_traceback_raw <- function(input, output, session, dcomp, ca, prior_ca_p
       dc0_disp <- dc0 %>% arrange(dummy_order, RN)
 
       dc0_disp <- dc0_disp[c("RN", "value", "data_block", showcols)]
+
 
       proxy %>% DT::selectRows(1)
     }
