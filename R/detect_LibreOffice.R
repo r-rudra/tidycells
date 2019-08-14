@@ -4,7 +4,7 @@
 # check this https://github.com/hrbrmstr/docxtractr/issues/23
 detect_LibreOffice <- function() {
   out <- FALSE
-  if (rlang::is_installed("docxtractr")) {
+  if (is_available("docxtractr")) {
     get_lo <- function() {
       # an internal function of docxtractr
       # this will work even if they change `lo_find`

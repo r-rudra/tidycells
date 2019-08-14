@@ -1,5 +1,5 @@
 read_excel_whole <- function(fn) {
-  if (rlang::is_installed("xlsx")) {
+  if (is_available("xlsx")) {
     # preferred
     read_xls_from_xlsx(fn)
   } else {

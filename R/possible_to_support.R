@@ -8,7 +8,7 @@ supported_types <- tibble(
 
 possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
   pkgs <- unique(supported_types$package)
-  ins_pkgs <- pkgs %>% map_lgl(rlang::is_installed)
+  ins_pkgs <- pkgs %>% map_lgl(is_available)
   ins_pkgs <- pkgs[ins_pkgs]
 
   st <- supported_types %>%
@@ -74,7 +74,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       if (!is.null(extra_msg0)) {
         extra_msg <- paste0(
           extra_msg,
-          cli_bs,
+          cli_bs(),
           cli_b(extra_msg0),
           "\n"
         )
@@ -83,7 +83,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       if (!is.null(extra_msg1)) {
         extra_msg <- paste0(
           extra_msg,
-          cli_bs,
+          cli_bs(),
           cli_b(extra_msg1),
           "\n"
         )
@@ -97,7 +97,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
           .,
           "\nNote:\n",
           extra_msg,
-          cli_bs,
+          cli_bs(),
           cli_b("Support is enabled for content type (means it will work even if the extension is wrong)")
         )
     } else {
@@ -110,7 +110,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       if (length(pkg_need) > 0) {
         pkg_msg <- paste0(
           "\nNote:\n",
-          cli_bs,
+          cli_bs(),
           cli_b("These packages are required: "),
           cli_br(paste0(pkg_need, collapse = ", "))
         )
@@ -122,7 +122,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
         paste0(collapse = ", ") %>%
         cli_br() %>%
         paste0(
-          cli_bs,
+          cli_bs(),
           cli_b("Support"),
           cli_bb(" not "),
           cli_b("present for following type of files: "),
@@ -133,30 +133,29 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       st_not_ok_msg <- NULL
     }
 
-
-    xst <- st %>%
-      filter(implemented) %>%
-      select(-implemented) %>%
-      select(type = file_type, package, present = pkg_installed, support = support_possible)
-
-
-    xst_msg <- format(xst)
-    xst_msg <- xst_msg[-c(1, 3)]
-
-    xst_msg[1] <- cli_b(xst_msg[1])
-
-    xst_msg <- xst_msg %>%
-      stringr::str_replace_all("TRUE", paste0("  ", cli_g(cli_tick), "")) %>%
-      stringr::str_replace_all("FALSE", paste0("  ", cli_r(cli_cross), ""))
-
-
     msg <- paste0(st_ok_msg, "\n", st_not_ok_msg)
     if (return_print_info) {
       return(msg)
     }
     cat(msg)
-    cat("\nDetails: \n")
-    cli_box(xst_msg, col = "cyan")
+    if (is_available("cli")) {
+      xst <- st %>%
+        filter(implemented) %>%
+        select(-implemented) %>%
+        select(type = file_type, package, present = pkg_installed, support = support_possible)
+
+
+      xst_msg <- format(xst)
+      xst_msg <- xst_msg[-c(1, 3)]
+
+      xst_msg[1] <- cli_b(xst_msg[1])
+
+      xst_msg <- xst_msg %>%
+        stringr::str_replace_all("TRUE", paste0("  ", cli_g(cli_tick()), "")) %>%
+        stringr::str_replace_all("FALSE", paste0("  ", cli_r(cli_cross()), ""))
+      cat("\nDetails: \n")
+      cli_box(xst_msg, col = "cyan")
+    }
   }
 
   return(invisible(st))

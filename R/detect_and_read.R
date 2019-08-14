@@ -18,7 +18,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
     # try html first
     if (!("html" %in% omit)) {
-      if (rlang::is_installed("XML")) {
+      if (is_available("XML")) {
         read_try <- try(XML::readHTMLTable(fn, header = FALSE), silent = TRUE)
         if (inherits(read_try, "try-error")) read_try <- NULL
         if (length(read_try) != 0) {
@@ -37,7 +37,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
     # try csv (melt csv first)
     if (!("csv" %in% omit)) {
-      if (rlang::is_installed("readr")) {
+      if (is_available("readr")) {
         read_try <- try(readr::melt_csv(fn), silent = TRUE)
         if (inherits(read_try, "try-error")) read_try <- NULL
         if (is.data.frame(read_try)) {
@@ -77,9 +77,9 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
       # try xls
       if (!("xls" %in% omit) | !("xls{readxl}" %in% omit)) {
-        if (rlang::is_installed("readxl") | rlang::is_installed("xlsx")) {
+        if (is_available("readxl") | is_available("xlsx")) {
           read_full <- FALSE
-          if (rlang::is_installed("xlsx")) {
+          if (is_available("xlsx")) {
             read_try <- suppressMessages(try(xlsx::loadWorkbook(fn), silent = TRUE))
             if (inherits(read_try, "jobjRef")) {
               read_full <- TRUE
@@ -106,7 +106,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
       # try doc
       if (!("doc" %in% omit)) {
-        if (rlang::is_installed("docxtractr")) {
+        if (is_available("docxtractr")) {
           if (lo$ext != "doc") {
             # need to rename the file as docxtractr detects by ext name
             tf <- tempfile(fileext = ".doc")
@@ -172,7 +172,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
       # try xlsx
       if (!("xlsx" %in% omit)) {
-        if (rlang::is_installed("tidyxl")) {
+        if (is_available("tidyxl")) {
           read_try <- try(tidyxl::xlsx_cells(fn), silent = TRUE)
           if (inherits(read_try, "try-error")) read_try <- NULL
 
@@ -189,7 +189,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
 
       # try docx
       if (!("docx" %in% omit)) {
-        if (rlang::is_installed("docxtractr")) {
+        if (is_available("docxtractr")) {
           if (lo$ext != "docx") {
             # need to rename the file as docxtractr detects by ext name
             tf <- tempfile(fileext = ".docx")
@@ -241,7 +241,7 @@ detect_and_read <- function(fn, silent = FALSE, omit = NULL) {
       lo$type <- c("pdf")
 
       if (!("pdf" %in% omit)) {
-        if (rlang::is_installed("tabulizer")) {
+        if (is_available("tabulizer")) {
           suppressWarnings(
             suppressMessages(
               read_try <- try(read_pdf_from_tabulizer(fn), silent = TRUE)

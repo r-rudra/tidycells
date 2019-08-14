@@ -1,7 +1,7 @@
 # readxl
 # possible_date_range is somehow inspired by LibreOffice
 read_excel_whole_part_readxl <- function(fn, sheet = 1L, possible_date_range = c(as.Date("1930-01-01"), Sys.Date() + 3800)) {
-  if (!rlang::is_installed("readxl")) {
+  if (!is_available("readxl")) {
     abort("'readxl' package is required")
   }
 
@@ -29,7 +29,7 @@ read_excel_whole_part_readxl <- function(fn, sheet = 1L, possible_date_range = c
 }
 
 read_excel_whole_readxl <- function(fn) {
-  if (!rlang::is_installed("readxl")) {
+  if (!is_available("readxl")) {
     abort("'readxl' package is required")
   }
   sheets <- readxl::excel_sheets(fn)

@@ -78,3 +78,23 @@ test_that("etc works", {
     purrr::map(~ expect_output(print(read_cells(fn, at_level = .x, simplify = FALSE)), read_cell_task_orders[.x]))
   expect_output(print(read_cells(fn, at_level = 2, simplify = FALSE)), "A partial read_cell")
 })
+
+test_that("doc works", {
+  #  too slow in local windows
+  if (!isTRUE(as.logical(Sys.getenv("CI")))) {
+    skip_on_os("windows")
+  }
+
+  u <- possible_to_support()
+  fty <- u %>%
+    dplyr::filter(support_possible) %>%
+    dplyr::pull(file_type)
+
+  if ("doc" %in% fty) {
+    fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
+    fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
+
+    expect_message(dc <- read_cells("testdata/doc.doc"), "slow")
+    expect_equal(dc, read_cells(fn))
+  }
+})

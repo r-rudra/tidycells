@@ -6,10 +6,10 @@ shiny_check <- function(force_load = FALSE) {
     }
   }
 
-  if (!rlang::is_installed("shiny")) {
+  if (!is_available("shiny")) {
     abort("'shiny' package is required for this functionality.")
   } else {
-    if (!rlang::is_installed("miniUI")) {
+    if (!is_available("miniUI")) {
       abort("'miniUI' package is required for this functionality.")
     }
   }
@@ -54,7 +54,7 @@ command_prompt_ask <- function(title, message, default = NULL) {
 
 rstudioapi_ask <- function(title, message, default = NULL) {
   ok <- FALSE
-  if (rlang::is_installed("rstudioapi")) {
+  if (is_available("rstudioapi")) {
     if (rstudioapi::hasFun("viewer")) {
       ok <- TRUE
     }

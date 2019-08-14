@@ -2,7 +2,7 @@
 
 # function to detect if xlsx working
 is_xlsx_ok <- function() {
-  if (!rlang::is_installed("xlsx")) {
+  if (!is_available("xlsx")) {
     return(FALSE)
   }
 

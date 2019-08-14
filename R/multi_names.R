@@ -4,9 +4,9 @@
 ## analyse_cells <- analyze_cells
 
 
-#' Analyse Cells 
+#' Analyse Cells
 #'
-#' @description Note that this is an other name for `tidycells::analyze_cells`. 
+#' @description Note that this is an other name for `tidycells::analyze_cells`.
 #' After [`Value Attribute Classification`][value_attribute_classify()] done on a [`cell_df`][cell_df-class] next task to do is
 #' analyze it's contents for data block detection, attribute orientation identification etc. The function `analyze_cells` (and also `analyse_cells`)
 #' does the same for you.

@@ -22,44 +22,48 @@ print.cell_df <- function(x, ...) {
   msg <- c(
     msg,
     paste0(
-      cli_bs, "To see cell stats, call ",
+      cli_bs(), "To see cell stats, call ",
       cli_b("summary()")
     )
   )
   msg <- c(
     msg,
     paste0(
-      cli_bs, "To see cell structure, call ",
+      cli_bs(), "To see cell structure, call ",
       cli_b("plot()")
     )
   )
 
-  msg <- c(
-    msg,
-    paste0(cli_bs, "Content:")
-  )
-
-  if (length(list(...))) {
-    t_msg <- d %>%
-      tibble::as_tibble() %>%
-      format(...)
-  } else {
-    t_msg <- d %>%
-      tibble::as_tibble() %>%
-      format(n = 4, width = 40L)
+  if (is_available("cli")) {
+    msg <- c(
+      msg,
+      paste0(cli_bs(), "Content:")
+    )
   }
 
   msg <- c(msg)
-
-  t_msg <- t_msg[-c(1, 3)]
-  t_msg[1] <- cli_b(t_msg[1])
-
   cat(paste0(paste0(msg, collapse = "\n"), "\n"))
-  cat("\n")
-  t_msg %>%
-    stringr::str_split("\n") %>%
-    unlist() %>%
-    cli_box()
+
+  if (is_available("cli")) {
+    if (length(list(...))) {
+      t_msg <- d %>%
+        tibble::as_tibble() %>%
+        format(...)
+    } else {
+      t_msg <- d %>%
+        tibble::as_tibble() %>%
+        format(n = 4, width = 40L)
+    }
+
+    t_msg <- t_msg[-c(1, 3)]
+    t_msg[1] <- cli_b(t_msg[1])
+
+    cat("\n")
+    t_msg %>%
+      stringr::str_split("\n") %>%
+      unlist() %>%
+      cli_box()
+  }
 }
 
 
@@ -86,19 +90,19 @@ summary.cell_df <- function(object, ..., no_print = FALSE) {
 
   msg <- c(
     msg,
-    paste0(cli_bs, cli_bb("Dimension: "), cli_br(nr), " x ", cli_br(nc))
+    paste0(cli_bs(), cli_bb("Dimension: "), cli_br(nr), " x ", cli_br(nc))
   )
 
   msg <- c(
     msg,
-    paste0(cli_bs, cli_bb("Content: "), cli_br(ds$nch), " characters and ", cli_br(ds$nnum), " numbers")
+    paste0(cli_bs(), cli_bb("Content: "), cli_br(ds$nch), " characters and ", cli_br(ds$nnum), " numbers")
   )
 
   ddensity <- nrow(d) / (nr * nc)
 
   msg <- c(
     msg,
-    paste0(cli_bs, cli_bb("Density: "), cli_br(paste0(round(ddensity * 100, 1), "%")))
+    paste0(cli_bs(), cli_bb("Density: "), cli_br(paste0(round(ddensity * 100, 1), "%")))
   )
 
   if (hasName(d, "type")) {
@@ -110,7 +114,7 @@ summary.cell_df <- function(object, ..., no_print = FALSE) {
 
     msg <- c(
       msg,
-      paste0(cli_bs, cli_bb("Types: "), cli_br(ds2$nval), " values, ", cli_br(ds2$natt), " attributes and ", cli_br(ds2$nemp), " empty cells")
+      paste0(cli_bs(), cli_bb("Types: "), cli_br(ds2$nval), " values, ", cli_br(ds2$natt), " attributes and ", cli_br(ds2$nemp), " empty cells")
     )
   }
 

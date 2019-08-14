@@ -11,7 +11,7 @@ print.cell_analysis <- function(x, ...) {
   if (nchar(dachek_msg) == 0) {
     dachek_msg <- NULL
   } else {
-    dachek_msg <- paste0(cli_bs, cli_br("Potential Issues:"), "\n", cli_b(dachek_msg))
+    dachek_msg <- paste0(cli_bs(), cli_br("Potential Issues:"), "\n", cli_b(dachek_msg))
   }
   msg <- paste0(
     cli_bb("Cell DF Analysis:"),

@@ -1,50 +1,75 @@
 
+ok_cli <- function() {
+  is_available("cli")
+}
 
-if (rlang::is_installed("cli")) {
-  cli_bs <- paste0(cli::symbol$menu, " ")
-  cli_tick <- cli::symbol$tick
-  cli_cross <- cli::symbol$cross
+cli_bs <- function() {
+  if (ok_cli()) {
+    paste0(cli::symbol$menu, " ")
+  } else {
+    "* "
+  }
+}
+cli_tick <- function() {
+  if (ok_cli()) {
+    cli::symbol$tick
+  } else {
+    "V"
+  }
+}
+cli_cross <- function() {
+  if (ok_cli()) {
+    cli::symbol$cross
+  } else {
+    "X"
+  }
+}
 
 
-  cli_bb <- function(x) {
+cli_bb <- function(x) {
+  if (ok_cli()) {
     cli::style_bold(cli::col_blue(x))
+  } else {
+    x
   }
+}
 
-  cli_b <- function(x) {
+cli_b <- function(x) {
+  if (ok_cli()) {
     cli::col_blue(x)
+  } else {
+    x
   }
+}
 
-  cli_r <- function(x) {
+cli_r <- function(x) {
+  if (ok_cli()) {
     cli::col_red(x)
+  } else {
+    x
   }
+}
 
-  cli_g <- function(x) {
+cli_g <- function(x) {
+  if (ok_cli()) {
     cli::col_green(x)
+  } else {
+    x
   }
+}
 
-  cli_br <- function(x) {
+cli_br <- function(x) {
+  if (ok_cli()) {
     cli::style_bold(cli::col_red(x))
+  } else {
+    x
   }
+}
 
-  cli_box <- function(x, ...) {
+cli_box <- function(x, ...) {
+  if (ok_cli()) {
     cli::cat_boxx(x, ...)
-  }
-} else {
-  cli_bs <- "* "
-  cli_tick <- "V"
-  cli_cross <- "X"
-
-  cli_bb <- identity
-
-  cli_b <- identity
-
-  cli_r <- identity
-
-  cli_g <- identity
-
-  cli_br <- identity
-
-  cli_box <- function(x, ...) {
-    cat(x, ...)
+  } else {
+    cat(x, sep = "\n")
   }
 }

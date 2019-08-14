@@ -11,12 +11,12 @@ selectize_drop_down_style <- function() {
 
 # checks plotly present or not
 plotly_present <- function() {
-  rlang::is_installed("plotly")
+  is_available("plotly")
 }
 
 # checks plotly present or not
 DT_present <- function() {
-  rlang::is_installed("DT")
+  is_available("DT")
 }
 
 

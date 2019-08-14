@@ -300,7 +300,10 @@ rc_part <- read_cells(fcsv, at_level = 2)
 str(rc_part)
 # sample_based_classifier is another VA classifier
 # for details see coresponding documentation
-rc_part[[1]] <- rc_part[[1]] %>% sample_based_classifier(empty_sample = "6")
+rc_part[[1]] <- rc_part[[1]] %>% 
+  numeric_values_classifier() %>% 
+  sample_based_classifier(empty_sample = "6")
+  
 
 # below should be similar to 
 # rc_part[[1]] %>% 

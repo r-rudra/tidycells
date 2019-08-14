@@ -18,7 +18,7 @@ similarity_score <- function(x, y) {
 
   ads_l <- list(ads)
 
-  if (rlang::is_installed("stringdist")) {
+  if (is_available("stringdist")) {
     suppressMessages(suppressWarnings({
       mthds <- c("osa", "jaccard", "soundex", "jw")
       ads_sdl <- mthds %>% map(~ stringdist::stringdistmatrix(x, y, method = .x, p = 0.1, q = 3))

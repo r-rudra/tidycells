@@ -1,6 +1,6 @@
 
 read_xls_from_xlsx <- function(fn) {
-  if (!rlang::is_installed("xlsx")) {
+  if (!is_available("xlsx")) {
     abort("'xlsx' package is required")
   }
 

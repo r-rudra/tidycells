@@ -1,7 +1,7 @@
 
 
 read_pdf_from_tabulizer <- function(fn) {
-  if (!rlang::is_installed("tabulizer")) {
+  if (!is_available("tabulizer")) {
     abort("'tabulizer' package is required")
   }
 
