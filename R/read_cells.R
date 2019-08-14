@@ -8,10 +8,10 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #' @description This function is designed to read cell level information
 #' (and the finally [analyze][analyze_cells()], [compose][compose_cells()] and [collate_columns][collate_columns()])
 #' from many file types like xls, pdf, doc etc.
-#' This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
+#' This is a wrapper function to functions from multiple packages. The support for a specific file is dependent on
 #' the installed packages. To see the list of supported files and potentially required packages (if any) just
 #' run `read_cells()` in the console. This function supports the file format based on content and not based on just the file
-#' extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say `.xlsx`)
+#' extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say `.xlsx`)
 #' then also the `read_cells` will detect it as pdf and read its content.
 #'
 #'
@@ -43,7 +43,7 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #' * **va_classify**: Run [Value Attribute Classification][value_attribute_classify()] using [`numeric_values_classifier`][numeric_values_classifier()].
 #' * **analyze**: Analyze the cells using [`analyze_cells`][analyze_cells()].
 #' * **compose**: Compose the cell-analysis to a tidy form using [`compose_cells`][compose_cells()].
-#' * **collate**: Finally collate columns based on content using [`collate_columns`][collate_columns()].
+#' * **collate**: Finally, collate columns based on content using [`collate_columns`][collate_columns()].
 #'
 #' \if{html}{
 #'
@@ -61,10 +61,11 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #'
 #' fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
 #' # File extension is intentionally given wrong
-#' # while filename is actual identifier of the file type
+#' # while filename is the actual identifier of the file type
 #' fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
 #' # read the data
 #' read_cells(fcsv)
+#' read_cells(fcsv, simplify = FALSE)
 read_cells <- function(x,
                        at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                        omit = NULL,

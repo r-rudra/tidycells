@@ -3,7 +3,17 @@
 
 #' Analyze Cells
 #'
-#' @param d A cell_df after [`Value Attribute Classification`][value_attribute_classify()] done
+#' @description After [`Value Attribute Classification`][value_attribute_classify()] done on a [`cell_df`][cell_df-class] next task to do is
+#' analyze it's contents for data block detection, attribute orientation identification etc. The function `analyze_cells` (and also `analyse_cells`)
+#' does the same for you.
+#'
+#' **Note**:
+#' \if{html}{If you are not sure about what package functions actually do or how they work together,
+#' please start with \href{../doc/tidycells-intro.html}{\code{vignette("tidycells-intro")}}.}
+#' \if{latex}{If you are not sure about what package functions actually do or how they work together,
+#' please start with \code{vignette("tidycells-intro")}.}
+#'
+#' @param d A [`cell_df`][cell_df-class] after [`Value Attribute Classification`][value_attribute_classify()] done
 #' @param silent logical scalar indicating whether to raise a warning if heuristic detection fails. (Default TRUE).
 #'
 #' @details it returns detailed analysis of the data structure including data block detection, attribute orientation detection etc.
@@ -38,6 +48,11 @@
 #' # look at the plot for detected directions
 #' plot(ca)
 analyze_cells <- function(d, silent = TRUE) {
+  analyze_cells_raw(d = d, silent = silent)
+}
+
+
+analyze_cells_raw <- function(d, silent = TRUE) {
   if (!is_cell_df(d)) {
     abort("A Cell DF expected")
   }

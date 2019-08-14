@@ -2,10 +2,13 @@
 
 #' Compose a Cell Analysis to a tidy form
 #'
+#' @description After [`analyze_cells`][analyze_cells()] carried out, you may like to use this function in order to
+#' stitch the cells together as per the analyzed results, to form a meaningful structural representation (like tidy format).
+#'
 #' @param ca a cell_analysis to process
 #' @param post_process logical scalar. If disabled a list will be returned without performing post-processing. (Default `TRUE`)
 #' @param attr_sep a character string to separate the attributes. (Default is `<space>::<space>`)
-#' @param discard_raw_cols logical scalar. By default `FALSE` if enabled only main processed columns will be returned.
+#' @param discard_raw_cols logical scalar. If enabled only main processed columns will be returned. (Default `FALSE`)
 #' @param print_attribute_overview print the overview of the attributes (4 distinct values from each attribute of each block)
 #'
 #' @return a data.frame (as tibble) in tidy form.

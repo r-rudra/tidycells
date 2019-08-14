@@ -15,7 +15,7 @@ Objects of class \code{cell_analysis} have following named nodes:
 \item \code{cells} : Contains information about \code{cell_group_type} in terms of (data, minor and major attributes).(a tibble)
 \item \code{sections} : Contains boundaries of each data block. (a tibble)
 \item \code{details} : a list containing further information
-\item \code{cell_df} : The original cell_df which is passed for processing
+\item \code{cell_df} : The original \code{\link[=cell_df-class]{cell_df}} which is passed for processing
 }
 }
 
@@ -27,3 +27,4 @@ Objects of class \code{cell_analysis} have following named nodes:
 }
 }
 
+\keyword{internal}

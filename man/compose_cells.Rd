@@ -14,7 +14,7 @@ compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
 
 \item{attr_sep}{a character string to separate the attributes. (Default is \code{<space>::<space>})}
 
-\item{discard_raw_cols}{logical scalar. By default \code{FALSE} if enabled only main processed columns will be returned.}
+\item{discard_raw_cols}{logical scalar. If enabled only main processed columns will be returned. (Default \code{FALSE})}
 
 \item{print_attribute_overview}{print the overview of the attributes (4 distinct values from each attribute of each block)}
 }
@@ -22,7 +22,8 @@ compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
 a data.frame (as tibble) in tidy form.
 }
 \description{
-Compose a Cell Analysis to a tidy form
+After \code{\link[=analyze_cells]{analyze_cells}} carried out, you may like to use this function in order to
+stitch the cells together as per the analyzed results, to form a meaningful structural representation (like tidy format).
 }
 \examples{
 cd <- 1:(9) \%>\%

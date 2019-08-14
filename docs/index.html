@@ -5,7 +5,8 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Read Tabular Data from Diverse Sources and Easily Make Them Tidy • tidycells</title>
+<title>Read Tabular Data from Diverse Sources and Easily Make
+    Them Tidy • tidycells</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -15,22 +16,19 @@
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Read Tabular Data from Diverse Sources and Easily Make Them Tidy">
-<meta property="og:description" content="Provides utilities to read, cells from complex 
-    tabular data and heuristic detection based 'structural assignment' of those 
-    cells to a columnar or tidy format.
-    Read functionality has the ability to read (in a unified manner) 
-    structured, partially structured or unstructured tabular data (usually 
-    spreadsheets for public data dissemination and aimed for common human 
-    understanding) from various types of documents. The tabular information 
-    is read as cells.
-    The 'structure assignment' functionality has both supervised and 
-    unsupervised way of assigning cells data to columnar/tidy format. 
-    Multiple disconnected blocks of tables in a single sheet are also handled 
-    appropriately.
-    These tools are suitable for unattended conversation of (maybe a pile of)
-    messy tables (like government data) into a consumable format(usable 
-    for further analysis and data wrangling).">
+<script src="pkgdown.js"></script><meta property="og:title" content="Read Tabular Data from Diverse Sources and Easily Make
+    Them Tidy">
+<meta property="og:description" content="Provides utilities to read, cells from complex
+    tabular data and heuristic detection based 'structural assignment' of
+    those cells to a columnar or tidy format. Read functionality has the
+    ability to read structured, partially structured or unstructured
+    tabular data from various types of documents. The 'structural
+    assignment' functionality has both supervised and unsupervised way of
+    assigning cells data to columnar/tidy format. Multiple disconnected
+    blocks of tables in a single sheet are also handled appropriately.
+    These tools are suitable for unattended conversation of messy tables
+    into a consumable format(usable for further analysis and data
+    wrangling).">
 <meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -51,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -104,6 +102,10 @@
 
     
     
+<style>
+body {
+text-align: justify}
+</style>
 <div id="tidycells" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#tidycells" class="anchor"></a><strong>tidycells</strong> <img src="articles/ext/logo.png" align="right" width="200">
@@ -135,22 +137,12 @@
 <p>Read functionality has the ability to read (in a unified manner) structured, partially structured or unstructured tabular data (usually spreadsheets for public data dissemination and aimed for common human understanding) from various types of documents. The tabular information is read as cells. The ‘structure assignment’ functionality has both supervised and unsupervised way of assigning cells data to columnar/tidy format. Multiple disconnected blocks of tables in a single sheet are also handled appropriately.</p>
 <p>These tools are suitable for unattended conversation of (maybe a pile of) messy tables (like government data) into a consumable format(usable for further analysis and data wrangling).</p>
 </div>
-<div id="inspiration" class="section level2">
-<h2 class="hasAnchor">
-<a href="#inspiration" class="anchor"></a>Inspiration</h2>
-<p>A spreadsheet is really flexible in storing and sharing data. Many organizations use excel files as their fundamental medium of data exchange (particularly in the government sector). These data are generally not in tidy format (thanks to ultra flexibility of spreadsheets!).</p>
-<p>This is a great time killer for R data scientist adopting <a href="https://www.tidyverse.org/">tidyverse</a> techniques. A lot of time is spent to bring the data into a consumable or usable format (<a href="https://r4ds.had.co.nz/tidy-data.html">tidy format</a>).</p>
-<p>For example, you may check out <a href="https://dbie.rbi.org.in/">Database of Indian Economy</a> (a public data dissemination platform from <a href="https://www.rbi.org.in/"><em>Reserve Bank of India</em></a>). This platform is a great source of Indian economy data. However, since the target audience of this platform is possibly common people and not data scientists, the data structure is not suitable for ready consumption in <em>tidyverse</em> functions. This is not only one, but there are plenty of great source of data which provides data in <em>“eye-relaxing”</em> format rather than tidy format.</p>
-<p>Thanks to great packages like <a href="https://github.com/tidyverse/tidyr">tidyr</a>, <a href="https://github.com/nacnudus/tidyxl">tidyxl</a>, <a href="https://github.com/nacnudus/unpivotr">unpivotr</a> (and many other sweet packages mentioned in <em>reference</em>) which enable users to spend less time in reshaping the data and focus more on analysis rather than data wrangling.</p>
-<p>These packages require user interaction and decision to transform and reshape the raw data (which is still easier than doing <em>copy-paste and transpose</em> in excel) into the tidy format.</p>
-<p>However, consider the situations like, you are given a pile of excel (or any other format of spreadsheets) which are somehow similar but are generated by various human hands over a long period (obviously the format and structure will change from file to file). Or you want to build an automated forecast mechanism based on some spreadsheet which updates periodically (possibly you may get the updated file through some automated channel like web scraping, FTP transfer etc.). Or simply you want something like <em>“I’m Feeling Lucky!”</em></p>
-</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>To install the development version from GitHub you’ll need <code>devtools</code> package in R. Assuming you have <code>devtools</code> you can install this package in R with the following command:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"r-rudra/tidycells"</span>)</a></code></pre></div>
-<p>To start with <code>tidycells</code>, I invite you to see <code><a href="articles/tidycells-intro.html">vignette("tidycells-intro")</a></code> or check out <a href="https://r-rudra.github.io/tidycells/"><code>tidycells</code>-website</a>.</p>
+<p>To start with <code>tidycells</code>, I invite you to see <code><a href="articles/tidycells-intro.html">vignette("tidycells-intro")</a></code> (<em>to see vignette you need to install the package with vignette. That can be done in above command by specifying <code>build_vignettes = TRUE</code>. Note that is might be time consuming</em>) or check out <a href="https://r-rudra.github.io/tidycells/">tidycells-website</a>.</p>
 </div>
 <div id="quick-overview" class="section level2">
 <h2 class="hasAnchor">
@@ -159,7 +151,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>The data looks like (in excel)</p>
 <p><img src="articles/ext/marks.png" width="451px"></p>
-<p>Let’s try our luck in this data</p>
+<p>Let’s try <code>tidycells</code> functions</p>
 <p>Read at once</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb4-2" title="2"><span class="st">  </span><span class="kw"><a href="reference/read_cells.html">read_cells</a></span>()</a></code></pre></div>
@@ -516,7 +508,7 @@
 <li><a href="https://coveralls.io/github/r-rudra/tidycells?branch=master"><img src="https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master" alt="Coveralls Coverage Status"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle"></a></li>
 <li><a href="https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md"><img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license"></a></li>
-<li><a href="https://github.com/r-rudra/tidycells/blob/master/dev-notes.md"><img src="https://img.shields.io/badge/See-DevNotes-blue.svg" alt="See DevNotes"></a></li>
+<li><a href="dev-notes.html"><img src="https://img.shields.io/badge/See-DevNotes-blue.svg" alt="See DevNotes"></a></li>
 </ul>
 </div>
 </div>

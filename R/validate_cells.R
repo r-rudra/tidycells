@@ -10,6 +10,7 @@
 #' If all the checks are passed then it returns `TRUE` else it returns `FALSE` with `msg` attribute, indicating reason for validation failure.
 #'
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' # returns TRUE

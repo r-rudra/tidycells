@@ -34,3 +34,4 @@ chk <- validate_cells(tibble::tibble(row = 1, col = 2, data_type = "numeric"))
 # msg
 attr(chk, "msg")
 }
+\keyword{internal}

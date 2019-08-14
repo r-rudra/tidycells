@@ -1,22 +1,15 @@
 
 # *News*
 
-# tidycells 0.1.9 (2019-07-31)
+# tidycells 0.1.9 _(2019-08-12)_
 
-## Initial Submission
+## New Features
 
-* **CRAN** Initial Submission
+* Added `collate_columns` to collate attribute-columns having similar content.
 
-# tidycells 0.1.5 (2019-07-30)
+# tidycells 0.1.0 _(2019-07-25)_
 
-## Final Codebase Release in GitHub
-
-* Final Release in GitHub for **CRAN** Submission
-* Only Minor Documentation Change after this and before next **CRAN** Submission
-
-# tidycells 0.1.0 (2019-07-25)
-
-## Initial Release to GitHub
+## Initial Public Release
 
 * Initial Release to GitHub
 * Prior to this it was private package

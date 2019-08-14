@@ -16,10 +16,13 @@ as_cell_df(d, take_row_names = FALSE, take_col_names = FALSE)
 (applicable only for data with no (row, col) information). Default is \code{FALSE}.}
 }
 \value{
-A object of class \code{\link[=cell_df-class]{cell_df}}.
+An object of class \code{\link[=cell_df-class]{cell_df}}.
+
+\strong{Note}: After this, you may like to do \code{\link[=value_attribute_classify]{Value Attribute Classification}}.
 }
 \description{
-Transform data into Cell-DF Structure
+Transform an R object (mostly matrix or data.frame) into a \code{\link[=cell_df-class]{cell_df}}
+for further processing in other \code{tidycells} functions.
 }
 \examples{
 
@@ -28,11 +31,14 @@ as_cell_df(iris)
 # consider column name as cell
 as_cell_df(iris, take_col_names = TRUE)
 
-# if the data is already in similar format it will not further transform
+# if the data is already in a similar format it will not further transform
 # which is not true for ---> unpivotr::as_cells
 # check ---> unpivotr::as_cells(iris) \%>\% unpivotr::as_cells()
 unpivotr::as_cells(iris) \%>\% as_cell_df()
 }
 \seealso{
-\code{\link[unpivotr:as_cells]{as_cells}}
+\itemize{
+\item \code{\link[=validate_cells]{validate_cells}} which is used to validate \code{cell_df}.
+\item \code{\link[unpivotr:as_cells]{as_cells}} from \code{unpivotr} package.
+}
 }

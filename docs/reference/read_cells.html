@@ -42,10 +42,10 @@
 <meta property="og:description" content="This function is designed to read cell level information
 (and the finally analyze, compose and collate_columns)
 from many file types like xls, pdf, doc etc.
-This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
+This is a wrapper function to functions from multiple packages. The support for a specific file is dependent on
 the installed packages. To see the list of supported files and potentially required packages (if any) just
 run read_cells() in the console. This function supports the file format based on content and not based on just the file
-extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say .xlsx)
+extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say .xlsx)
 then also the read_cells will detect it as pdf and read its content." />
 
 <meta property="og:image" content="/logo.png" />
@@ -79,7 +79,7 @@ then also the read_cells will detect it as pdf and read its content." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -140,10 +140,10 @@ then also the read_cells will detect it as pdf and read its content." />
     <p>This function is designed to read cell level information
 (and the finally <a href='analyze_cells.html'>analyze</a>, <a href='compose_cells.html'>compose</a> and <a href='collate_columns.html'>collate_columns</a>)
 from many file types like xls, pdf, doc etc.
-This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
+This is a wrapper function to functions from multiple packages. The support for a specific file is dependent on
 the installed packages. To see the list of supported files and potentially required packages (if any) just
 run <code>read_cells()</code> in the console. This function supports the file format based on content and not based on just the file
-extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say <code>.xlsx</code>)
+extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say <code>.xlsx</code>)
 then also the <code>read_cells</code> will detect it as pdf and read its content.</p>
     
     </div>
@@ -208,7 +208,7 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 <li><p><strong>va_classify</strong>: Run <a href='value_attribute_classify.html'>Value Attribute Classification</a> using <code><a href='numeric_values_classifier.html'>numeric_values_classifier</a></code>.</p></li>
 <li><p><strong>analyze</strong>: Analyze the cells using <code><a href='analyze_cells.html'>analyze_cells</a></code>.</p></li>
 <li><p><strong>compose</strong>: Compose the cell-analysis to a tidy form using <code><a href='compose_cells.html'>compose_cells</a></code>.</p></li>
-<li><p><strong>collate</strong>: Finally collate columns based on content using <code><a href='collate_columns.html'>collate_columns</a></code>.</p></li>
+<li><p><strong>collate</strong>: Finally, collate columns based on content using <code><a href='collate_columns.html'>collate_columns</a></code>.</p></li>
 </ul>
     <p>Here is the flowchart of the same:
     <img src='figures/read_cells.svg' width=400 /></p>
@@ -217,11 +217,12 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see supported files</span>
 <span class='fu'>read_cells</span>()</div><div class='output co'>#&gt; <span style='color: #0000BB;'>Please provide a valid file path to process.
-#&gt; Support present for following type of files: </span><span style='color: #0000BB;font-weight: bold;'>csv, xls, xlsx, docx, pdf, html</span><span>
+#&gt; Support present for following type of files: </span><span style='color: #0000BB;font-weight: bold;'>csv, xls, xlsx, doc, docx, pdf, html</span><span>
 #&gt; Note:
-#&gt; = </span><span style='color: #0000BB;'>LibreOffice may be required for doc files</span><span>
+#&gt; = </span><span style='color: #0000BB;'>LibreOffice present so doc files will be supported but it may take little longer time to read/detect.
+#&gt;   You may need to open LibreOffice outside this R-Session manually to speed it up.</span><span>
 #&gt; = </span><span style='color: #0000BB;'>Support is enabled for content type (means it will work even if the extension is wrong)</span><span>
-#&gt; = </span><span style='color: #0000BB;'>Support</span><span style='color: #0000BB;font-weight: bold;'> not </span><span style='color: #0000BB;'>present for following type of files: </span><span style='color: #BB0000;font-weight: bold;'>doc</span><span>
+#&gt; 
 #&gt; Details: 
 #&gt; </span><span style='color: #00BBBB;'>+----------------------------------------------+</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>                                              </span><span style='color: #00BBBB;'>|</span><span>
@@ -231,7 +232,7 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>3</span><span style='color: #00BBBB;'> xls{readxl} readxl       </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>4</span><span style='color: #00BBBB;'> xls         xlsx         </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>5</span><span style='color: #00BBBB;'> xlsx        tidyxl       </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
-#&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>6</span><span style='color: #00BBBB;'> doc         docxtractr   </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #BB0000;'>x</span><span style='color: #00BBBB;'>  </span><span>      </span><span style='color: #00BBBB;'>|</span><span>
+#&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>6</span><span style='color: #00BBBB;'> doc         docxtractr   </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>7</span><span style='color: #00BBBB;'> docx        docxtractr   </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>8</span><span style='color: #00BBBB;'> pdf         tabulizer    </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>9</span><span style='color: #00BBBB;'> html        XML          </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
@@ -239,7 +240,7 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 #&gt; </span><span style='color: #00BBBB;'>+----------------------------------------------+</span><span></div><div class='input'>
 <span class='no'>fold</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"messy"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tidycells"</span>, <span class='kw'>mustWork</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='co'># File extension is intentionally given wrong</span>
-<span class='co'># while filename is actual identifier of the file type</span>
+<span class='co'># while filename is the actual identifier of the file type</span>
 <span class='no'>fcsv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list.files'>list.files</a></span>(<span class='no'>fold</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"^csv."</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>]
 <span class='co'># read the data</span>
 <span class='fu'>read_cells</span>(<span class='no'>fcsv</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 5</span><span>
@@ -248,7 +249,8 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 #&gt; </span><span style='color: #555555;'>1</span><span> Nakshatra  Weight     Kid Name   Table_1   12   
 #&gt; </span><span style='color: #555555;'>2</span><span> Titas      Weight     Kid Name   Table_1   16   
 #&gt; </span><span style='color: #555555;'>3</span><span> Nakshatra  Age        Kid Name   Table_1   1.5  
-#&gt; </span><span style='color: #555555;'>4</span><span> Titas      Age        Kid Name   Table_1   6    </div></span></pre>
+#&gt; </span><span style='color: #555555;'>4</span><span> Titas      Age        Kid Name   Table_1   6    </div><div class='input'><span class='fu'>read_cells</span>(<span class='no'>fcsv</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; </span><span style='color: #0000BB;font-weight: bold;'>A partial read_cell</span><span>
+#&gt; </span><span style='color: #0000BB;'>At stage </span><span>collate</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

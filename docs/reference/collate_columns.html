@@ -39,7 +39,8 @@
 
 <meta property="og:title" content="Collate Columns Based on Content — collate_columns" />
 
-<meta property="og:description" content="Collate Columns Based on Content" />
+<meta property="og:description" content="After compose_cells, this function rearranges and rename attribute-columns in order to
+make columns properly aligned, based on the content of the columns." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -130,13 +131,13 @@
 
     <div class="ref-description">
     
-    <p>Collate Columns Based on Content</p>
+    <p>After <code><a href='compose_cells.html'>compose_cells</a></code>, this function rearranges and rename attribute-columns in order to
+make columns properly aligned, based on the content of the columns.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>collate_columns</span>(<span class='no'>composed_data</span>, <span class='kw'>combine_threshold</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>rest_cols</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>retain_other_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>retain_cell_address</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>collate_columns</span>(<span class='no'>composed_data</span>, <span class='kw'>combine_threshold</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rest_cols</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
+  <span class='kw'>retain_other_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>retain_cell_address</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,11 +148,11 @@
     </tr>
     <tr>
       <th>combine_threshold</th>
-      <td><p>a numerical threshold (between 0-1) for content-based collation of columns. (Default 0.9)</p></td>
+      <td><p>a numerical threshold (between 0-1) for content-based collation of columns. (Default 1)</p></td>
     </tr>
     <tr>
       <th>rest_cols</th>
-      <td><p>number of rest columns (beyond <code>combine_threshold</code> joins these many number of columns to keep)</p></td>
+      <td><p>number of rest columns (beyond <code>combine_threshold</code> joins these many numbers of columns to keep)</p></td>
     </tr>
     <tr>
       <th>retain_other_cols</th>
@@ -167,6 +168,16 @@ This may be required for <code><a href='cell_composition_traceback.html'>traceba
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A column collated data.frame</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <ul>
+<li><p><strong>Dependency on <em>stringdist</em></strong>: If you have <code><a href='https://www.rdocumentation.org/packages/stringdist/topics/stringdist-package'>stringdist</a></code> installed,
+the approximate string matching will be enhanced. There may be variations in outcome if you have <code>stringdist</code>
+vs if you don't have it.</p></li>
+<li><p><strong>Possibility of randomness</strong>: If the attribute column is containing many distinct values, then a column representative sample will be drawn.
+Hence it is always recommended to <code><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></code> if reproducibility is a matter of concern.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -231,6 +242,8 @@ This may be required for <code><a href='cell_composition_traceback.html'>traceba
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

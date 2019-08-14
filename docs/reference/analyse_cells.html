@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Value/Attribute Classifier which considers number like cells as values — numeric_values_classifier • tidycells</title>
+<title>Analyse Cells — analyse_cells • tidycells</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,9 +37,15 @@
 
 
 
-<meta property="og:title" content="Value/Attribute Classifier which considers number like cells as values — numeric_values_classifier" />
+<meta property="og:title" content="Analyse Cells — analyse_cells" />
 
-<meta property="og:description" content="Value/Attribute Classifier which considers number like cells as values" />
+<meta property="og:description" content="Note that this is an other name for tidycells::analyze_cells.
+After Value Attribute Classification done on a cell_df next task to do is
+analyze it's contents for data block detection, attribute orientation identification etc. The function analyze_cells (and also analyse_cells)
+does the same for you.
+Note:
+If you are not sure about what package functions actually do or how they work together,
+please start with vignette(&quot;tidycells-intro&quot;)." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -123,47 +129,59 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Value/Attribute Classifier which considers number like cells as values</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-rudra/tidycells/blob/master/R/value_attribute_classifiers.R'><code>R/value_attribute_classifiers.R</code></a></small>
-    <div class="hidden name"><code>numeric_values_classifier.Rd</code></div>
+    <h1>Analyse Cells</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-rudra/tidycells/blob/master/R/multi_names.R'><code>R/multi_names.R</code></a></small>
+    <div class="hidden name"><code>analyse_cells.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Value/Attribute Classifier which considers number like cells as values</p>
+    <p>Note that this is an other name for <code><a href='analyze_cells.html'>tidycells::analyze_cells</a></code>.
+After <code><a href='value_attribute_classify.html'>Value Attribute Classification</a></code> done on a <code><a href='cell_df-class.html'>cell_df</a></code> next task to do is
+analyze it's contents for data block detection, attribute orientation identification etc. The function <code>analyze_cells</code> (and also <code>analyse_cells</code>)
+does the same for you.</p>
+<p><strong>Note</strong>:
+If you are not sure about what package functions actually do or how they work together,
+please start with <a href='../doc/tidycells-intro.html'><code><a href='../articles/tidycells-intro.html'>vignette("tidycells-intro")</a></code></a>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>numeric_values_classifier</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='no'>allow_chars</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='co'># S3 method for default</span>
-<span class='fu'>numeric_values_classifier</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>allow_chars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='co'># S3 method for cell_df</span>
-<span class='fu'>numeric_values_classifier</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='no'>allow_chars</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>analyse_cells</span>(<span class='no'>d</span>, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Either a <code><a href='cell_df-class.html'>cell_df</a></code> or leave blank for function output (required by <code><a href='value_attribute_classify.html'>value_attribute_classify</a></code>)</p></td>
+      <th>d</th>
+      <td><p>A <code><a href='cell_df-class.html'>cell_df</a></code> after <code><a href='value_attribute_classify.html'>Value Attribute Classification</a></code> done</p></td>
     </tr>
     <tr>
-      <th>allow_chars</th>
-      <td><p>(Optional) Allow characters together with numbers. (a character vector)</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>Logical scalar for printing discovered cells (which gets new type by this rule)</p></td>
+      <th>silent</th>
+      <td><p>logical scalar indicating whether to raise a warning if heuristic detection fails. (Default TRUE).</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Detailed analysis of the cell data structure.
+Which will be a <code><a href='cell_analysis-class.html'>cell_analysis</a></code> class object.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>it returns detailed analysis of the data structure including data block detection, attribute orientation detection etc.
+The argument <code>silent</code> is set to <code>TRUE</code> by default, as the warning will be given whenever the <code><a href='cell_analysis-class.html'>cell_analysis</a></code> is printed.</p>
+<p>After this step one may like to do :</p><ul>
+<li><p><code><a href='compose_cells.html'>compose_cells</a></code></p></li>
+</ul>
+    <p>If in an interactive session, following additional functions can be helpful for interactive visualizations:</p><ul>
+<li><p><code><a href='visual_functions.html'>visual_data_block_inspection</a></code></p></li>
+<li><p><code><a href='visual_functions.html'>visual_orientation_modification</a></code></p></li>
+<li><p><code><a href='visual_functions.html'>visual_traceback</a></code></p></li>
+</ul>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='value_attribute_classify.html'>value_attribute_classify</a></p></div>
+    <div class='dont-index'><p><code><a href='compose_cells.html'>compose_cells</a></code>, <code><a href='collate_columns.html'>collate_columns</a></code>, <code><a href='analyze_cells.html'>analyze_cells</a></code></p></div>
     
 
   </div>
@@ -172,6 +190,10 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#see-also">See also</a></li>
           </ul>
 

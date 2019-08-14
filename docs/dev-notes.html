@@ -70,7 +70,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -127,11 +127,20 @@
 <div id="developers-note" class="section level1">
 
 <p>Also Check <a href="https://github.com/r-rudra/tidycells/blob/master/cran-comments.md">CRAN Comments</a></p>
+<div id="dependability" class="section level3">
+<h3 class="hasAnchor">
+<a href="#dependability" class="anchor"></a>Dependability</h3>
+<p>If a user builds a continuous workflow of data wrangling starting with some functions from <code>tidycells</code> package or includes <code>tidycells</code> in their package, then proper precautions should be taken as <code>tidycells</code> functions are heuristic-based. One can face problem like column <code>collated_2</code> has been renamed to <code>collated_3</code> etc.</p>
+<p>The package has two main functions which may raise some dependability issues in future. These functions are <code><a href="reference/analyze_cells.html">tidycells::analyze_cells</a></code> and <code><a href="reference/collate_columns.html">tidycells::collate_columns</a></code> (which are based on heuristics and internal statistical logic). The main cause for potential output variation across different releases (future CRAN releases) of this package might be due to changes in <code><a href="reference/analyze_cells.html">tidycells::analyze_cells</a></code>. Since <code><a href="reference/read_cells.html">tidycells::read_cells</a></code> is dependent on these functions, it will also be affected equally.</p>
+<p>The package has been developed observing certain types of oddly structured data available to the developer (me). However, if any user has any issues in automatic understanding of the underlying structure, it is expected that the same will be attempted to address in a future release (provided the user inform me the issue). This may be referred to as the “Heuristic Maturation” process for these two functions. As and when the tests written for these functions requires a modification (which means the output column name and other major details has been changed) I’ll bump the <minor> (version convention <major>.<minor>.<patch>) version in the release. If only <patch> is changed since a user last used this package, then possibly you can depend on this package without any worry.</patch></patch></minor></major></minor></p>
+<p>After first CRAN release when next <minor> version will be released in CRAN hopefully I’ll be able to provide you with a <em>compatibility checker function</em> to work out and find potential tendency issues.</minor></p>
+<p>Don’t worry I’ll try my best not to break your code intentionally. This is just a message to you so that you can build careful dependency on this package.</p>
+</div>
 <div id="contributing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#contributing" class="anchor"></a>Contributing</h3>
 <p>You are most welcome to contribute to this project in any means.</p>
-<p>Apart from opening an issue in Github (preferably with <a href="https://reprex.tidyverse.org/">reprex</a>), you can also contribute mainly in the “Heuristic Maturation” process for <code><a href="reference/analyze_cells.html">tidycells::analyze_cells</a></code> and <code><a href="reference/collate_columns.html">tidycells::collate_columns</a></code>. If any issue is specific to a data which you would like to share with me, there is a friendly function to mask your data using <code>tidycells:::mask_data</code> (<em>this function is not exported to avoid possible name conflicts</em>).</p>
+<p>Apart from opening an issue in Github (preferably with <a href="https://reprex.tidyverse.org/">reprex</a>), you can also contribute mainly to the “Heuristic Maturation” process for <code><a href="reference/analyze_cells.html">tidycells::analyze_cells</a></code> and <code><a href="reference/collate_columns.html">tidycells::collate_columns</a></code>. If any issue is specific to a data which you would like to share with me, there is a friendly function to mask your data using <code>tidycells:::mask_data</code> (<em>this function is not exported to avoid possible name conflicts</em>).</p>
 </div>
 <div id="faqs" class="section level3">
 <h3 class="hasAnchor">
@@ -141,7 +150,7 @@
 <a href="#1-why-there-are-two-code-coverages" class="anchor"></a>1) <strong>Why there are two code coverages?</strong>
 </h5>
 <p>The package contains optional functionality which are written as shiny widgets. These are given to the user as <a href="https://github.com/r-rudra/tidycells/blob/master/R/visual_functions.R"><code>visual_*</code></a> series of functions. Limited <a href="https://github.com/r-rudra/tidycells/blob/master/tests/testthat/test-shiny.R">tests</a> for these are developed and tested in a few testing environments. These tests are based on <a href="https://rstudio.github.io/shinytest/">shinytest</a> package. The <a href="https://covr.r-lib.org/">covr</a> package is not yet (at least the <strong>CRAN</strong> version) capable to track code coverages in shinytest [Ref: r-lib/covr <a href="https://github.com/r-lib/covr/issues/277">#277</a>]. Also note that shinytest is not yet taking widget-based functions [Ref: rstudio/shinytest <a href="https://github.com/rstudio/shinytest/issues/157">#157</a>] (at least the <strong>CRAN</strong> version). That is why a set of <a href="https://github.com/r-rudra/tidycells/blob/master/tests/testthat/testlib/shiny_test.R">functions</a> is introduced to run tests for shiny.</p>
-<p>On these grounds, codecov <a href="https://codecov.io/gh/r-rudra/tidycells?branch=master"><img src="https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg" alt="Codecov test coverage"></a> is used to give full coverage (<em>without any restiction</em>) (<em>ideally this should increase provided the support for covr is introduced in shinytest (and covr). Also “brush input fractional mismatch” (mentioned below) issue gets some resolution</em>) . While the coveralls <a href="https://coveralls.io/r/r-rudra/tidycells?branch=master"><img src="https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master" alt="Coveralls test coverage"></a> shows the coverage excluding <code>shiny_*.R</code> and <code>visual_*.R</code> files (<em>showing the coverage for only main functionality</em>)</p>
+<p>On these grounds, codecov <a href="https://codecov.io/gh/r-rudra/tidycells?branch=master"><img src="https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg" alt="Codecov test coverage"></a> is used to give full coverage (<em>without any restrictions</em>) (<em>ideally this should increase provided the support for covr is introduced in shinytest (and covr). Also “brush input fractional mismatch” (mentioned below) issue gets some resolution</em>) . While the coveralls <a href="https://coveralls.io/r/r-rudra/tidycells?branch=master"><img src="https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master" alt="Coveralls test coverage"></a> shows the coverage excluding <code>shiny_*.R</code> and <code>visual_*.R</code> files (<em>showing the coverage for only main functionality</em>)</p>
 </div>
 <div id="2-where-the-shiny-modules-are-tested" class="section level5">
 <h5 class="hasAnchor">
@@ -208,18 +217,21 @@ Test for optional shiny modules (series of <code>visual_*</code> functions)</li>
 <input type="checkbox" disabled checked>
 Write more tests (increase coverage)</li>
 <li>
+<input type="checkbox" disabled checked>
+Write <code>collate_columns</code> function to deal with similar columns in composed data.frame</li>
+<li>
+<input type="checkbox" disabled checked>
+Making a pkgdown site</li>
+<li>
 <input type="checkbox" disabled>
 Releasing this package to <a href="https://cran.r-project.org/submit.html"><strong>CRAN</strong></a>
 </li>
 <li>
 <input type="checkbox" disabled>
-Write <code>collate_columns</code> function to deal with similar columns in composed data.frame</li>
+A <code>compatibility function</code> for the “Heuristic Maturation” process (after CRAN)</li>
 <li>
 <input type="checkbox" disabled>
 Write more vignettes on other topics</li>
-<li>
-<input type="checkbox" disabled>
-Making a pkgdown site</li>
 <li>
 <input type="checkbox" disabled>
 Making cell analysis little faster</li>
@@ -420,14 +432,21 @@ Making cell analysis little faster</li>
 <div id="dependency-explained" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dependency-explained" class="anchor"></a>Dependency Explained</h3>
+<p>To install <code>tidycells</code> (with bare minimum functionality) you need do following two things</p>
+<ul>
+<li>
+<code><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages("tidyverse")</a></code> (<em>This possibly you have already done. </em>)</li>
+<li><code><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages("unpivotr")</a></code></li>
+</ul>
+<p>Rest packages are optional and can be installed as per your requirements.</p>
 <p>Note the package has “Induced System Dependency” which is causing to break the code sometime in <a href="https://builder.r-hub.io/">R-hub</a>. Below table describes the same (note that below table is an indicative list and may not be complete.).</p>
-<table>
+<table style="width:100%;">
 <colgroup>
 <col width="8%">
 <col width="6%">
-<col width="37%">
-<col width="21%">
-<col width="26%">
+<col width="43%">
+<col width="18%">
+<col width="22%">
 </colgroup>
 <thead><tr class="header">
 <th>Package</th>
@@ -438,28 +457,14 @@ Making cell analysis little faster</li>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>magrittr</td>
-<td>Imports</td>
-<td>core</td>
+<td><strong>Imports</strong></td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td>dplyr</td>
-<td>Imports</td>
-<td>core</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>purrr</td>
-<td>Imports</td>
-<td>core</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>stringr</td>
 <td>Imports</td>
 <td>core</td>
 <td></td>
@@ -473,14 +478,28 @@ Making cell analysis little faster</li>
 <td></td>
 </tr>
 <tr class="even">
-<td>tibble</td>
+<td>graphics</td>
+<td>Imports</td>
+<td>base</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>magrittr</td>
 <td>Imports</td>
 <td>core</td>
 <td></td>
 <td></td>
 </tr>
+<tr class="even">
+<td>methods</td>
+<td>Imports</td>
+<td>base</td>
+<td></td>
+<td></td>
+</tr>
 <tr class="odd">
-<td>tidyr</td>
+<td>purrr</td>
 <td>Imports</td>
 <td>core</td>
 <td></td>
@@ -494,6 +513,34 @@ Making cell analysis little faster</li>
 <td></td>
 </tr>
 <tr class="odd">
+<td>stats</td>
+<td>Imports</td>
+<td>tidycells::collate_columns –&gt; tidycells:::similarity_score</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>stringr</td>
+<td>Imports</td>
+<td>core</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>tibble</td>
+<td>Imports</td>
+<td>core</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>tidyr</td>
+<td>Imports</td>
+<td>core</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
 <td>unpivotr</td>
 <td>Imports</td>
 <td>core</td>
@@ -501,100 +548,30 @@ Making cell analysis little faster</li>
 <td>libxml2</td>
 </tr>
 <tr class="even">
-<td>methods</td>
-<td>Imports</td>
-<td>base</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td>utils</td>
 <td>Imports</td>
 <td>base</td>
 <td></td>
 <td></td>
 </tr>
-<tr class="even">
-<td>graphics</td>
-<td>Imports</td>
-<td>base</td>
-<td></td>
-<td></td>
-</tr>
 <tr class="odd">
-<td>testthat</td>
-<td>Suggests</td>
-<td>tests</td>
+<td><strong>Suggests</strong></td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
-<td>readr</td>
+<td>cli</td>
 <td>Suggests</td>
-<td>read csv</td>
+<td>nice prints</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
-<td>tidyxl</td>
+<td>covr</td>
 <td>Suggests</td>
-<td>read xlsx</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>plotly</td>
-<td>Suggests</td>
-<td>optional interactive ggplot2 in visual_* functions</td>
-<td>httr, openssl</td>
-<td>openssl / libssl</td>
-</tr>
-<tr class="odd">
-<td>DT</td>
-<td>Suggests</td>
-<td>for visual_traceback plots</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>shiny</td>
-<td>Suggests</td>
-<td>for visual_* functions</td>
-<td>httr, openssl</td>
-<td>openssl / libssl</td>
-</tr>
-<tr class="odd">
-<td>miniUI</td>
-<td>Suggests</td>
-<td>for visual_* functions</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>rstudioapi</td>
-<td>Suggests</td>
-<td>object selector in Rstudio</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>knitr</td>
-<td>Suggests</td>
-<td>vignettes</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>rmarkdown</td>
-<td>Suggests</td>
-<td>vignettes</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>XML</td>
-<td>Suggests</td>
-<td>read html like files</td>
+<td>code coverage</td>
 <td></td>
 <td></td>
 </tr>
@@ -606,9 +583,79 @@ Making cell analysis little faster</li>
 <td>LibreOffice (Suggested Dependency)</td>
 </tr>
 <tr class="odd">
+<td>DT</td>
+<td>Suggests</td>
+<td>for visual_traceback plots</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>knitr</td>
+<td>Suggests</td>
+<td>vignettes</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>miniUI</td>
+<td>Suggests</td>
+<td>for visual_* functions</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>plotly</td>
+<td>Suggests</td>
+<td>optional interactive ggplot2 in visual_* functions</td>
+<td>httr, openssl</td>
+<td>openssl / libssl</td>
+</tr>
+<tr class="odd">
+<td>readr</td>
+<td>Suggests</td>
+<td>read csv</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
 <td>readxl</td>
 <td>Suggests</td>
 <td>read xls</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>rmarkdown</td>
+<td>Suggests</td>
+<td>vignettes</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>rstudioapi</td>
+<td>Suggests</td>
+<td>object selector in Rstudio</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>shiny</td>
+<td>Suggests</td>
+<td>for visual_* functions</td>
+<td>httr, openssl</td>
+<td>openssl / libssl</td>
+</tr>
+<tr class="even">
+<td>shinytest</td>
+<td>Suggests</td>
+<td>shiny module tests</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>stringdist</td>
+<td>Suggests</td>
+<td>tidycells::collate_columns –&gt; tidycells:::similarity_score (Enhance)</td>
 <td></td>
 <td></td>
 </tr>
@@ -620,30 +667,30 @@ Making cell analysis little faster</li>
 <td>Java</td>
 </tr>
 <tr class="odd">
-<td>xlsx</td>
+<td>testthat</td>
 <td>Suggests</td>
-<td>read xls (preferred option)</td>
-<td>rJava</td>
-<td>Java</td>
+<td>tests</td>
+<td></td>
+<td></td>
 </tr>
 <tr class="even">
-<td>covr</td>
+<td>tidyxl</td>
 <td>Suggests</td>
-<td>code coverage</td>
+<td>read xlsx</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
-<td>cli</td>
+<td>xlsx</td>
 <td>Suggests</td>
-<td>nice prints</td>
-<td></td>
-<td></td>
+<td>read xls (prefered option)</td>
+<td>rJava</td>
+<td>Java</td>
 </tr>
 <tr class="even">
-<td>shinytest</td>
+<td>XML</td>
 <td>Suggests</td>
-<td>shiny module tests</td>
+<td>read html like files</td>
 <td></td>
 <td></td>
 </tr>

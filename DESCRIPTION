@@ -1,30 +1,28 @@
-Package: tidycells
 Type: Package
-Title: Read Tabular Data from Diverse Sources and Easily Make Them Tidy
-Version: 0.1.9.2
+Package: tidycells
+Title: Read Tabular Data from Diverse Sources and Easily Make
+    Them Tidy
+Version: 0.2.0
 Authors@R: 
     person(given = "Indranil",
            family = "Gayen",
            role = c("aut", "cre"),
            email = "nil.gayen@gmail.com",
            comment = c(ORCID = "0000-0003-0197-1944"))
-Description: Provides utilities to read, cells from complex 
-    tabular data and heuristic detection based 'structural assignment' of those 
-    cells to a columnar or tidy format.
-    Read functionality has the ability to read (in a unified manner) 
-    structured, partially structured or unstructured tabular data (usually 
-    spreadsheets for public data dissemination and aimed for common human 
-    understanding) from various types of documents. The tabular information 
-    is read as cells.
-    The 'structure assignment' functionality has both supervised and 
-    unsupervised way of assigning cells data to columnar/tidy format. 
-    Multiple disconnected blocks of tables in a single sheet are also handled 
-    appropriately.
-    These tools are suitable for unattended conversation of (maybe a pile of)
-    messy tables (like government data) into a consumable format(usable 
-    for further analysis and data wrangling).
+Description: Provides utilities to read, cells from complex
+    tabular data and heuristic detection based 'structural assignment' of
+    those cells to a columnar or tidy format. Read functionality has the
+    ability to read structured, partially structured or unstructured
+    tabular data from various types of documents. The 'structural
+    assignment' functionality has both supervised and unsupervised way of
+    assigning cells data to columnar/tidy format. Multiple disconnected
+    blocks of tables in a single sheet are also handled appropriately.
+    These tools are suitable for unattended conversation of messy tables
+    into a consumable format(usable for further analysis and data
+    wrangling).
 License: MIT + file LICENSE
-URL: https://github.com/r-rudra/tidycells
+URL: https://r-rudra.github.io/tidycells/,
+    https://github.com/r-rudra/tidycells
 BugReports: https://github.com/r-rudra/tidycells/issues
 Depends:
     R (>= 3.2.0)

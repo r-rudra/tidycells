@@ -18,7 +18,7 @@ matrix:
       r: devel
 after_success:
   - Rscript -e 'covr::codecov()'
-  - Rscript -e 'covr::coveralls(line_exclusions = c("R/shiny_etc.R","R/shiny_main.R","R/shiny_parts_server.R","R/shiny_parts_server_components.R","R/shiny_parts_ui.R","R/visual_functions.R"))'
+  - Rscript -e 'covr::coveralls(type = "all", line_exclusions = c("R/shiny_etc.R","R/shiny_main.R","R/shiny_parts_server.R","R/shiny_parts_server_components.R","R/shiny_parts_ui.R","R/visual_functions.R"))'
 before_deploy:
   # so no overwrite of linux build
   - if [[ "${TRAVIS_OS_NAME}" = "osx" ]]; then rm -f *.tar.gz; fi

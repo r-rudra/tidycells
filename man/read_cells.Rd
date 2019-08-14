@@ -40,10 +40,10 @@ and continue again with \code{read_cells} (perhaps then \code{from_level} may be
 This function is designed to read cell level information
 (and the finally \link[=analyze_cells]{analyze}, \link[=compose_cells]{compose} and \link[=collate_columns]{collate_columns})
 from many file types like xls, pdf, doc etc.
-This is a wrapper function to functions from multiple packages. The support for specific file is dependent on
+This is a wrapper function to functions from multiple packages. The support for a specific file is dependent on
 the installed packages. To see the list of supported files and potentially required packages (if any) just
 run \code{read_cells()} in the console. This function supports the file format based on content and not based on just the file
-extension. That means if a file is saved as pdf and then extension is removed (or extension modified to say \code{.xlsx})
+extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say \code{.xlsx})
 then also the \code{read_cells} will detect it as pdf and read its content.
 }
 \details{
@@ -54,7 +54,7 @@ It performs following set of actions if called with default \code{at_level}.
 \item \strong{va_classify}: Run \link[=value_attribute_classify]{Value Attribute Classification} using \code{\link[=numeric_values_classifier]{numeric_values_classifier}}.
 \item \strong{analyze}: Analyze the cells using \code{\link[=analyze_cells]{analyze_cells}}.
 \item \strong{compose}: Compose the cell-analysis to a tidy form using \code{\link[=compose_cells]{compose_cells}}.
-\item \strong{collate}: Finally collate columns based on content using \code{\link[=collate_columns]{collate_columns}}.
+\item \strong{collate}: Finally, collate columns based on content using \code{\link[=collate_columns]{collate_columns}}.
 }
 
 \if{html}{
@@ -71,8 +71,9 @@ read_cells()
 
 fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
 # File extension is intentionally given wrong
-# while filename is actual identifier of the file type
+# while filename is the actual identifier of the file type
 fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
 # read the data
 read_cells(fcsv)
+read_cells(fcsv, simplify = FALSE)
 }

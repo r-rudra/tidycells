@@ -33,7 +33,16 @@ setOldClass(cell_df_class)
 #' * `as.matrix`: This will transform the data back into tabular form and create a character matrix.
 #' * `as.data.frame`: Similar to `as.matrix` this will also transform the data back into tabular form.
 #'
+#' @seealso
+#'
+#' The function [`validate_cells`][validate_cells()] which is used to validate `cell_df`.
+#'
+#' The `as.matrix` and `as.data.frame` method is similar to [`unpivotr::rectify`][unpivotr::rectify()].
+#'
+#' Object of this class is also compatible to most of the functions from \code{\link[unpivotr:unpivotr-package]{unpivotr}} package.
+#'
 #' @name cell_df-class
+#' @keywords internal
 NULL
 
 

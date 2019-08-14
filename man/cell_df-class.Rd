@@ -34,3 +34,11 @@ However, (\code{row}, \code{col}) together should identify the row of the \code{
 }
 }
 
+\seealso{
+The function \code{\link[=validate_cells]{validate_cells}} which is used to validate \code{cell_df}.
+
+The \code{as.matrix} and \code{as.data.frame} method is similar to \code{\link[unpivotr:rectify]{unpivotr::rectify}}.
+
+Object of this class is also compatible to most of the functions from \code{\link[unpivotr:unpivotr-package]{unpivotr}} package.
+}
+\keyword{internal}

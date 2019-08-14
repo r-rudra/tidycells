@@ -39,7 +39,8 @@
 
 <meta property="og:title" content="Transform data into Cell-DF Structure — as_cell_df" />
 
-<meta property="og:description" content="Transform data into Cell-DF Structure" />
+<meta property="og:description" content="Transform an R object (mostly matrix or data.frame) into a cell_df
+for further processing in other tidycells functions." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -130,7 +131,8 @@
 
     <div class="ref-description">
     
-    <p>Transform data into Cell-DF Structure</p>
+    <p>Transform an R object (mostly matrix or data.frame) into a <code><a href='cell_df-class.html'>cell_df</a></code>
+for further processing in other <code>tidycells</code> functions.</p>
     
     </div>
 
@@ -157,11 +159,15 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A object of class <code><a href='cell_df-class.html'>cell_df</a></code>.</p>
+    <p>An object of class <code><a href='cell_df-class.html'>cell_df</a></code>.</p>
+<p><strong>Note</strong>: After this, you may like to do <code><a href='value_attribute_classify.html'>Value Attribute Classification</a></code>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://www.rdocumentation.org/packages/unpivotr/topics/as_cells'>as_cells</a></code></p></div>
+    <div class='dont-index'><ul>
+<li><p><code><a href='validate_cells.html'>validate_cells</a></code> which is used to validate <code>cell_df</code>.</p></li>
+<li><p><code><a href='https://www.rdocumentation.org/packages/unpivotr/topics/as_cells'>as_cells</a></code> from <code>unpivotr</code> package.</p></li>
+</ul></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -197,7 +203,7 @@
 #&gt; |   </span><span style='color: #555555;'># ... with 751 more rows</span><span>               |
 #&gt; |                                          |
 #&gt; +------------------------------------------+</div><div class='input'>
-<span class='co'># if the data is already in similar format it will not further transform</span>
+<span class='co'># if the data is already in a similar format it will not further transform</span>
 <span class='co'># which is not true for ---&gt; unpivotr::as_cells</span>
 <span class='co'># check ---&gt; unpivotr::as_cells(iris) %&gt;% unpivotr::as_cells()</span>
 <span class='kw pkg'>unpivotr</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/unpivotr/topics/as_cells'>as_cells</a></span>(<span class='no'>iris</span>) <span class='kw'>%&gt;%</span> <span class='fu'>as_cell_df</span>()</div><div class='output co'>#&gt; A </span><span style='color: #0000BB;font-weight: bold;'>Cell Data Frame</span><span>

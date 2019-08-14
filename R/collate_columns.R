@@ -3,14 +3,25 @@
 
 #' Collate Columns Based on Content
 #'
+#' @description After [`compose_cells`][compose_cells()], this function rearranges and rename attribute-columns in order to
+#' make columns properly aligned, based on the content of the columns.
+#'
 #' @param composed_data output of [`compose_cells`][compose_cells()] (preferably not processed)
-#' @param combine_threshold a numerical threshold (between 0-1) for content-based collation of columns. (Default 0.9)
-#' @param rest_cols number of rest columns (beyond `combine_threshold` joins these many number of columns to keep)
+#' @param combine_threshold a numerical threshold (between 0-1) for content-based collation of columns. (Default 1)
+#' @param rest_cols number of rest columns (beyond `combine_threshold` joins these many numbers of columns to keep)
 #' @param retain_other_cols whether to keep other intermediate (and possibly not so important) columns. (Default `FALSE`)
 #' @param retain_cell_address whether to keep columns like (`row`, `col`, `data_block`).
 #' This may be required for [`traceback`][cell_composition_traceback()] (Default `FALSE`)
 #'
 #' @return A column collated data.frame
+#'
+#' @details
+#' * **Dependency on _stringdist_**: If you have \code{\link[stringdist:stringdist-package]{stringdist}} installed,
+#' the approximate string matching will be enhanced. There may be variations in outcome if you have `stringdist`
+#' vs if you don't have it.
+#' * **Possibility of randomness**: If the attribute column is containing many distinct values, then a column representative sample will be drawn.
+#' Hence it is always recommended to [`set.seed`][base::set.seed()] if reproducibility is a matter of concern.
+#'
 #' @export
 #'
 #' @examples
@@ -24,7 +35,7 @@
 #'
 #' collate_columns(dc)
 collate_columns <- function(composed_data,
-                            combine_threshold = 0.9,
+                            combine_threshold = 1,
                             rest_cols = Inf,
                             retain_other_cols = FALSE,
                             retain_cell_address = FALSE) {

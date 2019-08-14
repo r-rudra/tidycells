@@ -39,7 +39,10 @@
 
 <meta property="og:title" content="Value/Attribute Classifier — value_attribute_classify" />
 
-<meta property="og:description" content="Value/Attribute Classifier" />
+<meta property="og:description" content="After as_cell_df (entry  point to tidycells) you may need to use this function
+or individual Value/Attribute Classifier-functions as listed below in &quot;see also&quot; - section.
+Here the idea is to classify all cells into either value, attribute, empty which will be
+used by analyze_cells for further processing." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -72,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -130,7 +133,10 @@
 
     <div class="ref-description">
     
-    <p>Value/Attribute Classifier</p>
+    <p>After <code><a href='as_cell_df.html'>as_cell_df</a></code> (entry  point to <code>tidycells</code>) you may need to use this function
+or individual <em>Value/Attribute Classifier</em>-functions as listed below in <em>"see also"</em> - section.</p>
+<p>Here the idea is to classify all cells into either <code>value</code>, <code>attribute</code>, <code>empty</code> which will be
+used by <code><a href='analyze_cells.html'>analyze_cells</a></code> for further processing.</p>
     
     </div>
 
@@ -151,17 +157,17 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a Cell DF with Value/Attribute Classification. The underlying tibble will contain extra column named <code>type</code>.</p>
+    <p>a Cell DF with Value/Attribute Classification. The underlying tibble will contain an extra column named <code>type</code>.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In order to understand the data orientation and detect data-blocks Cell DF requires additional column named <code>type</code>.
-This <code>type</code> column potentially contain either <code>value</code>, <code>attribute</code>, <code>empty</code>. The <code>value</code> are given corresponding to cells
-with observations in it. The tag <code>attribute</code> is for identifier of these cells. Lastly <code>empty</code> cells are useless cells or
+This <code>type</code> column potentially contains either <code>value</code>, <code>attribute</code>, <code>empty</code>. The <code>value</code> are given corresponding to cells
+with observations in it. The tag, <code>attribute</code> is for the identifier of these cells. Lastly, <code>empty</code> cells are useless cells or
 cells with no meaningful information.</p>
 <p>For <code>classifier</code> following options are present:</p><ul>
 <li><p><code>basic_classifier</code> : naive classifier which recode <code>data_type</code>.</p></li>
-<li><p><code>sample_based_classifier</code> : sample based classifier.</p></li>
+<li><p><code>sample_based_classifier</code> : sample-based classifier.</p></li>
 <li><p><code>numeric_values_classifier</code> : considers number like cells as values.</p></li>
 </ul>
     <p>Each of the above are available as individual functions. Those can also be directly applied on a <code>cell-df</code>.
@@ -188,7 +194,7 @@ However, it is recommended to use <code>value_attribute_classify</code> as it te
   <span class='fu'><a href='sample_based_classifier.html'>sample_based_classifier</a></span>(<span class='kw'>value_sample</span> <span class='kw'>=</span> <span class='st'>"setosa"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='numeric_values_classifier.html'>numeric_values_classifier</a></span>() <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>()</div><div class='img'><img src='value_attribute_classify-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='kw'>if</span> (<span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tidyxl"</span>)) {
+<span class='kw'>if</span> (<span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/rlang/topics/is_installed'>is_installed</a></span>(<span class='st'>"tidyxl"</span>)) {
   <span class='no'>cdn</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"RBI_HBS_Table_No_166.xlsx"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tidycells"</span>) <span class='kw'>%&gt;%</span>
     <span class='kw pkg'>tidyxl</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidyxl/topics/xlsx_cells'>xlsx_cells</a></span>()
   <span class='no'>cdn</span> <span class='kw'>&lt;-</span> <span class='no'>cdn</span> <span class='kw'>%&gt;%</span>
@@ -198,8 +204,12 @@ However, it is recommended to use <code>value_attribute_classify</code> as it te
   <span class='co'># all of these are same except value_attribute_classify will perform validate_cells once again</span>
   <span class='no'>cd1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_based_classifier.html'>sample_based_classifier</a></span>(<span class='no'>cdn</span>, <span class='kw'>value_sample</span> <span class='kw'>=</span> <span class='st'>"APR"</span>)
   <span class='no'>cd2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_based_classifier.html'>sample_based_classifier</a></span>(<span class='kw'>value_sample</span> <span class='kw'>=</span> <span class='st'>"APR"</span>)(<span class='no'>cdn</span>)
-  <span class='no'>cd3</span> <span class='kw'>&lt;-</span> <span class='fu'>value_attribute_classify</span>(<span class='no'>cdn</span>, <span class='kw'>classifier</span> <span class='kw'>=</span> <span class='fu'><a href='sample_based_classifier.html'>sample_based_classifier</a></span>(<span class='kw'>value_sample</span> <span class='kw'>=</span> <span class='st'>"APR"</span>))
-}</div></pre>
+  <span class='no'>cd3</span> <span class='kw'>&lt;-</span> <span class='fu'>value_attribute_classify</span>(<span class='no'>cdn</span>,
+    <span class='kw'>classifier</span> <span class='kw'>=</span> <span class='fu'><a href='sample_based_classifier.html'>sample_based_classifier</a></span>(<span class='kw'>value_sample</span> <span class='kw'>=</span> <span class='st'>"APR"</span>)
+  )
+  <span class='co'># see it</span>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>cd3</span>)
+}</div><div class='img'><img src='value_attribute_classify-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -4,16 +4,15 @@
 \alias{collate_columns}
 \title{Collate Columns Based on Content}
 \usage{
-collate_columns(composed_data, combine_threshold = 0.9,
-  rest_cols = Inf, retain_other_cols = FALSE,
-  retain_cell_address = FALSE)
+collate_columns(composed_data, combine_threshold = 1, rest_cols = Inf,
+  retain_other_cols = FALSE, retain_cell_address = FALSE)
 }
 \arguments{
 \item{composed_data}{output of \code{\link[=compose_cells]{compose_cells}} (preferably not processed)}
 
-\item{combine_threshold}{a numerical threshold (between 0-1) for content-based collation of columns. (Default 0.9)}
+\item{combine_threshold}{a numerical threshold (between 0-1) for content-based collation of columns. (Default 1)}
 
-\item{rest_cols}{number of rest columns (beyond \code{combine_threshold} joins these many number of columns to keep)}
+\item{rest_cols}{number of rest columns (beyond \code{combine_threshold} joins these many numbers of columns to keep)}
 
 \item{retain_other_cols}{whether to keep other intermediate (and possibly not so important) columns. (Default \code{FALSE})}
 
@@ -24,7 +23,17 @@ This may be required for \code{\link[=cell_composition_traceback]{traceback}} (D
 A column collated data.frame
 }
 \description{
-Collate Columns Based on Content
+After \code{\link[=compose_cells]{compose_cells}}, this function rearranges and rename attribute-columns in order to
+make columns properly aligned, based on the content of the columns.
+}
+\details{
+\itemize{
+\item \strong{Dependency on \emph{stringdist}}: If you have \code{\link[stringdist:stringdist-package]{stringdist}} installed,
+the approximate string matching will be enhanced. There may be variations in outcome if you have \code{stringdist}
+vs if you don't have it.
+\item \strong{Possibility of randomness}: If the attribute column is containing many distinct values, then a column representative sample will be drawn.
+Hence it is always recommended to \code{\link[base:set.seed]{set.seed}} if reproducibility is a matter of concern.
+}
 }
 \examples{
 

@@ -19,6 +19,23 @@ test_that("etc works", {
   expect_equal(nrow(dc3), 2)
   expect_false(identical(dc2, dcomp1))
 
+  expect_message(get_col_representative(rnorm(3000), silent = FALSE), "set.seed")
+  expect_equal(norm_this(0.6), 1)
+  expect_equal(norm_this(0.1), 0)
+
+  dc0 <- readRDS("testdata/enron_from_unpivotr_processed.rds") %>%
+    analyze_cells()
+
+  dc00 <- dc0 %>%
+    compose_cells(post_process = FALSE)
+
+  dc01 <- dc00 %>%
+    collate_columns(combine_threshold = 0.1)
+  dc02 <- dc00 %>%
+    collate_columns(combine_threshold = 1)
+
+  expect_false(identical(colnames(dc02), colnames(dc01)))
+
   # test as_cell_df_internal.default
   c1 <- dc2 %>%
     dplyr::select(row, col, value) %>%
