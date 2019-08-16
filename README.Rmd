@@ -81,6 +81,7 @@ Let's try `tidycells` functions in this data
 
 Read at once
 ```{r, eval=FALSE}
+# you should have tidyxl installed
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
   read_cells()
 ```
@@ -165,7 +166,7 @@ collate_columns(dc) %>%
   head()
 ```
 ```{r, echo=FALSE}
-knitr::kable(head(collate_columns(dc)), align = c(rep("l", 4), "c"))
+knitr::kable(head(collate_columns(dc)), align = c(rep("l", 5), "c"))
 ```
 
 Looks like staged example! Yes you are right this is not always perfect (same is true for `analyze_cells` also). However, if the data is somehow helpful in demystifying underlying columns structure (like this one), then this will be useful. 
@@ -208,19 +209,21 @@ Since all of these modules are entirely optional the dependency is kept at **tid
 
 
 ## Reference and Related Projects
-* [tidyxl](https://github.com/nacnudus/tidyxl) :  **Read Untidy Excel Files:**
+* [tidyxl](https://github.com/nacnudus/tidyxl):  **Read Untidy Excel Files:**
 Imports non-tabular from Excel files into R. Exposes cell content, position and formatting in a tidy structure for further manipulation. Tokenizes Excel formulas. Supports '.xlsx' and '.xlsm' via the embedded 'RapidXML' C++ library <http://rapidxml.sourceforge.net>. Does not support '.xlsb' or '.xls'.
 * [unpivotr](https://github.com/nacnudus/unpivotr): **Unpivot Complex and Irregular Data Layouts**
 Tools for converting data from complex or irregular layouts to a columnar structure. For example, tables with multilevel column or row headers, or spreadsheets. Header and data cells are selected by their contents and position, as well as formatting and comments where available, and are associated with one other by their proximity in given directions. Functions for data frames and HTML tables are provided.
 Major parts of the package right now fully depend on **unpivotr**. The **tidycells** package would have never existed without this wonderful package from [Duncan Garmonsway](https://github.com/nacnudus).
 * The [rsheets](https://github.com/rsheets) project: 
 It hosts several R packages (few of them are in CRAN already) which are in the early stages of importing spreadsheets from Excel and Google Sheets into R.  Specifically, have a look at these projects which seems closely related to these projects : [jailbreaker](https://github.com/rsheets/jailbreakr), [rexcel](https://github.com/rsheets/rexcel) (README of this project has a wonderful reference for excel integration with R).
+* [readabs](https://github.com/MattCowgill/readabs): **Download and Tidy Time Series Data from the Australian Bureau of Statistics**
+The `readabs` package helps you easily download, import, and tidy time series data from the [Australian Bureau of Statistics](https://www.abs.gov.au/) from within R. This saves you time manually downloading and tediously tidying time series data and allows you to spend more time on your analysis.
 * The [tidyABS](https://github.com/ianmoran11/tidyABS) package: 
 The `tidyABS` package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user. This package is in early development.
 
 
 ## Acknowledgement
-This package incomplete without following packages (apart from the **unpivotr** which is the core package on which **tidycells** depends largely, as mentioned above ). Each of these packages are in suggests fields of `tidycells`.
+This package incomplete without following packages (apart from the **unpivotr** which is the core package on which **tidycells** depends largely, as mentioned above). Each of these packages are in suggests fields of `tidycells`.
 (The read_cells basically, performs unification on several functions from various packages to give you support for different file types. These are listed below.)
 
 * [**readr**](https://cran.r-project.org/package=readr): for csv (in melted format)

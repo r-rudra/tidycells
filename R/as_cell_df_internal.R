@@ -26,10 +26,14 @@ as_cell_df_internal.default <- function(d,
   rcdf_possible <- is_conforms_to_rcdf(d)
   d_out <- tibble()
 
-  if (rcdf_possible) {
+  if (!rcdf_possible) {
     warn_msg <- attr(rcdf_possible, "msg")
+    wlvl <- attr(rcdf_possible, "lvl")
+    if (length(wlvl) != 1) wlvl <- 0
+    if (is.na(wlvl)) wlvl <- 0
   } else {
     warn_msg <- character(0)
+    wlvl <- 0
   }
 
   conv_done <- FALSE
@@ -80,6 +84,8 @@ as_cell_df_internal.default <- function(d,
         )) %>%
         unique()
 
+      wlvl <- max(wlvl, 2)
+
       translate <- TRUE
     }
   } else {
@@ -89,8 +95,8 @@ as_cell_df_internal.default <- function(d,
   warn_msg <- unique(warn_msg)
 
   if (translate) {
-    if (length(warn_msg) > 0) {
-      message("Data is transformed into row-col-value format.")
+    if (length(warn_msg) > 0 & wlvl > 1) {
+      message("Data is transformed into row-col-value format. (check if the output is as expected)")
       warn(paste0(warn_msg, collapse = "\n"))
     }
 

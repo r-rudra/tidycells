@@ -151,85 +151,96 @@ text-align: justify}
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>The data looks like (in excel)</p>
 <p><img src="articles/ext/marks.png" width="451px"></p>
-<p>Let’s try <code>tidycells</code> functions</p>
+<p>Let’s try <code>tidycells</code> functions in this data</p>
 <p>Read at once</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="st">  </span><span class="kw"><a href="reference/read_cells.html">read_cells</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># you should have tidyxl installed</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="st">  </span><span class="kw"><a href="reference/read_cells.html">read_cells</a></span>()</a></code></pre></div>
 <table class="table table">
 <thead><tr class="header">
 <th align="left">collated_1</th>
 <th align="left">collated_2</th>
 <th align="left">collated_3</th>
 <th align="left">collated_4</th>
+<th align="left">collated_5</th>
 <th align="left">table_tag</th>
 <th align="left">value</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Utsyo Roy</td>
 <td align="left">Sheet1</td>
 <td align="left">95</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Nakshatra Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">99</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Titas Gupta</td>
 <td align="left">Sheet1</td>
 <td align="left">89</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Ujjaini Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">100</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Indranil Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">70</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">S Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">75</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Sarmistha Senapati</td>
 <td align="left">Sheet1</td>
 <td align="left">81</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Shtuti Roy</td>
 <td align="left">Sheet1</td>
 <td align="left">90</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -238,6 +249,7 @@ text-align: justify}
 <td align="left">50</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -246,6 +258,7 @@ text-align: justify}
 <td align="left">59</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -254,6 +267,7 @@ text-align: justify}
 <td align="left">61</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -355,48 +369,55 @@ text-align: justify}
 <th align="left">collated_2</th>
 <th align="left">collated_3</th>
 <th align="left">collated_4</th>
+<th align="left">collated_5</th>
 <th align="center">value</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Utsyo Roy</td>
 <td align="center">95</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Nakshatra Gayen</td>
 <td align="center">99</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Titas Gupta</td>
 <td align="center">89</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Ujjaini Gayen</td>
 <td align="center">100</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Indranil Gayen</td>
 <td align="center">70</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">S Gayen</td>
 <td align="center">75</td>
 </tr>
@@ -440,17 +461,19 @@ text-align: justify}
 <a href="#reference-and-related-projects" class="anchor"></a>Reference and Related Projects</h2>
 <ul>
 <li>
-<a href="https://github.com/nacnudus/tidyxl">tidyxl</a> : <strong>Read Untidy Excel Files:</strong> Imports non-tabular from Excel files into R. Exposes cell content, position and formatting in a tidy structure for further manipulation. Tokenizes Excel formulas. Supports ‘.xlsx’ and ‘.xlsm’ via the embedded ‘RapidXML’ C++ library <a href="http://rapidxml.sourceforge.net" class="uri">http://rapidxml.sourceforge.net</a>. Does not support ‘.xlsb’ or ‘.xls’.</li>
+<a href="https://github.com/nacnudus/tidyxl">tidyxl</a>: <strong>Read Untidy Excel Files:</strong> Imports non-tabular from Excel files into R. Exposes cell content, position and formatting in a tidy structure for further manipulation. Tokenizes Excel formulas. Supports ‘.xlsx’ and ‘.xlsm’ via the embedded ‘RapidXML’ C++ library <a href="http://rapidxml.sourceforge.net" class="uri">http://rapidxml.sourceforge.net</a>. Does not support ‘.xlsb’ or ‘.xls’.</li>
 <li>
 <a href="https://github.com/nacnudus/unpivotr">unpivotr</a>: <strong>Unpivot Complex and Irregular Data Layouts</strong> Tools for converting data from complex or irregular layouts to a columnar structure. For example, tables with multilevel column or row headers, or spreadsheets. Header and data cells are selected by their contents and position, as well as formatting and comments where available, and are associated with one other by their proximity in given directions. Functions for data frames and HTML tables are provided. Major parts of the package right now fully depend on <strong>unpivotr</strong>. The <strong>tidycells</strong> package would have never existed without this wonderful package from <a href="https://github.com/nacnudus">Duncan Garmonsway</a>.</li>
 <li>The <a href="https://github.com/rsheets">rsheets</a> project: It hosts several R packages (few of them are in CRAN already) which are in the early stages of importing spreadsheets from Excel and Google Sheets into R. Specifically, have a look at these projects which seems closely related to these projects : <a href="https://github.com/rsheets/jailbreakr">jailbreaker</a>, <a href="https://github.com/rsheets/rexcel">rexcel</a> (README of this project has a wonderful reference for excel integration with R).</li>
+<li>
+<a href="https://github.com/MattCowgill/readabs">readabs</a>: <strong>Download and Tidy Time Series Data from the Australian Bureau of Statistics</strong> The <code>readabs</code> package helps you easily download, import, and tidy time series data from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics</a> from within R. This saves you time manually downloading and tediously tidying time series data and allows you to spend more time on your analysis.</li>
 <li>The <a href="https://github.com/ianmoran11/tidyABS">tidyABS</a> package: The <code>tidyABS</code> package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user. This package is in early development.</li>
 </ul>
 </div>
 <div id="acknowledgement" class="section level2">
 <h2 class="hasAnchor">
 <a href="#acknowledgement" class="anchor"></a>Acknowledgement</h2>
-<p>This package incomplete without following packages (apart from the <strong>unpivotr</strong> which is the core package on which <strong>tidycells</strong> depends largely, as mentioned above ). Each of these packages are in suggests fields of <code>tidycells</code>. (The read_cells basically, performs unification on several functions from various packages to give you support for different file types. These are listed below.)</p>
+<p>This package incomplete without following packages (apart from the <strong>unpivotr</strong> which is the core package on which <strong>tidycells</strong> depends largely, as mentioned above). Each of these packages are in suggests fields of <code>tidycells</code>. (The read_cells basically, performs unification on several functions from various packages to give you support for different file types. These are listed below.)</p>
 <ul>
 <li>
 <a href="https://cran.r-project.org/package=readr"><strong>readr</strong></a>: for csv (in melted format)</li>

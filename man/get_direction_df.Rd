@@ -4,7 +4,7 @@
 \alias{get_direction_df}
 \title{Get Directional Orientation for Attributes corresponding to a given data group}
 \usage{
-get_direction_df(dp, datt)
+get_direction_df(dp, datt, allow_inside = FALSE)
 }
 \arguments{
 \item{dp}{single data group boundary information}

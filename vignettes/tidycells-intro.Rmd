@@ -403,7 +403,7 @@ collate_columns(dc) %>%
   head()
 ```
 ```{r, echo=FALSE}
-knitr::kable(head(collate_columns(dc)), align = c(rep("l", 4), "c"))
+knitr::kable(head(collate_columns(dc)), align = c(rep("l", 5), "c"))
 ```
 
 Looks like staged example! Yes you are right this is not always perfect (same is true for `analyze_cells` also). However, if the data is somehow helpful in demystifying underlying columns structure (like this one), then this will be useful. 

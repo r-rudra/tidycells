@@ -192,6 +192,8 @@ Hence it is always recommended to <code><a href='https://www.rdocumentation.org/
 #&gt;      </span><span style='color: #00BB00;'>School A</span><span>
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_col_top_1_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>Score</span><span>
+#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_corner_topLeft_1_1</span><span>
+#&gt;      </span><span style='color: #00BB00;'>Student Name</span><span>
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_2_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>Nakshatra Gayen</span><span>, </span><span style='color: #00BB00;'>Titas Gupta</span><span>, </span><span style='color: #00BB00;'>Ujjaini Gayen</span><span>, </span><span style='color: #00BB00;'>Utsyo Roy</span><span>
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_1_1</span><span>
@@ -208,33 +210,31 @@ Hence it is always recommended to <code><a href='https://www.rdocumentation.org/
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_1_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>Score</span><span>
 #&gt; </span><span style='color: #BB0000;font-weight: bold;'>data_block = 3</span><span>
-#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_row_left_1_2</span><span>
-#&gt;      </span><span style='color: #00BB00;'>Student Name</span><span>
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_col_top_1_1</span><span>
-#&gt;      </span><span style='color: #00BB00;'>Marks</span><span>
-#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_col_top_1_1</span><span>
-#&gt;      </span><span style='color: #00BB00;'>School C</span><span>
-#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_col_top_2_1</span><span>
+#&gt;      </span><span style='color: #00BB00;'>Score</span><span>
+#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_corner_topLeft_1_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>Name</span><span>
-#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_1_1</span><span>
+#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_2_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>I Roy</span><span>, </span><span style='color: #00BB00;'>S Ghosh</span><span>, </span><span style='color: #00BB00;'>S Senapati</span><span>, </span><span style='color: #00BB00;'>U Gupta</span><span>
+#&gt;   </span><span style='color: #0000BB;font-weight: bold;'>major_row_left_1_1</span><span>
+#&gt;      </span><span style='color: #00BB00;'>School C</span><span>
 #&gt;   </span><span style='color: #0000BB;font-weight: bold;'>minor_row_right_1_1</span><span>
 #&gt;      </span><span style='color: #00BB00;'>Female</span><span>, </span><span style='color: #00BB00;'>Male</span><span></div><div class='input'>
-<span class='fu'>collate_columns</span>(<span class='no'>dc</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 12 x 5</span><span>
-#&gt;    collated_1 collated_2 collated_3 collated_4         value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Male       School A   Score      Utsyo Roy          95   
-#&gt; </span><span style='color: #555555;'> 2</span><span> Male       School A   Score      Nakshatra Gayen    99   
-#&gt; </span><span style='color: #555555;'> 3</span><span> Female     School A   Score      Titas Gupta        89   
-#&gt; </span><span style='color: #555555;'> 4</span><span> Female     School A   Score      Ujjaini Gayen      100  
-#&gt; </span><span style='color: #555555;'> 5</span><span> Male       School B   Score      Indranil Gayen     70   
-#&gt; </span><span style='color: #555555;'> 6</span><span> Male       School B   Score      S Gayen            75   
-#&gt; </span><span style='color: #555555;'> 7</span><span> Female     School B   Score      Sarmistha Senapati 81   
-#&gt; </span><span style='color: #555555;'> 8</span><span> Female     School B   Score      Shtuti Roy         90   
-#&gt; </span><span style='color: #555555;'> 9</span><span> Male       School C   Name       I Roy              50   
-#&gt; </span><span style='color: #555555;'>10</span><span> Male       School C   Name       S Ghosh            59   
-#&gt; </span><span style='color: #555555;'>11</span><span> Female     School C   Name       S Senapati         61   
-#&gt; </span><span style='color: #555555;'>12</span><span> Female     School C   Name       U Gupta            38   </div></span></pre>
+<span class='fu'>collate_columns</span>(<span class='no'>dc</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 12 x 6</span><span>
+#&gt;    collated_1 collated_2 collated_3 collated_4   collated_5         value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> Score      Male       School A   Student Name Utsyo Roy          95   
+#&gt; </span><span style='color: #555555;'> 2</span><span> Score      Male       School A   Student Name Nakshatra Gayen    99   
+#&gt; </span><span style='color: #555555;'> 3</span><span> Score      Female     School A   Student Name Titas Gupta        89   
+#&gt; </span><span style='color: #555555;'> 4</span><span> Score      Female     School A   Student Name Ujjaini Gayen      100  
+#&gt; </span><span style='color: #555555;'> 5</span><span> Score      Male       School B   Student      Indranil Gayen     70   
+#&gt; </span><span style='color: #555555;'> 6</span><span> Score      Male       School B   Student      S Gayen            75   
+#&gt; </span><span style='color: #555555;'> 7</span><span> Score      Female     School B   Student      Sarmistha Senapati 81   
+#&gt; </span><span style='color: #555555;'> 8</span><span> Score      Female     School B   Student      Shtuti Roy         90   
+#&gt; </span><span style='color: #555555;'> 9</span><span> Score      Male       School C   Name         I Roy              50   
+#&gt; </span><span style='color: #555555;'>10</span><span> Score      Male       School C   Name         S Ghosh            59   
+#&gt; </span><span style='color: #555555;'>11</span><span> Score      Female     School C   Name         S Senapati         61   
+#&gt; </span><span style='color: #555555;'>12</span><span> Score      Female     School C   Name         U Gupta            38   </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

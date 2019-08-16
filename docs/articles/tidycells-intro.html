@@ -90,7 +90,7 @@
       <h1>Tidycells Package</h1>
                         <h4 class="author">Indranil Gayen</h4>
             
-            <h4 class="date">2019-08-14</h4>
+            <h4 class="date">2019-08-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-rudra/tidycells/blob/master/vignettes/tidycells-intro.Rmd"><code>vignettes/tidycells-intro.Rmd</code></a></small>
       <div class="hidden name"><code>tidycells-intro.Rmd</code></div>
@@ -576,17 +576,20 @@ text-align: justify}
 <a class="sourceLine" id="cb24-11" title="11"><span class="co">#&gt;  - attr(*, "read_cells_stage")= chr "make_cells"</span></a>
 <a class="sourceLine" id="cb24-12" title="12"><span class="co"># sample_based_classifier is another VA classifier</span></a>
 <a class="sourceLine" id="cb24-13" title="13"><span class="co"># for details see coresponding documentation</span></a>
-<a class="sourceLine" id="cb24-14" title="14">rc_part[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>rc_part[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/sample_based_classifier.html">sample_based_classifier</a></span>(<span class="dt">empty_sample =</span> <span class="st">"6"</span>)</a>
-<a class="sourceLine" id="cb24-15" title="15"></a>
-<a class="sourceLine" id="cb24-16" title="16"><span class="co"># below should be similar to </span></a>
-<a class="sourceLine" id="cb24-17" title="17"><span class="co"># rc_part[[1]] %&gt;% </span></a>
-<a class="sourceLine" id="cb24-18" title="18"><span class="co">#   analyze_cells() %&gt;% </span></a>
-<a class="sourceLine" id="cb24-19" title="19"><span class="co">#   compose_cells(discard_raw_cols = TRUE)</span></a>
-<a class="sourceLine" id="cb24-20" title="20">rc_part <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/read_cells.html">read_cells</a></span>(<span class="dt">from_level =</span> <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb24-21" title="21"><span class="co">#&gt; # A tibble: 1 x 7</span></a>
-<a class="sourceLine" id="cb24-22" title="22"><span class="co">#&gt;   collated_1 collated_2 collated_3 collated_4 collated_5 table_tag value</span></a>
-<a class="sourceLine" id="cb24-23" title="23"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;</span></a>
-<a class="sourceLine" id="cb24-24" title="24"><span class="co">#&gt; 1 Nakshatra  Weight     Age        Kid Name   Titas      Table_1   12</span></a></code></pre></div>
+<a class="sourceLine" id="cb24-14" title="14">rc_part[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>rc_part[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-15" title="15"><span class="st">  </span><span class="kw"><a href="../reference/numeric_values_classifier.html">numeric_values_classifier</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-16" title="16"><span class="st">  </span><span class="kw"><a href="../reference/sample_based_classifier.html">sample_based_classifier</a></span>(<span class="dt">empty_sample =</span> <span class="st">"6"</span>)</a>
+<a class="sourceLine" id="cb24-17" title="17">  </a>
+<a class="sourceLine" id="cb24-18" title="18"></a>
+<a class="sourceLine" id="cb24-19" title="19"><span class="co"># below should be similar to </span></a>
+<a class="sourceLine" id="cb24-20" title="20"><span class="co"># rc_part[[1]] %&gt;% </span></a>
+<a class="sourceLine" id="cb24-21" title="21"><span class="co">#   analyze_cells() %&gt;% </span></a>
+<a class="sourceLine" id="cb24-22" title="22"><span class="co">#   compose_cells(discard_raw_cols = TRUE)</span></a>
+<a class="sourceLine" id="cb24-23" title="23">rc_part <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/read_cells.html">read_cells</a></span>(<span class="dt">from_level =</span> <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb24-24" title="24"><span class="co">#&gt; # A tibble: 1 x 7</span></a>
+<a class="sourceLine" id="cb24-25" title="25"><span class="co">#&gt;   collated_1 collated_2 collated_3 collated_4 collated_5 table_tag value</span></a>
+<a class="sourceLine" id="cb24-26" title="26"><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb24-27" title="27"><span class="co">#&gt; 1 Nakshatra  Weight     Age        Kid Name   Titas      Table_1   12</span></a></code></pre></div>
 <p><strong>A more complicated example</strong></p>
 <p>Let’s take a quick look at another example data as given in</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"marks.xlsx"</span>, <span class="dt">package =</span> <span class="st">"tidycells"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
@@ -602,75 +605,85 @@ text-align: justify}
 <th align="left">collated_2</th>
 <th align="left">collated_3</th>
 <th align="left">collated_4</th>
+<th align="left">collated_5</th>
 <th align="left">table_tag</th>
 <th align="left">value</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Utsyo Roy</td>
 <td align="left">Sheet1</td>
 <td align="left">95</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Nakshatra Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">99</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Titas Gupta</td>
 <td align="left">Sheet1</td>
 <td align="left">89</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Ujjaini Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">100</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Indranil Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">70</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">S Gayen</td>
 <td align="left">Sheet1</td>
 <td align="left">75</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Sarmistha Senapati</td>
 <td align="left">Sheet1</td>
 <td align="left">81</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Shtuti Roy</td>
 <td align="left">Sheet1</td>
 <td align="left">90</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -679,6 +692,7 @@ text-align: justify}
 <td align="left">50</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -687,6 +701,7 @@ text-align: justify}
 <td align="left">59</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -695,6 +710,7 @@ text-align: justify}
 <td align="left">61</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School C</td>
 <td align="left">Name</td>
@@ -792,48 +808,55 @@ text-align: justify}
 <th align="left">collated_2</th>
 <th align="left">collated_3</th>
 <th align="left">collated_4</th>
+<th align="left">collated_5</th>
 <th align="center">value</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Utsyo Roy</td>
 <td align="center">95</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Nakshatra Gayen</td>
 <td align="center">99</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Titas Gupta</td>
 <td align="center">89</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Female</td>
 <td align="left">School A</td>
-<td align="left">Score</td>
+<td align="left">Student Name</td>
 <td align="left">Ujjaini Gayen</td>
 <td align="center">100</td>
 </tr>
 <tr class="odd">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">Indranil Gayen</td>
 <td align="center">70</td>
 </tr>
 <tr class="even">
+<td align="left">Score</td>
 <td align="left">Male</td>
 <td align="left">School B</td>
-<td align="left">Score</td>
+<td align="left">Student</td>
 <td align="left">S Gayen</td>
 <td align="center">75</td>
 </tr>

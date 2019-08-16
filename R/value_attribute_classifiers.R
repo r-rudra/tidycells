@@ -95,7 +95,8 @@ sample_based_classifier.cell_df <- function(x, ...,
 
 #####
 #' @title Value/Attribute Classifier which considers number like cells as values
-#' @param x Either a [`cell_df`][cell_df-class] or leave blank for function output (required by [`value_attribute_classify`][value_attribute_classify()])
+#' @param x Either a [`cell_df`][cell_df-class] or
+#' leave blank for function output (required by [`value_attribute_classify`][value_attribute_classify()])
 #' @param allow_chars (Optional) Allow characters together with numbers. (a character vector)
 #' @param verbose Logical scalar for printing discovered cells (which gets new type by this rule)
 #'

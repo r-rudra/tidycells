@@ -87,28 +87,28 @@ The data looks like (in excel)
 
 Let’s try `tidycells` functions in this data
 
-Read at
-once
+Read at once
 
 ``` r
+# you should have tidyxl installed
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
   read_cells()
 ```
 
-| collated\_1 | collated\_2 | collated\_3 | collated\_4        | table\_tag | value |
-| :---------- | :---------- | :---------- | :----------------- | :--------- | :---- |
-| Male        | School A    | Score       | Utsyo Roy          | Sheet1     | 95    |
-| Male        | School A    | Score       | Nakshatra Gayen    | Sheet1     | 99    |
-| Female      | School A    | Score       | Titas Gupta        | Sheet1     | 89    |
-| Female      | School A    | Score       | Ujjaini Gayen      | Sheet1     | 100   |
-| Male        | School B    | Score       | Indranil Gayen     | Sheet1     | 70    |
-| Male        | School B    | Score       | S Gayen            | Sheet1     | 75    |
-| Female      | School B    | Score       | Sarmistha Senapati | Sheet1     | 81    |
-| Female      | School B    | Score       | Shtuti Roy         | Sheet1     | 90    |
-| Male        | School C    | Name        | I Roy              | Sheet1     | 50    |
-| Male        | School C    | Name        | S Ghosh            | Sheet1     | 59    |
-| Female      | School C    | Name        | S Senapati         | Sheet1     | 61    |
-| Female      | School C    | Name        | U Gupta            | Sheet1     | 38    |
+| collated\_1 | collated\_2 | collated\_3 | collated\_4  | collated\_5        | table\_tag | value |
+| :---------- | :---------- | :---------- | :----------- | :----------------- | :--------- | :---- |
+| Score       | Male        | School A    | Student Name | Utsyo Roy          | Sheet1     | 95    |
+| Score       | Male        | School A    | Student Name | Nakshatra Gayen    | Sheet1     | 99    |
+| Score       | Female      | School A    | Student Name | Titas Gupta        | Sheet1     | 89    |
+| Score       | Female      | School A    | Student Name | Ujjaini Gayen      | Sheet1     | 100   |
+| Score       | Male        | School B    | Student      | Indranil Gayen     | Sheet1     | 70    |
+| Score       | Male        | School B    | Student      | S Gayen            | Sheet1     | 75    |
+| Score       | Female      | School B    | Student      | Sarmistha Senapati | Sheet1     | 81    |
+| Score       | Female      | School B    | Student      | Shtuti Roy         | Sheet1     | 90    |
+| Score       | Male        | School C    | Name         | I Roy              | Sheet1     | 50    |
+| Score       | Male        | School C    | Name         | S Ghosh            | Sheet1     | 59    |
+| Score       | Female      | School C    | Name         | S Senapati         | Sheet1     | 61    |
+| Score       | Female      | School C    | Name         | U Gupta            | Sheet1     | 38    |
 
 The function `read_cells` is a set of ordered operations connected
 together. The flowchart of
@@ -192,14 +192,14 @@ collate_columns(dc) %>%
   head()
 ```
 
-| collated\_1 | collated\_2 | collated\_3 | collated\_4     | value |
-| :---------- | :---------- | :---------- | :-------------- | :---: |
-| Male        | School A    | Score       | Utsyo Roy       |  95   |
-| Male        | School A    | Score       | Nakshatra Gayen |  99   |
-| Female      | School A    | Score       | Titas Gupta     |  89   |
-| Female      | School A    | Score       | Ujjaini Gayen   |  100  |
-| Male        | School B    | Score       | Indranil Gayen  |  70   |
-| Male        | School B    | Score       | S Gayen         |  75   |
+| collated\_1 | collated\_2 | collated\_3 | collated\_4  | collated\_5     | value |
+| :---------- | :---------- | :---------- | :----------- | :-------------- | :---: |
+| Score       | Male        | School A    | Student Name | Utsyo Roy       |  95   |
+| Score       | Male        | School A    | Student Name | Nakshatra Gayen |  99   |
+| Score       | Female      | School A    | Student Name | Titas Gupta     |  89   |
+| Score       | Female      | School A    | Student Name | Ujjaini Gayen   |  100  |
+| Score       | Male        | School B    | Student      | Indranil Gayen  |  70   |
+| Score       | Male        | School B    | Student      | S Gayen         |  75   |
 
 Looks like staged example\! Yes you are right this is not always perfect
 (same is true for `analyze_cells` also). However, if the data is somehow
@@ -256,7 +256,7 @@ level only.
 
 ## Reference and Related Projects
 
-  - [tidyxl](https://github.com/nacnudus/tidyxl) : **Read Untidy Excel
+  - [tidyxl](https://github.com/nacnudus/tidyxl): **Read Untidy Excel
     Files:** Imports non-tabular from Excel files into R. Exposes cell
     content, position and formatting in a tidy structure for further
     manipulation. Tokenizes Excel formulas. Supports ‘.xlsx’ and ‘.xlsm’
@@ -282,6 +282,13 @@ level only.
     [jailbreaker](https://github.com/rsheets/jailbreakr),
     [rexcel](https://github.com/rsheets/rexcel) (README of this project
     has a wonderful reference for excel integration with R).
+  - [readabs](https://github.com/MattCowgill/readabs): **Download and
+    Tidy Time Series Data from the Australian Bureau of Statistics** The
+    `readabs` package helps you easily download, import, and tidy time
+    series data from the [Australian Bureau of
+    Statistics](https://www.abs.gov.au/) from within R. This saves you
+    time manually downloading and tediously tidying time series data and
+    allows you to spend more time on your analysis.
   - The [tidyABS](https://github.com/ianmoran11/tidyABS) package: The
     `tidyABS` package converts ABS excel tables to tidy data frames. It
     uses rules-of-thumb to determine the structure of excel tables,
@@ -292,7 +299,7 @@ level only.
 
 This package incomplete without following packages (apart from the
 **unpivotr** which is the core package on which **tidycells** depends
-largely, as mentioned above ). Each of these packages are in suggests
+largely, as mentioned above). Each of these packages are in suggests
 fields of `tidycells`. (The read\_cells basically, performs unification
 on several functions from various packages to give you support for
 different file types. These are listed below.)

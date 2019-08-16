@@ -24,6 +24,9 @@ test_that("optional_package dependency test", {
     expect_message(d2 <- read_cells(dm$fn[dm$original == "xls"]), "readxl")
     expect_equal(d1, d2)
     not_available(c("readxl", "docxtractr"))
+    not_available("cli")
+    expect_output(possible_to_support(), "readxl")
+    expect_output(possible_to_support(), "docxtractr")
     expect_null(read_cells(dm$fn[dm$original == "xls"]))
     not_available()
   }

@@ -15,7 +15,8 @@ numeric_values_classifier(x, ..., allow_chars, verbose = FALSE)
   verbose = FALSE)
 }
 \arguments{
-\item{x}{Either a \code{\link[=cell_df-class]{cell_df}} or leave blank for function output (required by \code{\link[=value_attribute_classify]{value_attribute_classify}})}
+\item{x}{Either a \code{\link[=cell_df-class]{cell_df}} or
+leave blank for function output (required by \code{\link[=value_attribute_classify]{value_attribute_classify}})}
 
 \item{allow_chars}{(Optional) Allow characters together with numbers. (a character vector)}
 

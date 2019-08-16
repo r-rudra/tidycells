@@ -36,7 +36,7 @@ test_that("collate_columns works", {
     cc1 %>% map(~ .x %>%
       unique() %>%
       length()) %>% unlist() %>% sort() %>% as.numeric(),
-    c(2, 2, 3, 12, 12)
+    c(1, 2, 3, 3, 12, 12)
   )
 })
 

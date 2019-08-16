@@ -8,7 +8,7 @@
 #' @keywords internal
 #' @return Directional Orientation for Attributes
 #'
-get_direction_df <- function(dp, datt) {
+get_direction_df <- function(dp, datt, allow_inside = FALSE) {
   directions <- list()
 
   directions$N <- datt %>%
@@ -112,6 +112,22 @@ get_direction_df <- function(dp, datt) {
       direction_group = "corner",
       data_gid = dp$gid
     )
+
+  if (allow_inside) {
+    directions$INSIDE <- datt %>%
+      filter(
+        row >= dp$r_min,
+        row <= dp$r_max,
+        col >= dp$c_min,
+        col <= dp$c_max
+      ) %>%
+      mutate(dist = 0) %>%
+      mutate(
+        direction = "INSIDE",
+        direction_group = "inside",
+        data_gid = dp$gid
+      )
+  }
 
 
   direction_df <- directions %>% bind_rows()

@@ -6,6 +6,7 @@ is_conforms_to_rcdf <- function(d) {
 
 is_conforms_to_rcdf.data.frame <- function(d) {
   msg <- character(0)
+  lvl <- 0
 
   decision <- FALSE
 
@@ -41,7 +42,11 @@ is_conforms_to_rcdf.data.frame <- function(d) {
           )
       }))
 
-      int_chk <- all(d$chk)
+      int_chk <- all(d$chk, na.rm = TRUE)
+
+      if (length(int_chk) != 1) int_chk <- FALSE
+
+      if (is.na(int_chk)) int_chk <- FALSE
     }
 
 
@@ -62,19 +67,27 @@ is_conforms_to_rcdf.data.frame <- function(d) {
 
       decision <- all(rest_chk$chks)
       msg <- rest_chk$neg_msgs[!rest_chk$chks]
+      if (any(!rest_chk$chks)) {
+        lvl <- max(which(!rest_chk$chks), na.rm = TRUE) + 2
+      }
     } else {
       decision <- FALSE
       msg <- "row/col is not interger (or meaningful coercion not possible)"
+      lvl <- 2
     }
   } else {
     decision <- FALSE
     msg <- "row/col column not present"
+    lvl <- 1 + (hasName(d, "row") + hasName(d, "col")) / 2
   }
 
   if (length(msg)) {
-    attr(decision, "msg") <- msg
+    attr(decision, "msg") <- msg[!is.na(msg)]
   }
 
+  if (lvl > 0) {
+    attr(decision, "lvl") <- lvl
+  }
   decision
 }
 

@@ -163,7 +163,8 @@ analyze_cells_raw <- function(d, silent = TRUE) {
   admap_fc0 <- ai_get_data_attr_map(
     dat_boundary = d_dat$group_id_extended_boundary,
     att_gid_map = d_att$group_id_map %>% filter(gid %in% unmapped_attr_gids),
-    attr_to_near_data = TRUE
+    attr_to_near_data = TRUE,
+    leave_inside = TRUE
   )
   unmapped_attr_gids <-
     admap1$map$attr_gid %>%
