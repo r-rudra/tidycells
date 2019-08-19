@@ -14,9 +14,7 @@
 * Platform: x86_64-w64-mingw32 (64-bit), 
   * R version 3.6.1 (2019-07-05)
   * R version 3.5.3 (2019-03-11)
-
-_Note: in `Win-Builder` + `R Under development (unstable) (2019-07-05 r76784)` the build is failing (Mainly because of this error "`All elements of `...` must be named`"). I could not reproduce the same error in local build of `R Under development (unstable) (2019-08-11 r76961)`. Hence ignoring._
-
+  * R Under development (unstable) (2019-08-18 r77036)
 
 ### Travis
 

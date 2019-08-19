@@ -1,6 +1,7 @@
 
 
-#' Get Directional Orientation for Attributes corresponding to a given data group
+#' Get Directional Orientation for Attributes corresponding to a given data
+#' group
 #'
 #' @param dp single data group boundary information
 #' @param datt attribute data (including attribute group id)

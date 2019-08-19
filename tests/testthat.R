@@ -2,7 +2,6 @@ library(testthat)
 library(tidycells)
 
 
-
 test_results <- test_check("tidycells")
 
 # get extra information

@@ -121,7 +121,7 @@ text-align: justify}
 <div id="author" class="section level2">
 <h2 class="hasAnchor">
 <a href="#author" class="anchor"></a>Author</h2>
-<p>Indranil Gayen</p>
+<p><a href="https://orcid.org/0000-0003-0197-1944">Indranil Gayen</a></p>
 </div>
 <div id="tldr" class="section level2">
 <h2 class="hasAnchor">
@@ -294,22 +294,22 @@ text-align: justify}
 <p><img src="articles/ext/compose_cells_cli1.png" width="451px"></p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># bit tricky and tedious unless you do print_attribute_overview = TRUE in above line</span></a>
 <a class="sourceLine" id="cb9-2" title="2">dcfine &lt;-<span class="st"> </span>dc <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">name =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/mutate">mutate</a></span>(<span class="dt">name =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
 <a class="sourceLine" id="cb9-4" title="4">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">2</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-5" title="5">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>major_col_bottom_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-6" title="6">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb9-7" title="7">  ),</a>
-<a class="sourceLine" id="cb9-8" title="8">  <span class="dt">sex =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
+<a class="sourceLine" id="cb9-8" title="8">  <span class="dt">sex =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
 <a class="sourceLine" id="cb9-9" title="9">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-10" title="10">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>major_col_bottom_<span class="dv">2</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-11" title="11">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>minor_row_right_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb9-12" title="12">  ),</a>
-<a class="sourceLine" id="cb9-13" title="13">  <span class="dt">school =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
+<a class="sourceLine" id="cb9-13" title="13">  <span class="dt">school =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
 <a class="sourceLine" id="cb9-14" title="14">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>minor_col_top_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-15" title="15">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>minor_corner_topLeft_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb9-16" title="16">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>minor_col_top_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb9-17" title="17">  )) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(school,sex, name, value)</a></code></pre></div>
+<a class="sourceLine" id="cb9-18" title="18"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/select">select</a></span>(school,sex, name, value)</a></code></pre></div>
 <p><code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head(dcfine)</a></code> looks like</p>
 <table class="table table">
 <thead><tr class="header">

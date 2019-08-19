@@ -30,6 +30,7 @@ library(tidycells)
 
 <img src="ext/logo.png" align="right" width="100"/>
 
+
 # **tidycells** 
 
 #### _Read Tabular Data from Diverse Sources and Easily Make Them Tidy_

@@ -62,6 +62,7 @@ Given these difficulties, the shiny tests are tested in the following environmen
   - [x] Making a pkgdown site
   - [ ] Releasing this package to [**CRAN**](https://cran.r-project.org/submit.html)
   - [ ] A `compatibility function` for the "Heuristic Maturation" process (after CRAN)
+  - [ ] Explore [SDMX](https://sdmx.org/?page_id=4649) Converter possibility
   - [ ] Write more vignettes on other topics
   - [ ] Making cell analysis little faster
   

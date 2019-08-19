@@ -71,8 +71,15 @@ stitch_direction <- function(d_part, dat, attr_name, trace_it = FALSE) {
     a0 <- a0 %>% mutate(cadd = paste(row, col, sep = "_"))
   }
 
-  d1 <- d0 %>%
-    enhead(a0, direction)
+  # suppressWarnings should be removed once unpivotr::enhead chages
+  # this is happening as "All elements of `...` must be named." warning in tidyr
+  # ref: https://github.com/tidyverse/tidyr/issues/714
+  # ref: https://github.com/nacnudus/unpivotr/issues/26
+  suppressWarnings({
+    d1 <- d0 %>%
+      enhead(a0, direction)
+  })
+
 
   colnames(d1)[which(colnames(d1) == "attr")] <- attr_name
 
