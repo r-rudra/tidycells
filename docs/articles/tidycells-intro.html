@@ -90,7 +90,7 @@
       <h1>Tidycells Package</h1>
                         <h4 class="author">Indranil Gayen</h4>
             
-            <h4 class="date">2019-08-19</h4>
+            <h4 class="date">2019-08-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-rudra/tidycells/blob/master/vignettes/tidycells-intro.Rmd"><code>vignettes/tidycells-intro.Rmd</code></a></small>
       <div class="hidden name"><code>tidycells-intro.Rmd</code></div>
@@ -211,7 +211,7 @@ text-align: justify}
 </tbody>
 </table>
 <p>Not a big deal for csv though. Also looks similar to</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(fcsv) <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/tidyr/topics/gather">gather</a></span>(measure, val_of_measure, <span class="op">-</span>Kid.Name)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(fcsv) <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(measure, val_of_measure, <span class="op">-</span>Kid.Name)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Kid.Name</th>
@@ -735,22 +735,22 @@ text-align: justify}
 <p><img src="ext/compose_cells_cli1.png" width="451px"></p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="co"># bit tricky and tedious unless you do print_attribute_overview = TRUE in above line</span></a>
 <a class="sourceLine" id="cb30-2" title="2">dcfine &lt;-<span class="st"> </span>dc <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/mutate">mutate</a></span>(<span class="dt">name =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
+<a class="sourceLine" id="cb30-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">name =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
 <a class="sourceLine" id="cb30-4" title="4">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">2</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-5" title="5">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>major_col_bottom_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-6" title="6">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb30-7" title="7">  ),</a>
-<a class="sourceLine" id="cb30-8" title="8">  <span class="dt">sex =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
+<a class="sourceLine" id="cb30-8" title="8">  <span class="dt">sex =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
 <a class="sourceLine" id="cb30-9" title="9">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>major_row_left_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-10" title="10">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>major_col_bottom_<span class="dv">2</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-11" title="11">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>minor_row_right_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb30-12" title="12">  ),</a>
-<a class="sourceLine" id="cb30-13" title="13">  <span class="dt">school =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/case_when">case_when</a></span>(</a>
+<a class="sourceLine" id="cb30-13" title="13">  <span class="dt">school =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
 <a class="sourceLine" id="cb30-14" title="14">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span>minor_col_top_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-15" title="15">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">~</span><span class="st"> </span>minor_corner_topLeft_<span class="dv">1</span>_<span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb30-16" title="16">    data_block <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> </span>minor_col_top_<span class="dv">1</span>_<span class="dv">1</span></a>
 <a class="sourceLine" id="cb30-17" title="17">  )) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-18" title="18"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/select">select</a></span>(school,sex, name, value)</a></code></pre></div>
+<a class="sourceLine" id="cb30-18" title="18"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(school,sex, name, value)</a></code></pre></div>
 <p><code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head(dcfine)</a></code> looks like</p>
 <table class="table">
 <thead><tr class="header">
@@ -876,7 +876,7 @@ text-align: justify}
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1">dcomps &lt;-<span class="st"> </span>dm<span class="op">$</span>fn <span class="op">%&gt;%</span><span class="st"> </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(read_cells)</a>
 <a class="sourceLine" id="cb33-2" title="2">dcomps_sel &lt;-<span class="st"> </span>dcomps <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb33-3" title="3"><span class="st">    </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="op">~</span><span class="st"> </span>.x <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb33-4" title="4"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/dplyr/topics/select">select</a></span>(value, collated_<span class="dv">1</span>, collated_<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb33-4" title="4"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(value, collated_<span class="dv">1</span>, collated_<span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb33-5" title="5"><span class="co"># all of them are same [intentionaly made. but the file types are totally different]</span></a>
 <a class="sourceLine" id="cb33-6" title="6">dcomps_sel <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb33-7" title="7"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_lgl</a></span>(<span class="op">~</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/identical">identical</a></span>(.x, dcomps_sel[[<span class="dv">1</span>]])) <span class="op">%&gt;%</span><span class="st"> </span></a>

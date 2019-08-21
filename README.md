@@ -14,7 +14,12 @@ status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?bra
 Status](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
 [![Coveralls Coverage
 Status](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master)](https://coveralls.io/github/r-rudra/tidycells?branch=master)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Dependency
+status](https://tinyverse.netlify.com/badge/tidycells)](https://CRAN.R-project.org/package=tidycells)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
 [![See
 DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
@@ -58,19 +63,29 @@ for further analysis and data wrangling).
 
 ## Installation
 
-To install the development version from GitHub you’ll need `devtools`
-package in R. Assuming you have `devtools` you can install this package
-in R with the following command:
+Install the [CRAN](https://CRAN.R-project.org/package=tidycells)
+version:
 
 ``` r
-devtools::install_github("r-rudra/tidycells")
+install.packages("tidycells")
+```
+
+To install the development version from GitHub you’ll need `remotes`
+package in R (comes with `devtools`). Assuming you have `remotes` you
+can install this package in R with the following command:
+
+``` r
+# devtools::install_github is actually remotes::install_github
+remotes::install_github("r-rudra/tidycells")
 ```
 
 To start with `tidycells`, I invite you to see
-`vignette("tidycells-intro")` (*to see vignette you need to install the
-package with vignette. That can be done in above command by specifying
-`build_vignettes = TRUE`. Note that is might be time consuming*) or
-check out [tidycells-website](https://r-rudra.github.io/tidycells/).
+`vignette("tidycells-intro")` or check out
+[tidycells-website](https://r-rudra.github.io/tidycells/) (*to see
+vignette you need to install the package with vignette. That can be done
+in above command (`remotes::install_github`) by specifying
+`build_vignettes = TRUE`. Note that, it might be time consuming. CRAN
+version comes with prebuilt-vignette*).
 
 ## Quick Overview
 
@@ -125,26 +140,31 @@ d <- system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE
   .[[1]]
 ```
 
+Or
+
 ``` r
 # or you may do
 d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) %>% 
   readRDS()
 ```
 
+Then
+
 ``` r
 d <- numeric_values_classifier(d)
 da <- analyze_cells(d)
 ```
 
-Then you need to run `compose_cells` with additional new argument
-`print_attribute_overview =
-TRUE`
+After this you need to run `compose_cells` (with argument
+`print_attribute_overview = TRUE`)
 
 ``` r
 dc <- compose_cells(da, print_attribute_overview = TRUE)
 ```
 
-<img src="vignettes/ext/compose_cells_cli1.png" width="451px" />
+<img src="vignettes/ext/compose_cells_cli1.png" width="451px" /> If you
+want a well-aligned columns then you may like to
+do
 
 ``` r
 # bit tricky and tedious unless you do print_attribute_overview = TRUE in above line
@@ -179,11 +199,11 @@ dcfine <- dc %>%
 | School B | Male   | S Gayen         |  75   |
 
 This is still not good right\! You had to manually pick some weird
-column-names and spent some brain (when it was evident from data which
-columns should be aligned with whom).
+column-names and spent some time and energy (when it was evident from
+data which columns should be aligned with whom).
 
 The `collate_columns` functions does exactly this for you. So instead of
-manually picking column-names after compose cells you can simply run
+manually picking column-names after *compose cells* you can simply run
 
 ``` r
 # collate_columns(dc) should be same with 
@@ -201,10 +221,10 @@ collate_columns(dc) %>%
 | Score       | Male        | School B    | Student      | Indranil Gayen  |  70   |
 | Score       | Male        | School B    | Student      | S Gayen         |  75   |
 
-Looks like staged example\! Yes you are right this is not always perfect
-(same is true for `analyze_cells` also). However, if the data is somehow
-helpful in demystifying underlying columns structure (like this one),
-then this will be useful.
+Looks like staged example\! Yes, you are right this is not always
+perfect (same is true for `analyze_cells` also). However, if the data is
+somehow helpful in demystifying underlying columns structure (like this
+one), then this will be useful.
 
 These functions `read_cells` (all functionalities combined),
 `analyze_cells`, `collate_columns` are here to ease your pain in data

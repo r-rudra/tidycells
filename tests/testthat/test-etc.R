@@ -80,6 +80,10 @@ test_that("etc works", {
 })
 
 test_that("doc works", {
+
+  # CRAN system level dependency, which is not good idea
+  skip_on_cran()
+
   #  too slow in local windows
   if (!isTRUE(as.logical(Sys.getenv("CI")))) {
     skip_on_os("windows")
