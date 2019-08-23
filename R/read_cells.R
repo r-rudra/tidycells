@@ -14,6 +14,22 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #' extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say `.xlsx`)
 #' then also the `read_cells` will detect it as pdf and read its content.
 #'
+#' **Note** :
+#'
+#' * `read_cells` is supposed to work for any kind of data. However, if it fails in intermediate stage it will raise
+#' a warning and give results till successfully processed stage.
+#' * The heuristic-algorithm are not well-optimized (yet) so may be slow on large files.
+#' * If the target table has numerical values as data and text as their attribute (identifier of the data elements),
+#' straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.
+#'
+#' **A Word of Warning** :
+#'
+#' _The functions used inside `read_cells` are heuristic-algorithm based. Thus, outcomes may be unexpected.
+#' It is recommend to try `read_cells` on the target file. If the outcome is expected., it is fine.
+#' If not try again with `read_cells(file_name, at_level = "compose")`. If after that also the output is not as expected
+#' then other functions are required to be used. At that time start again with `read_cells(file_name, at_level = "make_cells")`
+#' and proceed to further functions._
+#'
 #'
 #' @param x either a valid file path or a [`read_cell_part`][read_cell_part-class]
 #' @param at_level till which level to process.
@@ -158,142 +174,90 @@ read_cells.read_cell_part <- function(x,
     abort("multiple stages in the 'read_cell part'")
   }
 
+  ran_till <- "init"
+  ok_so_far <- TRUE
+
   # detect_and_read
-  if (at_level >= 1 & (this_level < 1)) {
-    out_l$info <- detect_and_read(out_l$file_name, omit = omit)
-    out_l$stage <- read_cell_task_orders[1]
-    if (simplify) {
-      simple <- out_l$info$content
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_detect_and_read(at_level, this_level, out_l, simplify, simple, omit))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[1]
+      out_l <- stn$out_l
+      simple <- stn$simple
+    } else {
+      ok_so_far <- FALSE
     }
   }
 
   # make_cells
-  if (at_level >= 2 & (this_level < 2)) {
-    if (!is.null(out_l$info$content)) {
-      out_l$is_empty <- FALSE
-
-      if (is.data.frame(out_l$info$content)) {
-        raw_bc <- list(out_l$info$content)
-      } else {
-        if (is.list(out_l$info$content)) {
-          raw_bc <- out_l$info$content
-        } else {
-          abort("Unknown error occured in make_cells level of read_cells")
-        }
-      }
-
-      out_l$cell_list <- raw_bc %>% map(as_cell_df)
-      names(out_l$cell_list) <- names(raw_bc)
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_make_cells(at_level, this_level, out_l, simplify, simple))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[2]
+      out_l <- stn$out_l
+      simple <- stn$simple
     } else {
-      out_l$is_empty <- TRUE
-    }
-
-    out_l$stage <- read_cell_task_orders[2]
-    if (simplify) {
-      simple <- out_l$cell_list
+      ok_so_far <- FALSE
     }
   }
 
   # va_classify
-  if (at_level >= 3 & (this_level < 3)) {
-    if (!out_l$is_empty) {
-      out_l$cell_list <- out_l$cell_list %>% map(numeric_values_classifier)
-      out_l$stage <- read_cell_task_orders[3]
-      if (simplify) {
-        simple <- out_l$cell_list
-      }
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_va_classify(at_level, this_level, out_l, simplify, simple))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[3]
+      out_l <- stn$out_l
+      simple <- stn$simple
+    } else {
+      ok_so_far <- FALSE
     }
   }
 
   # analyze
-  if (at_level >= 4 & (this_level < 4)) {
-    if (!out_l$is_empty) {
-      out_l$cell_analysis_list <- out_l$cell_list %>% map(analyze_cells)
-      out_l$stage <- read_cell_task_orders[4]
-      if (simplify) {
-        simple <- out_l$cell_analysis_list
-      }
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_analyze(at_level, this_level, out_l, simplify, simple))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[4]
+      out_l <- stn$out_l
+      simple <- stn$simple
+    } else {
+      ok_so_far <- FALSE
     }
   }
 
   # compose
-  if (at_level >= 5 & (this_level < 5)) {
-    if (!out_l$is_empty) {
-      raw_comp_no_pp <- out_l$cell_analysis_list %>%
-        map(~ compose_cells_raw(.x, post_process = FALSE))
-
-      rcn <- names(raw_comp_no_pp)
-      rcn <- rcn[!is.na(rcn)]
-      rcn <- rcn[nchar(rcn) > 0]
-      rcn <- unique(rcn)
-      if (length(rcn) == length(raw_comp_no_pp)) {
-        table_tag <- names(raw_comp_no_pp)
-      } else {
-        table_tag <- seq_along(raw_comp_no_pp) %>% paste0("Table_", .)
-      }
-
-      if (simplify & at_level < 6) {
-        # compose_cells post_process if simplify = TRUE and at_level < 6
-        raw_comp <- raw_comp_no_pp %>%
-          map(~ compose_cells_raw_post_process(.x, details = TRUE))
-
-        final_compositions <- seq_along(raw_comp_no_pp) %>%
-          map(~ {
-            tn1 <- raw_comp_no_pp[[.x]]
-            ttag <- table_tag[.x]
-            raw_comp_d <- tn1 %>% map(~ mutate(.x, table_tag = ttag))
-
-            tn2 <- raw_comp[[.x]]
-            comp_d <- tn2$raw_data[c(tn2$must_cols, tn2$major_col, tn2$minor_col)] %>% mutate(table_tag = ttag)
-
-            list(comp = comp_d, raw = raw_comp_d)
-          })
-      } else {
-        # this means it will be going thourgh 'collate' process
-        final_compositions <- seq_along(raw_comp_no_pp) %>%
-          map(~ {
-            tn1 <- raw_comp_no_pp[[.x]]
-            ttag <- table_tag[.x]
-            raw_comp_d <- tn1 %>% map(~ mutate(.x, table_tag = ttag))
-
-            list(raw = raw_comp_d)
-          })
-      }
-
-
-
-      out_l$raw_composition <- final_compositions %>% map("raw")
-      out_l$final_composition <- final_compositions %>% map_df("comp")
-
-      out_l$stage <- read_cell_task_orders[5]
-      if (simplify) {
-        simple <- out_l$final_composition
-      }
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_compose(at_level, this_level, out_l, simplify, simple))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[5]
+      out_l <- stn$out_l
+      simple <- stn$simple
+    } else {
+      ok_so_far <- FALSE
     }
   }
 
-
   # collate
-  if (at_level >= 6 & (this_level < 6)) {
-    if (!out_l$is_empty) {
-      raw_present <- FALSE
-      if (!is.null(out_l$raw_composition)) {
-        raw_present <- TRUE
-      }
-
-      if (raw_present) {
-        dcl <- out_l$raw_composition
-      } else {
-        dcl <- list(out_l$final_composition)
-      }
-
-      out_l$final <- dcl %>% map_df(~ collate_columns(.x) %>% as_tibble())
-
-      out_l$stage <- read_cell_task_orders[6]
-      if (simplify) {
-        simple <- out_l$final
-      }
+  if (ok_so_far) {
+    stn <- run_stage_safe(do_collate(at_level, this_level, out_l, simplify, simple))
+    if (stn$ok) {
+      ran_till <- read_cell_task_orders[6]
+      out_l <- stn$out_l
+      simple <- stn$simple
+    } else {
+      ok_so_far <- FALSE
     }
+  }
+
+  this_lvl_mx <- min(max(at_level, this_level), length(read_cell_task_orders))
+  reached_lvl <- which(read_cell_task_orders == ran_till)
+
+  if (reached_lvl < this_lvl_mx) {
+    warn(paste0(
+      "Supplied at_level is ", read_cell_task_orders[at_level], ".",
+      "\nWhile read_cells could reach till ", ran_till, ".",
+      "\nPlease check manually."
+    ))
   }
 
   if (simplify) {

@@ -75,6 +75,8 @@ stitch_direction <- function(d_part, dat, attr_name, trace_it = FALSE) {
   # this is happening as "All elements of `...` must be named." warning in tidyr
   # ref: https://github.com/tidyverse/tidyr/issues/714
   # ref: https://github.com/nacnudus/unpivotr/issues/26
+  # directions NNW (and similar) is strict; it does not allow multi block
+  # possibly need separate enhead like function
   suppressWarnings({
     d1 <- d0 %>%
       enhead(a0, direction)

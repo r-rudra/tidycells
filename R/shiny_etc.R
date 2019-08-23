@@ -52,7 +52,7 @@ command_prompt_ask <- function(title, message, default = NULL) {
   }
 }
 
-rstudioapi_ask <- function(title, message, default = NULL) {
+rstudioapi_ask <- function(title, message, default = NULL, is_question = FALSE, ...) {
   ok <- FALSE
   if (is_available("rstudioapi")) {
     if (rstudioapi::hasFun("viewer")) {
@@ -61,7 +61,11 @@ rstudioapi_ask <- function(title, message, default = NULL) {
   }
 
   if (ok) {
-    rstudioapi::showPrompt(title = title, message = message, default = default)
+    if (is_question) {
+      rstudioapi::showQuestion(title = title, message = message, ...)
+    } else {
+      rstudioapi::showPrompt(title = title, message = message, default = default)
+    }
   } else {
     command_prompt_ask(title = title, message = message, default = default)
   }

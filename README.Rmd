@@ -24,16 +24,50 @@ library(tidycells)
 
 <!-- badges: start -->
 
+```{r, echo = FALSE}
+# following given low res raster image
+# as https://tinyverse.netlify.com/badge/tidycells pointing to 
+# https://img.shields.io/badge/dependencies-9/43-orange.png?style=flat not 
+# https://img.shields.io/badge/dependencies-9/43-orange.svg
+# [![Dependency status](https://tinyverse.netlify.com/badge/tidycells)](https://CRAN.R-project.org/package=tidycells)
+
+# try to convert url from .png to .svg
+# but it will correspond to last CRAN version only
+# x <- curlGetHeaders("https://tinyverse.netlify.com/badge/tidycells")
+# tg <- which(stringr::str_detect(x, "img.shields.io")) %>% min()
+
+depi <- as.vector(read.dcf('DESCRIPTION')[, 'Imports'])
+imps <- stringr::str_split(depi, ",")[[1]] %>% stringr::str_extract("[a-zA-Z0-9]+")
+
+deps <- as.vector(read.dcf('DESCRIPTION')[, 'Suggests'])
+sugg <- stringr::str_split(deps, ",")[[1]] %>% stringr::str_extract("[a-zA-Z0-9]+")
+
+x <- installed.packages()
+# for inclusion of base and recommended pkgs
+usr_pkgs <- x %>% tibble::as_tibble() %>% dplyr::mutate(pkg = row.names(x)) %>% dplyr::filter(is.na(Priority)) %>% dplyr::pull(pkg)
+
+# excluding only base
+# usr_pkgs <- x %>% tibble::as_tibble() %>% dplyr::mutate(pkg = row.names(x)) %>% dplyr::filter(Priority == "base") %>% dplyr::pull(pkg)
+
+imps <- intersect(imps, usr_pkgs)
+sugg <- intersect(sugg, usr_pkgs)
+
+dep_str <- paste0(length(imps),"/",(length(imps)+length(sugg)))
+
+```
+
 [![CRAN status](https://www.r-pkg.org/badges/version/tidycells)](https://cran.r-project.org/package=tidycells)
+[![CRAN checks](https://cranchecks.info/badges/summary/tidycells)](https://cran.r-project.org/web/checks/check_results_tidycells.html)
 [![Travis build status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://travis-ci.org/r-rudra/tidycells)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?branch=master&svg=true)](https://ci.appveyor.com/project/bedantaguru/tidycells)
 [![Codecov Coverage Status](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
 [![Coveralls Coverage Status](https://coveralls.io/repos/github/r-rudra/tidycells/badge.svg?branch=master)](https://coveralls.io/github/r-rudra/tidycells?branch=master)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![Dependency status](https://tinyverse.netlify.com/badge/tidycells)](https://CRAN.R-project.org/package=tidycells)
+[![Dependency status](https://img.shields.io/badge/Dependencies-`r dep_str`-orange.svg)](https://CRAN.R-project.org/package=tidycells)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
 [![See DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
+
 
 <!-- badges: end -->
 
@@ -46,7 +80,16 @@ Given a `file_name` which is a path of a file that contains table(s). Run this `
 ```{r, eval=FALSE}
 read_cells(file_name)
 ```
-**Note** Just start with a small file.
+
+**Note** 
+
+* Just start with a small file, as heuristic-algorithm are not well-optimized (yet).
+* If the target table has numerical values as data and text as their attribute (identifier of the data elements), straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions. 
+
+**A Word of Warning** : 
+
+_Many functions in this package are heuristic-algorithm based. Thus, outcomes may be unexpected. I recommend you to try `read_cells` on the target file. If the outcome is what you are expecting, it is fine. If not try again with `read_cells(file_name, at_level = "compose")`. If after that also the output is not as expected then other functions are required to be used. At that time start again with `read_cells(file_name, at_level = "make_cells")` and proceed to further functions._
+
 
 ## Introduction
 The package provides utilities to read, cells from complex tabular data and heuristic detection based 'structural assignment' of those cells to a columnar or tidy format. 
@@ -230,6 +273,8 @@ Major parts of the package right now fully depend on **unpivotr**. The **tidycel
 It hosts several R packages (few of them are in CRAN already) which are in the early stages of importing spreadsheets from Excel and Google Sheets into R.  Specifically, have a look at these projects which seems closely related to these projects : [jailbreaker](https://github.com/rsheets/jailbreakr), [rexcel](https://github.com/rsheets/rexcel) (README of this project has a wonderful reference for excel integration with R).
 * [readabs](https://github.com/MattCowgill/readabs): **Download and Tidy Time Series Data from the Australian Bureau of Statistics**
 The `readabs` package helps you easily download, import, and tidy time series data from the [Australian Bureau of Statistics](https://www.abs.gov.au/) from within R. This saves you time manually downloading and tediously tidying time series data and allows you to spend more time on your analysis.
+* [ezpickr](https://CRAN.R-project.org/package=ezpickr): **Easy Data Import Using GUI File Picker and Seamless Communication Between an Excel and R**
+Gives ability for choosing any rectangular data file using interactive GUI dialog box, and seamlessly manipulating tidy data between an 'Excel' window and R session.
 * The [tidyABS](https://github.com/ianmoran11/tidyABS) package: 
 The `tidyABS` package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user. This package is in early development.
 

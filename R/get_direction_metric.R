@@ -22,9 +22,15 @@ get_direction_metric <- function(d1, a1, direction) {
 }
 
 get_direction_metric_part_raw <- function(d1, a1, direction) {
-  d1 %>%
-    enhead(a1, direction) %>%
-    filter(!is.na(attr_gid)) %>%
-    pull(attr_gid) %>%
-    length()
+  # suppressWarnings should be removed once unpivotr::enhead chages
+  # this is happening as "All elements of `...` must be named." warning in tidyr
+  # ref: https://github.com/tidyverse/tidyr/issues/714
+  # ref: https://github.com/nacnudus/unpivotr/issues/26
+  suppressWarnings({
+    d1 %>%
+      enhead(a1, direction) %>%
+      filter(!is.na(attr_gid)) %>%
+      pull(attr_gid) %>%
+      length()
+  })
 }

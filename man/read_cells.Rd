@@ -45,6 +45,23 @@ the installed packages. To see the list of supported files and potentially requi
 run \code{read_cells()} in the console. This function supports the file format based on content and not based on just the file
 extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say \code{.xlsx})
 then also the \code{read_cells} will detect it as pdf and read its content.
+
+\strong{Note} :
+\itemize{
+\item \code{read_cells} is supposed to work for any kind of data. However, if it fails in intermediate stage it will raise
+a warning and give results till successfully processed stage.
+\item The heuristic-algorithm are not well-optimized (yet) so may be slow on large files.
+\item If the target table has numerical values as data and text as their attribute (identifier of the data elements),
+straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.
+}
+
+\strong{A Word of Warning} :
+
+\emph{The functions used inside \code{read_cells} are heuristic-algorithm based. Thus, outcomes may be unexpected.
+It is recommend to try \code{read_cells} on the target file. If the outcome is expected., it is fine.
+If not try again with \code{read_cells(file_name, at_level = "compose")}. If after that also the output is not as expected
+then other functions are required to be used. At that time start again with \code{read_cells(file_name, at_level = "make_cells")}
+and proceed to further functions.}
 }
 \details{
 It performs following set of actions if called with default \code{at_level}.

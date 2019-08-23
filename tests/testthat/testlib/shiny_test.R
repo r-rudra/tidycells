@@ -1,6 +1,7 @@
 
 # this file is required by shiny module tests
 
+# # Interactive vs non-interactive difference present
 # # may need to run
 # # devtools::load_all()
 # # after record test you may do
@@ -13,9 +14,9 @@
 # # delete rest files
 # unlink(d$fn[d$fn0!="testshiny.tar"], recursive = TRUE)
 
-pull_shiny_test <- function(x) {
+pull_shiny_test <- function(x, tpath = "tests/testthat/testshiny") {
   testf <- list.files(x$app_dir, pattern = "test", include.dirs = TRUE, full.names = TRUE)
-  here_testf <- file.path("tests/testthat/testshiny", x$name)
+  here_testf <- file.path(tpath, x$name)
   dir.create(here_testf, showWarnings = FALSE, recursive = TRUE)
   file.copy(testf, here_testf, overwrite = TRUE, recursive = TRUE)
 }
@@ -127,6 +128,17 @@ test_temp_app <- function(x, test_img, untar_adds) {
   } else {
     message("shintest: NOT checking images")
   }
+
+  # # if a test is passed in interactive session and failed in non-interactive one
+  # # then possibly need to enable these lines
+  # shinytest::testApp(x$app_dir, compareImages = img_chk)
+  # shinytest::snapshotUpdate(x$app_dir)
+  # # here absolute path has to be provided
+  # pull_shiny_test(
+  #   x,
+  #   # here absolute path has to be provided
+  #   tpath = "<absolute path>"
+  # )
 
   shinytest::expect_pass(shinytest::testApp(x$app_dir, compareImages = img_chk))
 

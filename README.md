@@ -6,6 +6,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/tidycells)](https://cran.r-project.org/package=tidycells)
+[![CRAN
+checks](https://cranchecks.info/badges/summary/tidycells)](https://cran.r-project.org/web/checks/check_results_tidycells.html)
 [![Travis build
 status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://travis-ci.org/r-rudra/tidycells)
 [![AppVeyor build
@@ -19,7 +21,7 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Dependency
-status](https://tinyverse.netlify.com/badge/tidycells)](https://CRAN.R-project.org/package=tidycells)
+status](https://img.shields.io/badge/Dependencies-9/28-orange.svg)](https://CRAN.R-project.org/package=tidycells)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/r-rudra/tidycells/master/LICENSE.md)
 [![See
 DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
@@ -40,7 +42,25 @@ present for the file type. If support is present, just run
 read_cells(file_name)
 ```
 
-**Note** Just start with a small file.
+**Note**
+
+  - Just start with a small file, as heuristic-algorithm are not
+    well-optimized (yet).
+  - If the target table has numerical values as data and text as their
+    attribute (identifier of the data elements), straight forward method
+    is sufficient in the majority of situations. Otherwise, you may need
+    to utilize other functions.
+
+**A Word of Warning** :
+
+*Many functions in this package are heuristic-algorithm based. Thus,
+outcomes may be unexpected. I recommend you to try `read_cells` on the
+target file. If the outcome is what you are expecting, it is fine. If
+not try again with `read_cells(file_name, at_level = "compose")`. If
+after that also the output is not as expected then other functions are
+required to be used. At that time start again with
+`read_cells(file_name, at_level = "make_cells")` and proceed to further
+functions.*
 
 ## Introduction
 
@@ -309,6 +329,11 @@ level only.
     Statistics](https://www.abs.gov.au/) from within R. This saves you
     time manually downloading and tediously tidying time series data and
     allows you to spend more time on your analysis.
+  - [ezpickr](https://CRAN.R-project.org/package=ezpickr): **Easy Data
+    Import Using GUI File Picker and Seamless Communication Between an
+    Excel and R** Gives ability for choosing any rectangular data file
+    using interactive GUI dialog box, and seamlessly manipulating tidy
+    data between an ‘Excel’ window and R session.
   - The [tidyABS](https://github.com/ianmoran11/tidyABS) package: The
     `tidyABS` package converts ABS excel tables to tidy data frames. It
     uses rules-of-thumb to determine the structure of excel tables,

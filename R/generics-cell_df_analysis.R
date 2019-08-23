@@ -16,7 +16,8 @@ print.cell_analysis <- function(x, ...) {
   msg <- paste0(
     cli_bb("Cell DF Analysis:"),
     "\n", paste0(cli_b("Total blocks: "), nblocks),
-    "\n", dachek_msg
+    "\n", dachek_msg,
+    "\n"
   )
   cat(msg)
 }

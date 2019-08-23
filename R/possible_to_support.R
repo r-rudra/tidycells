@@ -55,8 +55,10 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       extra_msg0 <- NULL
       if ("doc" %in% st_ok) {
         extra_msg0 <- paste0(
-          "LibreOffice present so doc files will be supported but it may take little longer time to read/detect.",
-          "\n  You may need to open LibreOffice outside this R-Session manually to speed it up."
+          "LibreOffice is present so doc files will be supported but it may take little longer time to read/detect.",
+          "\n  You may need to open LibreOffice outside this R-Session manually to speed it up.",
+          "\n  In case the doc is not working, try running docxtractr::read_docx('<target doc file>').",
+          "\n  Check whether the file is being read correctly."
         )
       } else {
         if (st$pkg_installed[st$file_type == "doc"] == TRUE) {

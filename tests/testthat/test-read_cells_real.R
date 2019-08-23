@@ -41,7 +41,7 @@ test_that("sample analysis on real data works III", {
   cd <- readRDS("testdata/enron_from_unpivotr_processed.rds")
 
   ca <- analyze_cells(cd)
-  dcmp <- compose_cells(ca, discard_raw_cols = TRUE)
+  expect_warning(dcmp <- compose_cells_raw(ca, discard_raw_cols = TRUE, ask_user = FALSE), "failed to compose")
 
 
   expect_equal(

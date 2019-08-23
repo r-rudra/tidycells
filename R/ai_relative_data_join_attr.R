@@ -2,8 +2,8 @@
 
 ai_relative_data_join_attr <- function(admap_main, d_att) {
   chk <- admap_main$raw_map %>%
-    distinct(attr_gid, data_gid, direction) %>%
-    group_by(data_gid, direction) %>%
+    distinct(attr_gid, data_gid, direction, attr_group) %>%
+    group_by(data_gid, direction, attr_group) %>%
     mutate(n_att = n_distinct(attr_gid)) %>%
     ungroup() %>%
     filter(n_att > 1)
@@ -16,13 +16,14 @@ ai_relative_data_join_attr <- function(admap_main, d_att) {
 
     rel_gids <- chk %>%
       select(-n_att) %>%
-      inner_join(admap_main$raw_map, by = c("attr_gid", "data_gid", "direction"))
+      inner_join(admap_main$raw_map, by = c("attr_gid", "data_gid", "direction", "attr_group"))
 
-    d_att_dat_map_raw_rest <- admap_main$raw_map %>% anti_join(chk, by = c("attr_gid", "data_gid", "direction"))
+    d_att_dat_map_raw_rest <- admap_main$raw_map %>%
+      anti_join(chk, by = c("attr_gid", "data_gid", "direction", "attr_group"))
 
     rel_gids_att <- rel_gids %>%
-      distinct(attr_gid, data_gid, direction, row = row_a, col = col_a) %>%
-      group_by(data_gid, direction) %>%
+      distinct(attr_gid, data_gid, direction, attr_group, row = row_a, col = col_a) %>%
+      group_by(data_gid, direction, attr_group) %>%
       mutate(new_attr_gid = paste(min(attr_gid), data_gid, direction, sep = "_")) %>%
       ungroup()
 
@@ -31,6 +32,7 @@ ai_relative_data_join_attr <- function(admap_main, d_att) {
     rel_gids <- rel_gids %>%
       group_by(new_attr_gid, data_gid) %>%
       mutate(
+        # this is possibly not required anymore as attr_group is in grouping vars
         new_attr_group = ifelse(any(attr_group == "major"), "major", "minor"),
         new_dist = min(dist)
       ) %>%

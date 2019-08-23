@@ -37,7 +37,7 @@ if (getRversion() >= "2.15.1") {
     "cn_id_raw", "cr", "n1", "n2",
     "new_name", "old_name", "tinf", "fsn",
     "is_major", "new_cn", "sn", "sn_m",
-    "table_tag",
+    "table_tag", "fp",
 
     ########
     # for shiny

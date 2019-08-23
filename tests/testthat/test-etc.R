@@ -26,8 +26,8 @@ test_that("etc works", {
   dc0 <- readRDS("testdata/enron_from_unpivotr_processed.rds") %>%
     analyze_cells()
 
-  dc00 <- dc0 %>%
-    compose_cells(post_process = FALSE)
+  expect_warning(dc00 <- dc0 %>%
+    compose_cells_raw(post_process = FALSE, ask_user = FALSE), "failed to compose")
 
   dc01 <- dc00 %>%
     collate_columns(combine_threshold = 0.1)
@@ -86,10 +86,11 @@ test_that("doc works", {
 
   #  too slow in local windows
   if (!isTRUE(as.logical(Sys.getenv("CI")))) {
+    # to test in local (windows) open LibreOffice outside and comment following
     skip_on_os("windows")
   }
 
-  u <- possible_to_support()
+  u <- possible_to_support(print_info = FALSE)
   fty <- u %>%
     dplyr::filter(support_possible) %>%
     dplyr::pull(file_type)

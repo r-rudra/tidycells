@@ -90,37 +90,17 @@ analyze_cells_raw <- function(d, silent = TRUE) {
     abort("No `attribute` cells found")
   }
 
-  d_dat <- get_group_id(data_cells)
-  d_att <- get_group_id(attr_cells)
+  d_dat_orig <- get_group_id(data_cells)
+  d_att_orig <- get_group_id(attr_cells)
 
-  #  start with simple attr data map
-  admap0 <- ai_get_data_attr_map(
-    dat_boundary = d_dat$group_id_boundary,
-    att_gid_map = d_att$group_id_map
-  )
+  d_dat <- d_dat_orig
+  d_att <- d_att_orig
 
-  # crude joins
-  # absolutely sure joins
-  crude_djoins <- ai_crude_data_block_joins(basic_admap = admap0$map, d_dat = d_dat)
-  if (crude_djoins$done) {
-    d_dat <- crude_djoins$d_dat
-    admap0 <- ai_get_data_attr_map(
-      dat_boundary = d_dat$group_id_boundary,
-      att_gid_map = d_att$group_id_map
-    )
-  }
+  setp1 <- ai_get_data_attr_map_main(d_dat, d_att)
 
-  # split attr gid relative to data_gid
-  rel_chk <- ai_relative_data_split_attr(basic_map = admap0, d_att = d_att, d_dat = d_dat)
-  if (rel_chk$done) {
-    d_att <- rel_chk$d_att
-    admap0 <- rel_chk$admap
-  }
-
-  # dimension analysis done here (major minor classification)
-  admap1 <- admap0$map %>%
-    filter(direction_group != "corner") %>%
-    ai_get_data_attr_map_details(d_dat, d_att)
+  d_dat <- setp1$d_dat
+  d_att <- setp1$d_att
+  admap1 <- setp1$admap
 
   # data_gid join (if possible)
   if (nrow(d_dat$group_id_boundary) > 1) {
@@ -132,22 +112,21 @@ analyze_cells_raw <- function(d, silent = TRUE) {
       # this means results has been invalidated
       d_dat <- d_dat0
 
-      admap0 <- ai_get_data_attr_map(
-        dat_boundary = d_dat$group_id_boundary,
-        att_gid_map = d_att$group_id_map
-      )
+      # revert back to original form
+      d_att <- d_att_orig
 
-      # all (NS and WE) attr are attached
-      admap1 <- admap0$map %>%
-        filter(direction_group != "corner") %>%
-        ai_get_data_attr_map_details(d_dat, d_att)
+      setp2 <- ai_get_data_attr_map_main(d_dat, d_att, crude_join = FALSE)
+
+      d_dat <- setp2$d_dat
+      d_att <- setp2$d_att
+      admap1 <- setp2$admap
     }
   }
 
   # join attr based on block merges possible
   rel_chk <- ai_relative_data_join_attr(admap_main = admap1, d_att = d_att)
   if (rel_chk$done) {
-    d_att <- rel_chk$d_att
+    d_att <- rel_chk$d_att %>% map(unique)
     admap1 <- rel_chk$admap
   }
 
@@ -193,10 +172,52 @@ analyze_cells_raw <- function(d, silent = TRUE) {
   }
 
 
-  d_dat$group_id_whole_boundary <- extend_data_block(d_dat$group_id_extended_boundary, admap_fc1$map, d_att)
+  # last stage of analysis
+  # this is not required
+  # d_dat$group_id_whole_boundary <- extend_data_block(d_dat$group_id_extended_boundary, admap_fc1$map, d_att)
 
-  admap <- merge_admaps(admap1, admap_fc1)
+  admap2 <- merge_admaps(admap1, admap_fc1)
 
+  # join attr based on block merges possible (one more time)
+  rel_chk <- ai_relative_data_join_attr(admap_main = admap2, d_att = d_att)
+  if (rel_chk$done) {
+    d_att <- rel_chk$d_att %>% map(unique)
+    admap2 <- rel_chk$admap
+  }
+
+  cmp <- compact_gid_maps(d_att, admap2)
+  d_att <- cmp$gid_map
+  admap2 <- cmp$admap
+
+  admap3 <- admap2$map %>%
+    select(-attr_group) %>%
+    ai_get_data_attr_map_details(d_dat, d_att)
+
+  if (!identical(admap3$map, admap2$map)) {
+    # I think this can be iterated
+    # KFL
+    admap3_pass <- admap3$map %>%
+      rename(md = dist) %>%
+      group_by(data_gid, direction_group, attr_group) %>%
+      mutate(m_dist = min(md)) %>%
+      ungroup() %>%
+      filter(md == m_dist) %>%
+      select(-md) %>%
+      rename(dist = m_dist)
+
+    admap <- admap3_pass %>%
+      select(-attr_group) %>%
+      ai_get_data_attr_map_details(d_dat, d_att)
+  } else {
+    admap <- admap3
+  }
+
+  # once admap is done
+  d_dat$group_id_extended_boundary <- NULL
+  d_dat$group_id_whole_boundary <- extend_data_block(d_dat$group_id_boundary, admap$map, d_att)
+
+
+  # str-detection done
   this_cells <- get_cells_from_admap(admap, d_dat, d_att)
 
   # natural gid for easier understanding

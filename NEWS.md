@@ -1,16 +1,25 @@
 
 # *News*
 
+# tidycells 0.2.1
+
+## New features
+
+* Enhancement in the heuristic-based algorithm
+
+## Other changes
+
+* Now if `read_cells` fails in the intermediate stage, it will give the output of last successful stage 
+
 # tidycells 0.2.0 _(2019-08-20)_
 
 ## First CRAN Release
 
-* Next release will adopt to [tidyr 1.0.0](https://github.com/tidyverse/tidyr/issues/710)
-* Next release will fix CRAN build issue in Fedora [#1](https://github.com/r-rudra/tidycells/issues/1) ([![See DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md#regarding-cran-results))
+* Initial CRAN Release
 
 # tidycells 0.1.9 _(2019-08-12)_
 
-## New Features
+## New Features`
 
 * Added `collate_columns` to collate attribute-columns having similar content.
 
@@ -19,5 +28,5 @@
 ## Initial Public Release
 
 * Initial Release to GitHub
-* Prior to this it was private package
+* Prior to this it was a private package
 

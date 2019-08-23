@@ -1,5 +1,7 @@
 ai_data_gid_join <- function(d_dat, data_attr_map, full_data) {
   repeat({
+    if (length(unique(d_dat$group_id_map$gid)) < 2) break()
+
     data_gid_comb <- d_dat$group_id_map$gid %>%
       unique() %>%
       utils::combn(2) %>%
