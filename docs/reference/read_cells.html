@@ -46,7 +46,21 @@ This is a wrapper function to functions from multiple packages. The support for 
 the installed packages. To see the list of supported files and potentially required packages (if any) just
 run read_cells() in the console. This function supports the file format based on content and not based on just the file
 extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say .xlsx)
-then also the read_cells will detect it as pdf and read its content." />
+then also the read_cells will detect it as pdf and read its content.
+Note :
+read_cells is supposed to work for any kind of data. However, if it fails in intermediate stage it will raise
+a warning and give results till successfully processed stage.
+The heuristic-algorithm are not well-optimized (yet) so may be slow on large files.
+If the target table has numerical values as data and text as their attribute (identifier of the data elements),
+straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.
+" />
+
+<meta property="og:description" content="A Word of Warning :
+The functions used inside read_cells are heuristic-algorithm based. Thus, outcomes may be unexpected.
+It is recommend to try read_cells on the target file. If the outcome is expected., it is fine.
+If not try again with read_cells(file_name, at_level = &quot;compose&quot;). If after that also the output is not as expected
+then other functions are required to be used. At that time start again with read_cells(file_name, at_level = &quot;make_cells&quot;)
+and proceed to further functions." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -79,7 +93,7 @@ then also the read_cells will detect it as pdf and read its content." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -145,6 +159,20 @@ the installed packages. To see the list of supported files and potentially requi
 run <code>read_cells()</code> in the console. This function supports the file format based on content and not based on just the file
 extension. That means if a file is saved as pdf and then the extension is removed (or extension modified to say <code>.xlsx</code>)
 then also the <code>read_cells</code> will detect it as pdf and read its content.</p>
+<p><strong>Note</strong> :</p><ul>
+<li><p><code>read_cells</code> is supposed to work for any kind of data. However, if it fails in intermediate stage it will raise
+a warning and give results till successfully processed stage.</p></li>
+<li><p>The heuristic-algorithm are not well-optimized (yet) so may be slow on large files.</p></li>
+<li><p>If the target table has numerical values as data and text as their attribute (identifier of the data elements),
+straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.</p></li>
+</ul>
+
+    <p><strong>A Word of Warning</strong> :</p>
+<p><em>The functions used inside <code>read_cells</code> are heuristic-algorithm based. Thus, outcomes may be unexpected.
+It is recommend to try <code>read_cells</code> on the target file. If the outcome is expected., it is fine.
+If not try again with <code>read_cells(file_name, at_level = "compose")</code>. If after that also the output is not as expected
+then other functions are required to be used. At that time start again with <code>read_cells(file_name, at_level = "make_cells")</code>
+and proceed to further functions.</em></p>
     
     </div>
 
@@ -219,8 +247,10 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 <span class='fu'>read_cells</span>()</div><div class='output co'>#&gt; <span style='color: #0000BB;'>Please provide a valid file path to process.
 #&gt; Support present for following type of files: </span><span style='color: #0000BB;font-weight: bold;'>csv, xls, xlsx, doc, docx, pdf, html</span><span>
 #&gt; Note:
-#&gt; = </span><span style='color: #0000BB;'>LibreOffice present so doc files will be supported but it may take little longer time to read/detect.
-#&gt;   You may need to open LibreOffice outside this R-Session manually to speed it up.</span><span>
+#&gt; = </span><span style='color: #0000BB;'>LibreOffice is present so doc files will be supported but it may take little longer time to read/detect.
+#&gt;   You may need to open LibreOffice outside this R-Session manually to speed it up.
+#&gt;   In case the doc is not working, try running docxtractr::read_docx('&lt;target doc file&gt;').
+#&gt;   Check whether the file is being read correctly.</span><span>
 #&gt; = </span><span style='color: #0000BB;'>Support is enabled for content type (means it will work even if the extension is wrong)</span><span>
 #&gt; 
 #&gt; Details: 
@@ -246,10 +276,10 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 <span class='fu'>read_cells</span>(<span class='no'>fcsv</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 5</span><span>
 #&gt;   collated_1 collated_2 collated_3 table_tag value
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> Nakshatra  Weight     Kid Name   Table_1   12   
-#&gt; </span><span style='color: #555555;'>2</span><span> Titas      Weight     Kid Name   Table_1   16   
-#&gt; </span><span style='color: #555555;'>3</span><span> Nakshatra  Age        Kid Name   Table_1   1.5  
-#&gt; </span><span style='color: #555555;'>4</span><span> Titas      Age        Kid Name   Table_1   6    </div><div class='input'><span class='fu'>read_cells</span>(<span class='no'>fcsv</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; </span><span style='color: #0000BB;font-weight: bold;'>A partial read_cell</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> Weight     Nakshatra  Kid Name   Table_1   12   
+#&gt; </span><span style='color: #555555;'>2</span><span> Weight     Titas      Kid Name   Table_1   16   
+#&gt; </span><span style='color: #555555;'>3</span><span> Age        Nakshatra  Kid Name   Table_1   1.5  
+#&gt; </span><span style='color: #555555;'>4</span><span> Age        Titas      Kid Name   Table_1   6    </div><div class='input'><span class='fu'>read_cells</span>(<span class='no'>fcsv</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; </span><span style='color: #0000BB;font-weight: bold;'>A partial read_cell</span><span>
 #&gt; </span><span style='color: #0000BB;'>At stage </span><span>collate</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

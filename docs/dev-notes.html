@@ -70,7 +70,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -192,7 +192,7 @@
 </table>
 <p>(above is as on 2019-08-21 08:51:43 CEST.)</p>
 <p>Check the <a href="https://cran.r-project.org/web/checks/check_results_tidycells.html">result now</a>.</p>
-<p>I would like to assure you that I’ll check myself the feature on failed platforms to see what is happening (raised <a href="https://github.com/r-rudra/tidycells/issues/1">#1</a> for this). Possibly this is something to do with <a href="https://www.libreoffice.org/">LibreOffice</a> installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see <a href="https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document">ref1</a>, <a href="https://github.com/hrbrmstr/docxtractr/issues/23">ref2</a>). Which is required by <a href="https://github.com/hrbrmstr/docxtractr"><code>docxtractr</code></a> package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). Since it is not a major update I’ll keep this for next release in CRAN (which possibly will happen after <a href="https://github.com/tidyverse/tidyr/issues/710">Release tidyr 1.0.0</a>.</p>
+<p>I would like to assure you that I’ll check myself the feature on failed platforms to see what is happening (raised <a href="https://github.com/r-rudra/tidycells/issues/1">#1</a> for this). Possibly this is something to do with <a href="https://www.libreoffice.org/">LibreOffice</a> installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see <a href="https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document">ref1</a>, <a href="https://github.com/hrbrmstr/docxtractr/issues/23">ref2</a>). Which is required by <a href="https://github.com/hrbrmstr/docxtractr"><code>docxtractr</code></a> package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). I’ll fix this in next release of CRAN.</p>
 <p>Meanwhile, if you face a similar issue with doc files kindly let me know (through mail or issues etc.). But I have tested with doc files (in fact all types of files) in local testing environment where it worked perfectly. You can use this package with full confidence.</p>
 </div>
 <div id="dependability" class="section level3">
@@ -299,12 +299,12 @@ Releasing this package to <a href="https://cran.r-project.org/submit.html"><stro
 <input type="checkbox" disabled checked>
 Make <a href="https://github.com/r-rudra/tidycells/blob/master/tests/testthat/test-etc.R">doc test</a> skip on CRAN.</li>
 <li>
-<input type="checkbox" disabled>
-A <code>compatibility function</code> for the “Heuristic Maturation” process (after CRAN)</li>
-<li>
-<input type="checkbox" disabled>
+<input type="checkbox" disabled checked>
 Make possibility for <code>purrr</code> like formula, e.g. ~ .x for <code><a href="reference/value_attribute_classify.html">tidycells::value_attribute_classify</a></code>
 </li>
+<li>
+<input type="checkbox" disabled>
+A <code>compatibility function</code> for the “Heuristic Maturation” process (after CRAN)</li>
 <li>
 <input type="checkbox" disabled>
 Write blog + add it to <a href="https://www.r-bloggers.com/add-your-blog/">R blogger</a> and other sites</li>
@@ -341,15 +341,6 @@ Making cell analysis little faster</li>
 <div id="minor-issues" class="section level4">
 <h4 class="hasAnchor">
 <a href="#minor-issues" class="anchor"></a>Minor Issues</h4>
-<ul>
-<li>Oracle Solaris 10, x86, 32 bit
-<ul>
-<li>R-patched</li>
-</ul>
-</li>
-</ul>
-<p><strong>Result</strong> : WARNING</p>
-<p><strong>Reason</strong> : Pandoc issues in re-building vignettes</p>
 <ul>
 <li>Fedora Linux,
 <ul>
@@ -413,111 +404,106 @@ Making cell analysis little faster</li>
 <td>SUCCESS</td>
 </tr>
 <tr class="even">
+<td>Oracle Solaris 10, x86, 32 bit</td>
+<td>(R-patched) R version 3.6.0 (2019-04-26)</td>
+<td>SUCCESS</td>
+</tr>
+<tr class="odd">
 <td>Windows Server 2008 R2 SP1</td>
 <td>(R-devel) R Under development (unstable) (2019-07-04 r76780)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Windows Server 2008 R2 SP2</td>
 <td>(R-oldrel) R version 3.5.3 (2019-03-11)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Windows Server 2008 R2 SP3</td>
 <td>(R-patched) R version 3.6.0 Patched (2019-06-21 r76731)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Windows Server 2008 R2 SP4</td>
 <td>(R-release) R version 3.6.1 (2019-07-05)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Windows Server 2012</td>
 <td>(R-devel, Rtools4.0, 32/64 bit) R version 3.6.0 Under development (Testing Rtools) (2019-02-27 r76167)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Fedora Linux</td>
-<td>R-devel, GCC</td>
+<td>(R-devel, GCC) R Under development (unstable) (2019-08-18 r77026)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>CentOS 6 with Redhat Developer Toolset</td>
 <td>(R from EPEL) R version 3.5.2 (2018-12-20)</td>
 <td>SUCCESS</td>
 </tr>
-<tr class="odd">
-<td><strong>WARNING</strong></td>
-<td><strong>Reason : <em>induced system dependency</em></strong></td>
-<td></td>
-</tr>
 <tr class="even">
-<td>Oracle Solaris 10, x86, 32 bit</td>
-<td>R-patched</td>
-<td>WARNING</td>
-</tr>
-<tr class="odd">
 <td><strong>NOTE</strong></td>
 <td><strong>Reason : <em>optional package dependency</em></strong></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Fedora Linux</td>
 <td>R-devel, clang, gfortran</td>
 <td>NOTE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>CentOS 6</td>
 <td>stock R from EPEL</td>
 <td>NOTE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong>PREPERROR</strong></td>
 <td><strong>Reason : <em>induced system dependency</em></strong></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Debian Linux</td>
 <td>R-devel, clang, ISO-8859-15 locale</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Debian Linux</td>
 <td>R-devel, GCC</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Debian Linux</td>
 <td>R-devel, GCC, no long double</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Debian Linux</td>
 <td>R-patched, GCC</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Debian Linux</td>
 <td>R-release, GCC</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Debian Linux</td>
 <td>R-devel, GCC ASAN/UBSAN</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Ubuntu Linux 16.04 LTS</td>
 <td>R-devel, GCC</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Ubuntu Linux 16.04 LTS</td>
 <td>R-release, GCC</td>
 <td>PREPERROR</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Ubuntu Linux 16.04 LTS</td>
 <td>R-devel with rchk</td>
 <td>PREPERROR</td>

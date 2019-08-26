@@ -120,6 +120,7 @@ To start with `tidycells`, I invite you to see `vignette("tidycells-intro")` or 
 ## Quick Overview
 
 Let's take a quick look at an example data as given in 
+
 ```{r, eval=FALSE}
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE)
 ```
@@ -133,6 +134,7 @@ knitr::include_graphics("vignettes/ext/marks.png")
 Let's try `tidycells` functions in this data
 
 Read at once
+
 ```{r, eval=FALSE}
 # you should have tidyxl installed
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
@@ -161,13 +163,17 @@ d <- system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE
   read_cells(at_level = "make_cells") %>% 
   .[[1]]
 ```
+
 Or
+
 ```{r}
 # or you may do
 d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) %>% 
   readRDS()
 ```
+
 Then 
+
 ```{r}
 d <- numeric_values_classifier(d)
 da <- analyze_cells(d)
@@ -182,7 +188,9 @@ dc <- compose_cells(da, print_attribute_overview = TRUE)
 knitr::include_graphics("vignettes/ext/compose_cells_cli1.png")
 dc <- compose_cells(da)
 ```
+
 If you want a well-aligned columns then you may like to do
+
 ```{r}
 # bit tricky and tedious unless you do print_attribute_overview = TRUE in above line
 dcfine <- dc %>% 
@@ -206,6 +214,7 @@ dcfine <- dc %>%
 ```
 
 `head(dcfine)` looks like
+
 ```{r, echo=FALSE}
 knitr::kable(head(dcfine), align = c(rep("l", 3), "c"))
 ```
@@ -277,6 +286,8 @@ The `readabs` package helps you easily download, import, and tidy time series da
 Gives ability for choosing any rectangular data file using interactive GUI dialog box, and seamlessly manipulating tidy data between an 'Excel' window and R session.
 * The [tidyABS](https://github.com/ianmoran11/tidyABS) package: 
 The `tidyABS` package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user. This package is in early development.
+* The [hypoparsr](https://github.com/tdoehmen/hypoparsr) package:
+This package takes a different approach to CSV parsing by creating different parsing hypotheses for a given file and ranking them based on data quality features.
 
 
 ## Acknowledgement

@@ -89,6 +89,11 @@ test_that("read_cells: (for csv) chains works", {
   lvlsdchk <- lvlsd[1:6] %>% purrr::map(read_cells)
   lvldchk <- lvld %>% purrr::map(read_cells)
 
+  expect_identical(
+    read_cells(lvlsd[[5]], from_level = 4),
+    read_cells(lvlsd[[5]])
+  )
+
   expect_error(read_cells(lvlsd[[7]]), "No 'read_cells_stage' attribute found!")
   expect_true(lvlsdchk %>% purrr::map_lgl(~ identical(.x, lvlsdchk[[1]])) %>% all())
   expect_true(lvldchk %>% purrr::map_lgl(~ identical(.x, lvldchk[[1]])) %>% all())

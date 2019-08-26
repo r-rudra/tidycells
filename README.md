@@ -182,8 +182,9 @@ After this you need to run `compose_cells` (with argument
 dc <- compose_cells(da, print_attribute_overview = TRUE)
 ```
 
-<img src="vignettes/ext/compose_cells_cli1.png" width="451px" /> If you
-want a well-aligned columns then you may like to
+<img src="vignettes/ext/compose_cells_cli1.png" width="451px" />
+
+If you want a well-aligned columns then you may like to
 do
 
 ``` r
@@ -339,6 +340,10 @@ level only.
     uses rules-of-thumb to determine the structure of excel tables,
     however it sometimes requires pointers from the user. This package
     is in early development.
+  - The [hypoparsr](https://github.com/tdoehmen/hypoparsr) package: This
+    package takes a different approach to CSV parsing by creating
+    different parsing hypotheses for a given file and ranking them based
+    on data quality features.
 
 ## Acknowledgement
 

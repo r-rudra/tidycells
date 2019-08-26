@@ -19,7 +19,7 @@ After the package is release in CRAN (_version 0.2.0 on 2019-08-20_), I just rea
 
 Check the [result now](https://cran.r-project.org/web/checks/check_results_tidycells.html).
 
-I would like to assure you that I'll check myself the feature on failed platforms to see what is happening (raised [#1](https://github.com/r-rudra/tidycells/issues/1) for this). Possibly this is something to do with [LibreOffice](https://www.libreoffice.org/) installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see [ref1](https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document), [ref2](https://github.com/hrbrmstr/docxtractr/issues/23)). Which is required by [`docxtractr`](https://github.com/hrbrmstr/docxtractr) package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). Since it is not a major update I'll keep this for next release in CRAN (which possibly will happen after [Release tidyr 1.0.0](https://github.com/tidyverse/tidyr/issues/710).  
+I would like to assure you that I'll check myself the feature on failed platforms to see what is happening (raised [#1](https://github.com/r-rudra/tidycells/issues/1) for this). Possibly this is something to do with [LibreOffice](https://www.libreoffice.org/) installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see [ref1](https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document), [ref2](https://github.com/hrbrmstr/docxtractr/issues/23)). Which is required by [`docxtractr`](https://github.com/hrbrmstr/docxtractr) package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). I'll fix this in next release of CRAN.  
 
 Meanwhile, if you face a similar issue with doc files kindly let me know (through mail or issues etc.). But I have tested with doc files (in fact all types of files) in local testing environment where it worked perfectly. You can use this package with full confidence. 
 
@@ -84,8 +84,8 @@ Check trackable version [here](https://github.com/r-rudra/tidycells/issues/2).
   - [x] Making a pkgdown site
   - [x] Releasing this package to [**CRAN**](https://cran.r-project.org/submit.html)
   - [x] Make [doc test](https://github.com/r-rudra/tidycells/blob/master/tests/testthat/test-etc.R) skip on CRAN.
+  - [x] Make possibility for `purrr` like formula, e.g. ~ .x for `tidycells::value_attribute_classify`
   - [ ] A `compatibility function` for the "Heuristic Maturation" process (after CRAN)
-  - [ ] Make possibility for `purrr` like formula, e.g. ~ .x for `tidycells::value_attribute_classify`
   - [ ] Write blog + add it to [R blogger](https://www.r-bloggers.com/add-your-blog/) and other sites
   - [ ] Send it to the [r-packages mailing list](https://stat.ethz.ch/mailman/listinfo/r-packages)
   - [ ] Explore options to add this in [CRAN Task Views](https://cran.r-project.org/web/packages/ctv/vignettes/ctv-howto.pdf)
@@ -101,13 +101,6 @@ Check trackable version [here](https://github.com/r-rudra/tidycells/issues/2).
 See other successful builds in [CRAN Comments](https://github.com/r-rudra/tidycells/blob/master/cran-comments.md)
 
 #### Minor Issues
-
-* Oracle Solaris 10, x86, 32 bit
-  * R-patched
-
-**Result** : WARNING
-
-**Reason** : Pandoc issues in re-building vignettes
 
 * Fedora Linux, 
   * R-devel, clang, gfortran
@@ -150,15 +143,14 @@ See other successful builds in [CRAN Comments](https://github.com/r-rudra/tidyce
 | OS                                     | R Version                                                                                                | Result    |
 |----------------------------------------|----------------------------------------------------------------------------------------------------------|-----------|
 | macOS 10.11 El Capitan                 | (R-release) R version 3.6.0 (2019-04-26)                                                                 | SUCCESS   |
+| Oracle Solaris 10, x86, 32 bit         | (R-patched) R version 3.6.0 (2019-04-26)                                                                 | SUCCESS   |
 | Windows Server 2008 R2 SP1             | (R-devel) R Under development (unstable) (2019-07-04 r76780)                                             | SUCCESS   |
 | Windows Server 2008 R2 SP2             | (R-oldrel) R version 3.5.3 (2019-03-11)                                                                  | SUCCESS   |
 | Windows Server 2008 R2 SP3             | (R-patched) R version 3.6.0 Patched (2019-06-21 r76731)                                                  | SUCCESS   |
 | Windows Server 2008 R2 SP4             | (R-release) R version 3.6.1 (2019-07-05)                                                                 | SUCCESS   |
 | Windows Server 2012                    | (R-devel, Rtools4.0, 32/64 bit) R version 3.6.0 Under development   (Testing Rtools) (2019-02-27 r76167) | SUCCESS   |
-| Fedora Linux                           | R-devel, GCC                                                                                             | SUCCESS   |
+| Fedora Linux                           | (R-devel, GCC) R Under development (unstable) (2019-08-18 r77026)                                        | SUCCESS   |
 | CentOS 6 with Redhat Developer Toolset | (R from EPEL) R version 3.5.2 (2018-12-20)                                                               | SUCCESS   |
-| **WARNING**                            | **Reason : _induced system dependency_**                                                                 |           |
-| Oracle Solaris 10, x86, 32 bit         | R-patched                                                                                                | WARNING   |
 | **NOTE**                               | **Reason : _optional package dependency_**                                                               |           |
 | Fedora Linux                           | R-devel, clang, gfortran                                                                                 | NOTE      |
 | CentOS 6                               | stock R from EPEL                                                                                        | NOTE      |

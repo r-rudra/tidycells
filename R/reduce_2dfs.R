@@ -13,11 +13,11 @@ get_connected_cols <- function(col_map_with_dist) {
 }
 
 reduce_2dfs <- function(dc1, dc2, combine_th = 0.6, rest_cols = Inf, retain_other_cols = FALSE) {
-  colnames(dc1) <- stringr::str_replace_all(colnames(dc1), "collated_", "d1_old_c_")
   colnames(dc1) <- stringr::str_replace_all(colnames(dc1), "uncollated_", "d1_old_uc_")
+  colnames(dc1) <- stringr::str_replace_all(colnames(dc1), "collated_", "d1_old_c_")
 
-  colnames(dc2) <- stringr::str_replace_all(colnames(dc2), "collated_", "d2_old_c_")
   colnames(dc2) <- stringr::str_replace_all(colnames(dc2), "uncollated_", "d2_old_uc_")
+  colnames(dc2) <- stringr::str_replace_all(colnames(dc2), "collated_", "d2_old_c_")
 
 
   cr1 <- get_all_col_representative(dc1)

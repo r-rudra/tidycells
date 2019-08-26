@@ -96,13 +96,16 @@ collate_columns <- function(composed_data,
   if (length(dcl) == 1) {
     out_d <- dcl[[1]]
 
+    colnames(out_d) <- stringr::str_replace_all(colnames(out_d), "uncollated_", "old_uc_")
+    colnames(out_d) <- stringr::str_replace_all(colnames(out_d), "collated_", "old_c_")
+
     restcols <- setdiff(colnames(out_d), defcols_this)
     if (length(restcols) > 0) {
       cn_map_0 <- tibble(cn = restcols) %>%
         mutate(is_major = stringr::str_detect(tolower(cn), "major")) %>%
         arrange(cn) %>%
-        mutate(sn = seq_along(cn), sn_m = sn + is_major * (10^10)) %>%
-        arrange(desc(sn_m)) %>%
+        mutate(sn = seq_along(cn), sn_m = sn - is_major * (10^10)) %>%
+        arrange(sn_m) %>%
         mutate(fsn = seq_along(cn), new_cn = paste0("collated_", fsn)) %>%
         select(cn, new_cn)
 

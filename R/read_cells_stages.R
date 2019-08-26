@@ -142,7 +142,9 @@ do_collate <- function(at_level, this_level, out_l, simplify, simple) {
         dcl <- list(out_l$final_composition)
       }
 
-      out_l$final <- dcl %>% map_df(~ collate_columns(.x) %>% as_tibble())
+      out_l$final <- dcl %>%
+        map(~ collate_columns(.x, retain_cell_address = TRUE)) %>%
+        collate_columns()
 
       out_l$stage <- read_cell_task_orders[6]
       if (simplify) {
