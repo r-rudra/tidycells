@@ -3,26 +3,6 @@
 
 Also Check [CRAN Comments](https://github.com/r-rudra/tidycells/blob/master/cran-comments.md)
 
-### Regarding **_CRAN Results_**
-
-After the package is release in CRAN (_version 0.2.0 on 2019-08-20_), I just realised that the package resulted in **ERROR** for few builds under Fedora. 
-
-|          Flavor                   |             Version    |             Tinstall    |             Tcheck    |             Ttotal    |             Status                                                                                        |             Flags             |
-|-----------------------------------|------------------------|-------------------------|-----------------------|-----------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------|
-| r-devel-linux-x86_64-debian-clang | 0.2.0                  | 9.68                    | 234.54                | 244.22                | OK                                                                                                        |                               |
-| r-devel-linux-x86_64-debian-gcc   | 0.2.0                  | 7.81                    | 185.91                | 193.72                | OK                                                                                                        |                               |
-| r-devel-linux-x86_64-fedora-clang | 0.2.0                  |                         |                       | 283.01                | [ERROR](https://www.r-project.org/nosvn/R.check/r-devel-linux-x86_64-fedora-clang/tidycells-00check.html) |                               |
-| r-devel-linux-x86_64-fedora-gcc   | 0.2.0                  |                         |                       | 279.44                | [ERROR](https://www.r-project.org/nosvn/R.check/r-devel-linux-x86_64-fedora-gcc/tidycells-00check.html)   |                               |
-| r-patched-solaris-x86             | 0.2.0                  |                         |                       | 289.1                 | OK                                                                                                        |                               |
-
-(above is as on 2019-08-21 08:51:43 CEST.)
-
-Check the [result now](https://cran.r-project.org/web/checks/check_results_tidycells.html).
-
-I would like to assure you that I'll check myself the feature on failed platforms to see what is happening (raised [#1](https://github.com/r-rudra/tidycells/issues/1) for this). Possibly this is something to do with [LibreOffice](https://www.libreoffice.org/) installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see [ref1](https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document), [ref2](https://github.com/hrbrmstr/docxtractr/issues/23)). Which is required by [`docxtractr`](https://github.com/hrbrmstr/docxtractr) package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). I'll fix this in next release of CRAN.  
-
-Meanwhile, if you face a similar issue with doc files kindly let me know (through mail or issues etc.). But I have tested with doc files (in fact all types of files) in local testing environment where it worked perfectly. You can use this package with full confidence. 
-
 ### Dependability
 
 If a user builds a continuous workflow of data wrangling starting with some functions from `tidycells` package or includes `tidycells` in their package, then proper precautions should be taken as `tidycells` functions are heuristic-based. One can face problem like column `collated_2` has been renamed to `collated_3` etc. 
@@ -69,8 +49,10 @@ Given these difficulties, the shiny tests are tested in the following environmen
 | Local            | Windows 10 x86 Build 9200               | R version 3.6.1 (2019-07-05)                | yes               |
 | Local            | Windows 10 x64 Build 17134              | R version 3.6.0 (2019-04-26)                | yes               |
 | AppVeyor         | Windows Server 2012 R2 x64 (build 9600) | R version 3.6.1 Patched (2019-07-24 r76894) | no                |
+| AppVeyor         | Windows Server 2012 R2 x64 (build 9600) | R version 3.6.1 (2019-07-05)                | no                |
+| AppVeyor         | Windows Server 2012 R2 x64 (build 9600) | R version 3.5.3 (2019-03-11)                | no                |
 
-**Note**: the screen-shots are also tested (apart from JSON test) (can be tested if `plotly` is not present as the tests are recorded without `plotly`).
+**Note**: the screen-shots are also tested (apart from JSON test).
 
 
 ### Current State of Development and Way Forward
@@ -138,7 +120,7 @@ See other successful builds in [CRAN Comments](https://github.com/r-rudra/tidyce
 **Note** : Neither of these errors (or notes) are attributable to the package as they failed because of induced system dependency or optional package dependency.
 
 
-**All R-hub build summary**
+### All R-hub build summary
 
 | OS                                     | R Version                                                                                                | Result    |
 |----------------------------------------|----------------------------------------------------------------------------------------------------------|-----------|

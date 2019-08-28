@@ -1,7 +1,7 @@
 
 # *News*
 
-# tidycells 0.2.1
+# tidycells 0.2.1 _(2019-08-27)_
 
 ## New features
 

@@ -127,74 +127,6 @@
 <div id="developers-note" class="section level1">
 
 <p>Also Check <a href="https://github.com/r-rudra/tidycells/blob/master/cran-comments.md">CRAN Comments</a></p>
-<div id="regarding-cran-results" class="section level3">
-<h3 class="hasAnchor">
-<a href="#regarding-cran-results" class="anchor"></a>Regarding <strong><em>CRAN Results</em></strong>
-</h3>
-<p>After the package is release in CRAN (<em>version 0.2.0 on 2019-08-20</em>), I just realised that the package resulted in <strong>ERROR</strong> for few builds under Fedora.</p>
-<table>
-<thead><tr class="header">
-<th>Flavor</th>
-<th>Version</th>
-<th>Tinstall</th>
-<th>Tcheck</th>
-<th>Ttotal</th>
-<th>Status</th>
-<th>Flags</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>r-devel-linux-x86_64-debian-clang</td>
-<td>0.2.0</td>
-<td>9.68</td>
-<td>234.54</td>
-<td>244.22</td>
-<td>OK</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>r-devel-linux-x86_64-debian-gcc</td>
-<td>0.2.0</td>
-<td>7.81</td>
-<td>185.91</td>
-<td>193.72</td>
-<td>OK</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>r-devel-linux-x86_64-fedora-clang</td>
-<td>0.2.0</td>
-<td></td>
-<td></td>
-<td>283.01</td>
-<td><a href="https://www.r-project.org/nosvn/R.check/r-devel-linux-x86_64-fedora-clang/tidycells-00check.html">ERROR</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>r-devel-linux-x86_64-fedora-gcc</td>
-<td>0.2.0</td>
-<td></td>
-<td></td>
-<td>279.44</td>
-<td><a href="https://www.r-project.org/nosvn/R.check/r-devel-linux-x86_64-fedora-gcc/tidycells-00check.html">ERROR</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>r-patched-solaris-x86</td>
-<td>0.2.0</td>
-<td></td>
-<td></td>
-<td>289.1</td>
-<td>OK</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>(above is as on 2019-08-21 08:51:43 CEST.)</p>
-<p>Check the <a href="https://cran.r-project.org/web/checks/check_results_tidycells.html">result now</a>.</p>
-<p>I would like to assure you that I’ll check myself the feature on failed platforms to see what is happening (raised <a href="https://github.com/r-rudra/tidycells/issues/1">#1</a> for this). Possibly this is something to do with <a href="https://www.libreoffice.org/">LibreOffice</a> installation (maybe an old version or patched version which does not support headless conversion of doc files to docx (see <a href="https://askubuntu.com/questions/1039715/convert-ods-document-to-docx-document">ref1</a>, <a href="https://github.com/hrbrmstr/docxtractr/issues/23">ref2</a>). Which is required by <a href="https://github.com/hrbrmstr/docxtractr"><code>docxtractr</code></a> package) in the CRAN corresponding system. Accordingly, I have adjusted the test to skip on CRAN (it will still be tested on my local machines and Travis). I’ll fix this in next release of CRAN.</p>
-<p>Meanwhile, if you face a similar issue with doc files kindly let me know (through mail or issues etc.). But I have tested with doc files (in fact all types of files) in local testing environment where it worked perfectly. You can use this package with full confidence.</p>
-</div>
 <div id="dependability" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dependability" class="anchor"></a>Dependability</h3>
@@ -265,9 +197,21 @@
 <td>R version 3.6.1 Patched (2019-07-24 r76894)</td>
 <td>no</td>
 </tr>
+<tr class="even">
+<td>AppVeyor</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R version 3.6.1 (2019-07-05)</td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>AppVeyor</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R version 3.5.3 (2019-03-11)</td>
+<td>no</td>
+</tr>
 </tbody>
 </table>
-<p><strong>Note</strong>: the screen-shots are also tested (apart from JSON test) (can be tested if <code>plotly</code> is not present as the tests are recorded without <code>plotly</code>).</p>
+<p><strong>Note</strong>: the screen-shots are also tested (apart from JSON test).</p>
 </div>
 </div>
 <div id="current-state-of-development-and-way-forward" class="section level3">
@@ -385,7 +329,11 @@ Making cell analysis little faster</li>
 <p><strong>Result</strong> : PREPERROR</p>
 <p><strong>Reason</strong> : xml2 and httr failed to installed due to system dependency (libxml2, libssl/openssl)</p>
 <p><strong>Note</strong> : Neither of these errors (or notes) are attributable to the package as they failed because of induced system dependency or optional package dependency.</p>
-<p><strong>All R-hub build summary</strong></p>
+</div>
+</div>
+<div id="all-r-hub-build-summary" class="section level3">
+<h3 class="hasAnchor">
+<a href="#all-r-hub-build-summary" class="anchor"></a>All R-hub build summary</h3>
 <table>
 <colgroup>
 <col width="25%">
@@ -510,7 +458,6 @@ Making cell analysis little faster</li>
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 <div id="dependency-explained" class="section level3">
 <h3 class="hasAnchor">
