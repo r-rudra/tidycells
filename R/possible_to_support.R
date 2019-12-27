@@ -1,12 +1,13 @@
 
 supported_types <- tibble(
   file_type = c("csv{utils}", "csv", "xls{readxl}", "xls", "xlsx", "doc", "docx", "pdf", "html"),
+  file_type_raw = c("csv", "csv", "xls", "xls", "xlsx", "doc", "docx", "pdf", "html"),
   implemented = TRUE,
   package = c("utils", "readr", "readxl", "xlsx", "tidyxl", "docxtractr", "docxtractr", "tabulizer", "XML")
 )
 
 
-possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
+possible_to_support <- function(print_info = TRUE, return_print_info = FALSE, perform_real_file_read_check = FALSE) {
   pkgs <- unique(supported_types$package)
   ins_pkgs <- pkgs %>% map_lgl(is_available)
   ins_pkgs <- pkgs[ins_pkgs]
@@ -17,6 +18,11 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
       pkg_installed = package %in% ins_pkgs,
       support_possible = pkg_installed
     )
+
+  if (perform_real_file_read_check) {
+    readable_types <- possible_to_support_real_file_type_checks()
+    st <- st %>% mutate(is_read_checked = (file_type_raw %in% readable_types) | (file_type %in% readable_types))
+  }
 
   # extra check for rJava dependency of xlsx
   if ("xls" %in% st$file_type) {
@@ -161,4 +167,43 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE) {
   }
 
   return(invisible(st))
+}
+
+
+# check by reading sample files
+possible_to_support_real_file_type_checks_raw <- function() {
+  fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
+  dm <- tibble(fn = list.files(fold, full.names = TRUE))
+
+  dm <- dm %>%
+    mutate(original_file_type = dm$fn %>%
+      map_chr(~ basename(.x) %>%
+        stringr::str_split("\\.") %>%
+        map_chr(1)))
+
+  dm <- dm %>%
+    dplyr::group_by(original_file_type) %>%
+    dplyr::sample_n(1) %>%
+    dplyr::ungroup()
+
+  dtypes <- dm$fn %>% purrr::map(~ try(read_cells(.x, at_level = "make_cells", simplify = FALSE), silent = TRUE))
+  chk <- dtypes %>% map_lgl(~ {
+    e <- try(nrow(.x$cell_list[[1]]) > 0, silent = TRUE)
+    ifelse(is.logical(e), e, FALSE)
+  })
+  passed_types <- dtypes %>% map_chr(~ {
+    e <- try(.x$info$type, silent = TRUE)
+    ifelse(inherits(e, "try-error"), "", e)
+  })
+  passed_types <- passed_types[chk]
+
+  passed_types <- intersect(passed_types, dm$original_file_type)
+
+  passed_types
+}
+
+possible_to_support_real_file_type_checks <- function() {
+  e <- try(possible_to_support_real_file_type_checks_raw(), silent = TRUE)
+  if (inherits(e, "try-error")) e <- character(0)
+  e
 }
