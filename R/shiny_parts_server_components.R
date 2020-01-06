@@ -792,87 +792,88 @@ sps_part_traceback_raw <- function(input, output, session, dcomp, ca, prior_ca_p
   this_dc <- reactiveVal()
   this_dc(NULL)
 
-  output$dt_trace <- DT::renderDT({
-    dc0 <- dcomp()
+  output$dt_trace <- DT::renderDT(
+    {
+      dc0 <- dcomp()
 
-    showcols <- colnames(dc0) %>%
-      stringr::str_detect("[major|minor|collated]_[0-9]+$") %>%
-      colnames(dc0)[.]
+      showcols <- colnames(dc0) %>%
+        stringr::str_detect("[major|minor|collated]_[0-9]+$") %>%
+        colnames(dc0)[.]
 
-    std_opts <- list(
-      pageLength = 5,
-      keys = TRUE,
-      sDom = '<"top">lrt<"bottom">ipB',
-      deferRender = TRUE,
-      scrollX = TRUE,
-      scrollY = 200,
-      scroller = TRUE,
-      ordering = FALSE,
-      # basic : buttons = I("colvis")
-      buttons = list(
-        list(
-          extend = "colvis",
-          text = as.character(tags$a("Columns", style = "font-size:70%"))
+      std_opts <- list(
+        pageLength = 5,
+        keys = TRUE,
+        sDom = '<"top">lrt<"bottom">ipB',
+        deferRender = TRUE,
+        scrollX = TRUE,
+        scrollY = 200,
+        scroller = TRUE,
+        ordering = FALSE,
+        # basic : buttons = I("colvis")
+        buttons = list(
+          list(
+            extend = "colvis",
+            text = as.character(tags$a("Columns", style = "font-size:70%"))
+          )
         )
       )
-    )
 
-    if (is.null(rev_sel_row())) {
-      opts <- std_opts
-      dc0_disp <- dc0[c("RN", "value", "data_block", showcols)]
-    } else {
+      if (is.null(rev_sel_row())) {
+        opts <- std_opts
+        dc0_disp <- dc0[c("RN", "value", "data_block", showcols)]
+      } else {
 
-      # kept for later
-      # below option is not working properly for all rows
-      # hence using custom solution
-      #
-      # # this is the ideal way but not always working
-      # # specifically is the selected row is beyond some number
-      # # this number is not fixed it's sometime 30 in viewer
-      # # ref :
-      # # https://stackoverflow.com/questions/47911673/r-shiny-scrolling-to-a-given-row-of-datatable-with-javascript-callback
-      # sel_opt <- list(
-      #   initComplete  = JS(paste("function() {",
-      #                            # this is  not working (kept for reference):# paste0("this.api().table().row(",rev_sel_row()-1,").node().scrollIntoView();"),
-      #                            # below and this are same : paste0("this.api().table().row(",rev_sel_row()-1,").scrollTo();"),
-      #                            paste0("this.api().row( ",rev_sel_row()-1," ).scrollTo();"),
-      #                            # this is  not working (kept for reference):# paste0("this.api().table().scroller.toPosition(",rev_sel_row()-1,")"),
-      #                            "}",
-      #                            sep = "\n"))
-      # )
-      #
-      # opts <- c(std_opts, sel_opt)
+        # kept for later
+        # below option is not working properly for all rows
+        # hence using custom solution
+        #
+        # # this is the ideal way but not always working
+        # # specifically is the selected row is beyond some number
+        # # this number is not fixed it's sometime 30 in viewer
+        # # ref :
+        # # https://stackoverflow.com/questions/47911673/r-shiny-scrolling-to-a-given-row-of-datatable-with-javascript-callback
+        # sel_opt <- list(
+        #   initComplete  = JS(paste("function() {",
+        #                            # this is  not working (kept for reference):# paste0("this.api().table().row(",rev_sel_row()-1,").node().scrollIntoView();"),
+        #                            # below and this are same : paste0("this.api().table().row(",rev_sel_row()-1,").scrollTo();"),
+        #                            paste0("this.api().row( ",rev_sel_row()-1," ).scrollTo();"),
+        #                            # this is  not working (kept for reference):# paste0("this.api().table().scroller.toPosition(",rev_sel_row()-1,")"),
+        #                            "}",
+        #                            sep = "\n"))
+        # )
+        #
+        # opts <- c(std_opts, sel_opt)
 
-      # instead of above I simply rearranged
-      opts <- std_opts
+        # instead of above I simply rearranged
+        opts <- std_opts
 
-      rw <- rev_sel_row()
+        rw <- rev_sel_row()
 
-      dc0 <- dc0 %>%
-        mutate(dummy_order = (RN - rw)^2)
+        dc0 <- dc0 %>%
+          mutate(dummy_order = (RN - rw)^2)
 
-      dc0_disp <- dc0 %>% arrange(dummy_order, RN)
+        dc0_disp <- dc0 %>% arrange(dummy_order, RN)
 
-      dc0_disp <- dc0_disp[c("RN", "value", "data_block", showcols)]
-
-
-      proxy %>% DT::selectRows(1)
-    }
-
-    this_dc(dc0_disp)
+        dc0_disp <- dc0_disp[c("RN", "value", "data_block", showcols)]
 
 
-    DT::datatable(dc0_disp %>% select(-data_block),
-      selection = "single",
-      escape = FALSE,
-      rownames = FALSE,
-      style = "bootstrap",
-      class = "cell-border stripe",
-      extensions = c("KeyTable", "Scroller", "Buttons"),
-      options = opts
-    )
-  },
-  server = TRUE
+        proxy %>% DT::selectRows(1)
+      }
+
+      this_dc(dc0_disp)
+
+
+      DT::datatable(dc0_disp %>% select(-data_block),
+        selection = "single",
+        escape = FALSE,
+        rownames = FALSE,
+        style = "bootstrap",
+        class = "cell-border stripe",
+        extensions = c("KeyTable", "Scroller", "Buttons"),
+        options = opts
+      )
+    },
+    server = TRUE
   )
 
   selected_row <- reactiveVal()

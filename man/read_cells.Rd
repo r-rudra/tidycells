@@ -4,9 +4,17 @@
 \alias{read_cells}
 \title{Read Cells from file}
 \usage{
-read_cells(x, at_level = c("collate", "detect_and_read", "make_cells",
-  "va_classify", "analyze", "compose"), omit = NULL, simplify = TRUE,
-  compose_main_cols_only = TRUE, from_level, silent = TRUE, ...)
+read_cells(
+  x,
+  at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze",
+    "compose"),
+  omit = NULL,
+  simplify = TRUE,
+  compose_main_cols_only = TRUE,
+  from_level,
+  silent = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{either a valid file path or a \code{\link[=read_cell_part-class]{read_cell_part}}}

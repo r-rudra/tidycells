@@ -20,7 +20,7 @@ Objects of class \code{read_cell_part} \strong{may} have following named nodes (
 \item \code{info} : a list containing further information on type and content of the file (provided the file got read)
 \item \code{is_empty} : whether the file contains no 'known tabular information'
 \item \code{cell_list} : list of \code{\link[=cell_df-class]{cell_df}}
-(possibly after \code{Value Attribute Classification} done if stage is higher than \code{make_cells})
+(possibly after \verb{Value Attribute Classification} done if stage is higher than \code{make_cells})
 \item \code{cell_analysis_list} : list of \code{\link[=cell_analysis-class]{cell_analysis}}
 \item \code{final_composition} : final composition (a \code{tibble}) with only main columns
 (or all column if \code{compose_main_cols_only = FALSE})

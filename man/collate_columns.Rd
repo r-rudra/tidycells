@@ -4,8 +4,13 @@
 \alias{collate_columns}
 \title{Collate Columns Based on Content}
 \usage{
-collate_columns(composed_data, combine_threshold = 1, rest_cols = Inf,
-  retain_other_cols = FALSE, retain_cell_address = FALSE)
+collate_columns(
+  composed_data,
+  combine_threshold = 1,
+  rest_cols = Inf,
+  retain_other_cols = FALSE,
+  retain_cell_address = FALSE
+)
 }
 \arguments{
 \item{composed_data}{output of \code{\link[=compose_cells]{compose_cells}} (preferably not processed)}

@@ -35,7 +35,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Indranil Gayen \email{nil.gayen@gmail.com} (0000-0003-0197-1944)
+\strong{Maintainer}: Indranil Gayen \email{nil.gayen@gmail.com} (\href{https://orcid.org/0000-0003-0197-1944}{ORCID})
 
 }
 \keyword{internal}

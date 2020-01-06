@@ -111,6 +111,7 @@ test_that("shiny widgets works", {
   # clean tar
   clean_untars(uta)
 
+  tar_pulled_tests()
 
   # reset option
   options(AutoUnloadShiny = nowats)

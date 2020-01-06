@@ -6,17 +6,38 @@
 \alias{sample_based_classifier.cell_df}
 \title{Sample Based Value/Attribute Classifier}
 \usage{
-sample_based_classifier(x, ..., value_sample, attribute_sample,
-  empty_sample, partial_match = FALSE, case_insensitive = FALSE,
-  verbose = FALSE)
+sample_based_classifier(
+  x,
+  ...,
+  value_sample,
+  attribute_sample,
+  empty_sample,
+  partial_match = FALSE,
+  case_insensitive = FALSE,
+  verbose = FALSE
+)
 
-\method{sample_based_classifier}{default}(x, ..., value_sample = NULL,
-  attribute_sample = NULL, empty_sample = NULL,
-  partial_match = FALSE, case_insensitive = FALSE, verbose = FALSE)
+\method{sample_based_classifier}{default}(
+  x,
+  ...,
+  value_sample = NULL,
+  attribute_sample = NULL,
+  empty_sample = NULL,
+  partial_match = FALSE,
+  case_insensitive = FALSE,
+  verbose = FALSE
+)
 
-\method{sample_based_classifier}{cell_df}(x, ..., value_sample,
-  attribute_sample, empty_sample, partial_match = FALSE,
-  case_insensitive = FALSE, verbose = FALSE)
+\method{sample_based_classifier}{cell_df}(
+  x,
+  ...,
+  value_sample,
+  attribute_sample,
+  empty_sample,
+  partial_match = FALSE,
+  case_insensitive = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{Either a \code{\link[=cell_df-class]{cell_df}} or leave blank for function output

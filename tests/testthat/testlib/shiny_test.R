@@ -1,4 +1,7 @@
 
+# run this line (from project root before check) to pull all tests
+# Sys.setenv(SHINYTEST_PULL = normalizePath("tests/testthat/testshiny"))
+
 # this file is required by shiny module tests
 
 # # Interactive vs non-interactive difference present
@@ -6,13 +9,24 @@
 # # devtools::load_all()
 # # after record test you may do
 # # this function is kept for test development and not for test to run.
-# # after pulling all tests run these lines
-# unlink("tests/testthat/testshiny/testshiny.tar")
-# tar("tests/testthat/testshiny/testshiny.tar", "tests/testthat/testshiny")
-# d <- data.frame(fn = list.files("tests/testthat/testshiny/", full.names = TRUE), stringsAsFactors = FALSE)
-# d$fn0 <- basename(d$fn)
-# # delete rest files
-# unlink(d$fn[d$fn0!="testshiny.tar"], recursive = TRUE)
+# # after pulling all tests run tar_pulled_tests
+
+tar_pulled_tests <- function() {
+  if (nchar(Sys.getenv("SHINYTEST_PULL")) > 0) {
+    if (file.exists(Sys.getenv("SHINYTEST_PULL"))) {
+      # setwd is used in interactive case only
+      # this is not going to impact the package at all.
+      setwd(dirname(dirname(dirname(Sys.getenv("SHINYTEST_PULL")))))
+      unlink("tests/testthat/testshiny/testshiny.tar")
+      tar("tests/testthat/testshiny/testshiny.tar", "tests/testthat/testshiny")
+      d <- data.frame(fn = list.files("tests/testthat/testshiny/", full.names = TRUE), stringsAsFactors = FALSE)
+      d$fn0 <- basename(d$fn)
+      # delete rest files
+      unlink(d$fn[d$fn0 != "testshiny.tar"], recursive = TRUE)
+      stop("The tests are pulled.", call. = FALSE)
+    }
+  }
+}
 
 pull_shiny_test <- function(x, tpath = "tests/testthat/testshiny") {
   testf <- list.files(x$app_dir, pattern = "test", include.dirs = TRUE, full.names = TRUE)
@@ -113,6 +127,7 @@ image_test <- function(enable_now) {
   return(FALSE)
 }
 
+
 test_temp_app <- function(x, test_img, untar_adds) {
   copy_test_to_temp_app(x, untar_adds)
 
@@ -129,16 +144,15 @@ test_temp_app <- function(x, test_img, untar_adds) {
     message("shintest: NOT checking images")
   }
 
-  # # if a test is passed in interactive session and failed in non-interactive one
-  # # then possibly need to enable these lines
-  # shinytest::testApp(x$app_dir, compareImages = img_chk)
-  # shinytest::snapshotUpdate(x$app_dir)
-  # # here absolute path has to be provided
-  # pull_shiny_test(
-  #   x,
-  #   # here absolute path has to be provided
-  #   tpath = "<absolute path>"
-  # )
+  if (nchar(Sys.getenv("SHINYTEST_PULL")) > 0) {
+    if (file.exists(Sys.getenv("SHINYTEST_PULL"))) {
+      shinytest::testApp(x$app_dir, compareImages = img_chk)
+      shinytest::snapshotUpdate(x$app_dir)
+      pull_shiny_test(x, tpath = Sys.getenv("SHINYTEST_PULL"))
+      # exit early
+      return(0)
+    }
+  }
 
   shinytest::expect_pass(shinytest::testApp(x$app_dir, compareImages = img_chk))
 

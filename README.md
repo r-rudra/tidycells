@@ -111,8 +111,7 @@ version comes with prebuilt-vignette*).
 
 ## Quick Overview
 
-Let’s take a quick look at an example data as given
-in
+Let’s take a quick look at an example data as given in
 
 ``` r
 system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE)
@@ -148,8 +147,7 @@ system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>%
 | Score       | Female      | School C    | Name         | U Gupta            | Sheet1     | 38    |
 
 The function `read_cells` is a set of ordered operations connected
-together. The flowchart of
-`read_cells`:
+together. The flowchart of `read_cells`:
 
 <img src="vignettes/ext/read_cells.svg" width="356px" style="display: block; margin: auto;" />
 
@@ -186,8 +184,7 @@ dc <- compose_cells(da, print_attribute_overview = TRUE)
 
 <img src="vignettes/ext/compose_cells_cli1.png" width="451px" />
 
-If you want a well-aligned columns then you may like to
-do
+If you want a well-aligned columns then you may like to do
 
 ``` r
 # bit tricky and tedious unless you do print_attribute_overview = TRUE in above line

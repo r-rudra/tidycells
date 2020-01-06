@@ -8,11 +8,9 @@
 \usage{
 numeric_values_classifier(x, ..., allow_chars, verbose = FALSE)
 
-\method{numeric_values_classifier}{default}(x, ..., allow_chars = NULL,
-  verbose = FALSE)
+\method{numeric_values_classifier}{default}(x, ..., allow_chars = NULL, verbose = FALSE)
 
-\method{numeric_values_classifier}{cell_df}(x, ..., allow_chars,
-  verbose = FALSE)
+\method{numeric_values_classifier}{cell_df}(x, ..., allow_chars, verbose = FALSE)
 }
 \arguments{
 \item{x}{Either a \code{\link[=cell_df-class]{cell_df}} or

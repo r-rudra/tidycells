@@ -15,21 +15,25 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,8 +41,8 @@
 
 
 
-<meta property="og:title" content="Read Cells from file — read_cells" />
 
+<meta property="og:title" content="Read Cells from file — read_cells" />
 <meta property="og:description" content="This function is designed to read cell level information
 (and the finally analyze, compose and collate_columns)
 from many file types like xls, pdf, doc etc.
@@ -53,17 +57,17 @@ a warning and give results till successfully processed stage.
 The heuristic-algorithm are not well-optimized (yet) so may be slow on large files.
 If the target table has numerical values as data and text as their attribute (identifier of the data elements),
 straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.
-" />
 
-<meta property="og:description" content="A Word of Warning :
+
+A Word of Warning :
 The functions used inside read_cells are heuristic-algorithm based. Thus, outcomes may be unexpected.
 It is recommend to try read_cells on the target file. If the outcome is expected., it is fine.
 If not try again with read_cells(file_name, at_level = &quot;compose&quot;). If after that also the output is not as expected
 then other functions are required to be used. At that time start again with read_cells(file_name, at_level = &quot;make_cells&quot;)
 and proceed to further functions." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,6 +79,7 @@ and proceed to further functions." />
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -93,7 +98,7 @@ and proceed to further functions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidycells</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -101,7 +106,7 @@ and proceed to further functions." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,11 +129,10 @@ and proceed to further functions." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-rudra/tidycells">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -139,6 +143,7 @@ and proceed to further functions." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -150,7 +155,6 @@ and proceed to further functions." />
     </div>
 
     <div class="ref-description">
-    
     <p>This function is designed to read cell level information
 (and the finally <a href='analyze_cells.html'>analyze</a>, <a href='compose_cells.html'>compose</a> and <a href='collate_columns.html'>collate_columns</a>)
 from many file types like xls, pdf, doc etc.
@@ -167,19 +171,26 @@ a warning and give results till successfully processed stage.</p></li>
 straight forward method is sufficient in the majority of situations. Otherwise, you may need to utilize other functions.</p></li>
 </ul>
 
-    <p><strong>A Word of Warning</strong> :</p>
+<p><strong>A Word of Warning</strong> :</p>
 <p><em>The functions used inside <code>read_cells</code> are heuristic-algorithm based. Thus, outcomes may be unexpected.
 It is recommend to try <code>read_cells</code> on the target file. If the outcome is expected., it is fine.
 If not try again with <code>read_cells(file_name, at_level = "compose")</code>. If after that also the output is not as expected
 then other functions are required to be used. At that time start again with <code>read_cells(file_name, at_level = "make_cells")</code>
 and proceed to further functions.</em></p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>read_cells</span>(<span class='no'>x</span>, <span class='kw'>at_level</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"collate"</span>, <span class='st'>"detect_and_read"</span>, <span class='st'>"make_cells"</span>,
-  <span class='st'>"va_classify"</span>, <span class='st'>"analyze"</span>, <span class='st'>"compose"</span>), <span class='kw'>omit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>compose_main_cols_only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>from_level</span>, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>read_cells</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>at_level</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"collate"</span>, <span class='st'>"detect_and_read"</span>, <span class='st'>"make_cells"</span>, <span class='st'>"va_classify"</span>, <span class='st'>"analyze"</span>,
+    <span class='st'>"compose"</span>),
+  <span class='kw'>omit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>compose_main_cols_only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>from_level</span>,
+  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -219,7 +230,7 @@ will be returned.</p></td>
       <td><p>further arguments</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>simplify=TRUE</code> then different kind of object is returned in different levels (depends on <code>at_level</code>).
@@ -227,7 +238,6 @@ If <code>at_level="compose"</code> then only final tibble is returned otherwise 
 named <code>"read_cells_stage"</code>.</p>
 <p>If <code>simplify=FALSE</code> then it will return a <code><a href='read_cell_part-class.html'>read_cell_part</a></code> which you can process manually
 and continue again with <code>read_cells</code> (perhaps then <code>from_level</code> may be useful).</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>It performs following set of actions if called with default <code>at_level</code>.</p><ul>
@@ -238,9 +248,8 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 <li><p><strong>compose</strong>: Compose the cell-analysis to a tidy form using <code><a href='compose_cells.html'>compose_cells</a></code>.</p></li>
 <li><p><strong>collate</strong>: Finally, collate columns based on content using <code><a href='collate_columns.html'>collate_columns</a></code>.</p></li>
 </ul>
-    <p>Here is the flowchart of the same:
-    <img src='figures/read_cells.svg' width=400 /></p>
-    
+
+<p>Here is the flowchart of the same:<img src='figures/read_cells.svg' width=400 /></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see supported files</span>
@@ -268,10 +277,10 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>   </span><span style='color: #555555;'>9</span><span style='color: #00BBBB;'> html        XML          </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>      </span><span style='color: #00BB00;'>v</span><span style='color: #00BBBB;'>   </span><span>     </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>|</span><span>                                              </span><span style='color: #00BBBB;'>|</span><span>
 #&gt; </span><span style='color: #00BBBB;'>+----------------------------------------------+</span><span></div><div class='input'>
-<span class='no'>fold</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"messy"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tidycells"</span>, <span class='kw'>mustWork</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>fold</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"messy"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tidycells"</span>, <span class='kw'>mustWork</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='co'># File extension is intentionally given wrong</span>
 <span class='co'># while filename is the actual identifier of the file type</span>
-<span class='no'>fcsv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list.files'>list.files</a></span>(<span class='no'>fold</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"^csv."</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>]
+<span class='no'>fcsv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>fold</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"^csv."</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>]
 <span class='co'># read the data</span>
 <span class='fu'>read_cells</span>(<span class='no'>fcsv</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 5</span><span>
 #&gt;   collated_1 collated_2 collated_3 table_tag value
@@ -286,16 +295,14 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -303,13 +310,16 @@ and continue again with <code>read_cells</code> (perhaps then <code>from_level</
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

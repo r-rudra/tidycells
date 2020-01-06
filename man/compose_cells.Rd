@@ -4,16 +4,21 @@
 \alias{compose_cells}
 \title{Compose a Cell Analysis to a tidy form}
 \usage{
-compose_cells(ca, post_process = TRUE, attr_sep = " :: ",
-  discard_raw_cols = FALSE, print_attribute_overview = FALSE,
-  silent = FALSE)
+compose_cells(
+  ca,
+  post_process = TRUE,
+  attr_sep = " :: ",
+  discard_raw_cols = FALSE,
+  print_attribute_overview = FALSE,
+  silent = FALSE
+)
 }
 \arguments{
 \item{ca}{a cell_analysis to process}
 
 \item{post_process}{logical scalar. If disabled a list will be returned without performing post-processing. (Default \code{TRUE})}
 
-\item{attr_sep}{a character string to separate the attributes. (Default is \code{<space>::<space>})}
+\item{attr_sep}{a character string to separate the attributes. (Default is \verb{<space>::<space>})}
 
 \item{discard_raw_cols}{logical scalar. If enabled only main processed columns will be returned. (Default \code{FALSE})}
 
