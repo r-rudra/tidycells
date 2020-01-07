@@ -1,6 +1,12 @@
 
 # *News*
 
+# tidycells 0.2.2 _(2020-01-07)_
+
+## Other changes
+
+* Internal changes to unit tests which will fix [#11](https://github.com/r-rudra/tidycells/issues/11) 
+
 # tidycells 0.2.1 _(2019-08-27)_
 
 ## New features
