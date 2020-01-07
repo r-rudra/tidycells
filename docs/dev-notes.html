@@ -170,7 +170,7 @@
 <li>The input <a href="https://shiny.rstudio.com/articles/plot-interaction.html"><code>plot brush</code></a> is changing in fractional values under different OS. Most of the functionalities are recorded with brush input which slightly differs. Since the <code>JSON</code> to <code>JSON</code> comparison is strict now, these are resulting in test failures.</li>
 <li>Sometimes GitHub push and pull is changing JSON slightly [getting <code>LF will be replaced by CRLF</code> warning.] (Full message: <em>The file will have its original line endings in your working directory. warning: LF will be replaced by CRLF</em>). It is solved using tar files (which untar on the fly). This is the reason the all recorded tests (includes JSON) are compress to tar in <a href="https://github.com/r-rudra/tidycells/tree/master/tests/testthat/testshiny">tidycells/tests/testthat/testshiny/</a>.</li>
 </ul>
-<p>Given these difficulties, the shiny tests are tested in the following environments only.</p>
+<p>Given these difficulties, the shiny tests are tested in the following environments (and in all <em>Windows</em> environment listed below).</p>
 <table>
 <colgroup>
 <col width="14%">
@@ -288,179 +288,434 @@ Making cell analysis little faster</li>
 <h3 class="hasAnchor">
 <a href="#r-hub-other-builds" class="anchor"></a>R-hub other builds</h3>
 <p>See other successful builds in <a href="https://github.com/r-rudra/tidycells/blob/master/cran-comments.md">CRAN Comments</a></p>
-<div id="minor-issues" class="section level4">
-<h4 class="hasAnchor">
-<a href="#minor-issues" class="anchor"></a>Minor Issues</h4>
-<ul>
-<li>Fedora Linux,
-<ul>
-<li>R-devel, clang, gfortran</li>
-</ul>
-</li>
-</ul>
-<p><strong>Result</strong> : NOTE</p>
-<p><strong>Reason</strong> : Packages suggested but not available for checking: ‘tabulizer’, ‘xlsx’</p>
-<ul>
-<li>CentOS 6
-<ul>
-<li>stock R from EPEL</li>
-</ul>
-</li>
-</ul>
-<p><strong>Result</strong> : NOTE</p>
-<p><strong>Reason</strong> : Packages suggested but not available for checking: ‘tidyxl’ ‘plotly’</p>
-</div>
-<div id="errors" class="section level4">
-<h4 class="hasAnchor">
-<a href="#errors" class="anchor"></a>Errors</h4>
-<ul>
-<li>Debian Linux,
-<ul>
-<li>R-devel, clang, ISO-8859-15 locale</li>
-<li>R-devel, GCC</li>
-<li>R-devel, GCC, no long double</li>
-<li>R-patched, GCC</li>
-<li>R-release, GCC</li>
-<li>R-devel, GCC ASAN/UBSAN</li>
-</ul>
-</li>
-<li>Ubuntu Linux 16.04 LTS
-<ul>
-<li>R-devel, GCC</li>
-<li>R-release, GCC</li>
-<li>R-devel with rchk</li>
-</ul>
-</li>
-</ul>
-<p><strong>Result</strong> : PREPERROR</p>
-<p><strong>Reason</strong> : xml2 and httr failed to installed due to system dependency (libxml2, libssl/openssl)</p>
+<p>See whole build matrix below</p>
 <p><strong>Note</strong> : Neither of these errors (or notes) are attributable to the package as they failed because of induced system dependency or optional package dependency.</p>
 </div>
-</div>
-<div id="all-r-hub-build-summary" class="section level3">
+<div id="all-build-summary" class="section level3">
 <h3 class="hasAnchor">
-<a href="#all-r-hub-build-summary" class="anchor"></a>All R-hub build summary</h3>
+<a href="#all-build-summary" class="anchor"></a>All build summary</h3>
 <table>
 <colgroup>
+<col width="3%">
+<col width="3%">
+<col width="4%">
+<col width="4%">
+<col width="3%">
+<col width="14%">
 <col width="25%">
-<col width="67%">
-<col width="7%">
+<col width="23%">
+<col width="12%">
+<col width="3%">
 </colgroup>
 <thead><tr class="header">
-<th>OS</th>
+<th>Package</th>
+<th>Version</th>
+<th>Submit Date</th>
+<th>Where</th>
+<th>OS Type</th>
+<th>OS Description</th>
 <th>R Version</th>
-<th>Result</th>
+<th>R Version Tag</th>
+<th>Platform</th>
+<th>State</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>macOS 10.11 El Capitan</td>
-<td>(R-release) R version 3.6.0 (2019-04-26)</td>
-<td>SUCCESS</td>
-</tr>
-<tr class="even">
-<td>Oracle Solaris 10, x86, 32 bit</td>
-<td>(R-patched) R version 3.6.0 (2019-04-26)</td>
-<td>SUCCESS</td>
-</tr>
-<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Windows</td>
 <td>Windows Server 2008 R2 SP1</td>
-<td>(R-devel) R Under development (unstable) (2019-07-04 r76780)</td>
-<td>SUCCESS</td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td>R-release 32/64 bit</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
 </tr>
 <tr class="even">
-<td>Windows Server 2008 R2 SP2</td>
-<td>(R-oldrel) R version 3.5.3 (2019-03-11)</td>
-<td>SUCCESS</td>
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Windows</td>
+<td>Windows Server 2008 R2 SP1</td>
+<td>R version 3.6.2 Patched (2019-12-12 r77564)</td>
+<td>R-patched 32/64 bit</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
 </tr>
 <tr class="odd">
-<td>Windows Server 2008 R2 SP3</td>
-<td>(R-patched) R version 3.6.0 Patched (2019-06-21 r76731)</td>
-<td>SUCCESS</td>
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Windows</td>
+<td>Windows Server 2008 R2 SP1</td>
+<td>R version 3.5.3 (2019-03-11)</td>
+<td>R-oldrel 32/64 bit</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
 </tr>
 <tr class="even">
-<td>Windows Server 2008 R2 SP4</td>
-<td>(R-release) R version 3.6.1 (2019-07-05)</td>
-<td>SUCCESS</td>
-</tr>
-<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Windows</td>
 <td>Windows Server 2012</td>
-<td>(R-devel, Rtools4.0, 32/64 bit) R version 3.6.0 Under development (Testing Rtools) (2019-02-27 r76167)</td>
-<td>SUCCESS</td>
-</tr>
-<tr class="even">
-<td>Fedora Linux</td>
-<td>(R-devel, GCC) R Under development (unstable) (2019-08-18 r77026)</td>
-<td>SUCCESS</td>
+<td>R version 4.0.0 Under development (Testing Rtools) (2019-09-30 r77236)</td>
+<td>R-devel Rtools4.0 32/64 bit</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
 </tr>
 <tr class="odd">
-<td>CentOS 6 with Redhat Developer Toolset</td>
-<td>(R from EPEL) R version 3.5.2 (2018-12-20)</td>
-<td>SUCCESS</td>
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Windows</td>
+<td>Windows Server 2008 R2 SP1</td>
+<td>R Under development (unstable) (2019-11-08 r77393)</td>
+<td>R-devel 32/64 bit</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
 </tr>
 <tr class="even">
-<td><strong>NOTE</strong></td>
-<td><strong>Reason : <em>optional package dependency</em></strong></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Fedora Linux</td>
-<td>R-devel, clang, gfortran</td>
-<td>NOTE</td>
-</tr>
-<tr class="even">
-<td>CentOS 6</td>
-<td>stock R from EPEL</td>
-<td>NOTE</td>
-</tr>
-<tr class="odd">
-<td><strong>PREPERROR</strong></td>
-<td><strong>Reason : <em>induced system dependency</em></strong></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Debian Linux</td>
-<td>R-devel, clang, ISO-8859-15 locale</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="odd">
-<td>Debian Linux</td>
-<td>R-devel, GCC</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="even">
-<td>Debian Linux</td>
-<td>R-devel, GCC, no long double</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="odd">
-<td>Debian Linux</td>
-<td>R-patched, GCC</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="even">
-<td>Debian Linux</td>
-<td>R-release, GCC</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="odd">
-<td>Debian Linux</td>
-<td>R-devel, GCC ASAN/UBSAN</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
 <td>Ubuntu Linux 16.04 LTS</td>
-<td>R-devel, GCC</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="odd">
-<td>Ubuntu Linux 16.04 LTS</td>
-<td>R-release, GCC</td>
-<td>PREPERROR</td>
-</tr>
-<tr class="even">
-<td>Ubuntu Linux 16.04 LTS</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
 <td>R-devel with rchk</td>
+<td></td>
 <td>PREPERROR</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Ubuntu Linux 16.04 LTS</td>
+<td></td>
+<td>R-release GCC</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Ubuntu Linux 16.04 LTS</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R-devel GCC</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Solaris</td>
+<td>Oracle Solaris 10 x86 32 bit</td>
+<td>R version 3.6.0 (2019-04-26)</td>
+<td>R-patched</td>
+<td>i386-pc-solaris2.10 (32-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>macOS</td>
+<td>macOS 10.11 El Capitan</td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td>R-release</td>
+<td>x86_64-apple-darwin15.6.0 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td>R Under development (unstable) (2018-06-20 r74924)</td>
+<td>R-devel GCC ASAN/UBSAN</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>CentOS 6 with Redhat Developer Toolset</td>
+<td>R version 3.5.2 (2018-12-20)</td>
+<td>R from EPEL</td>
+<td>x86_64-redhat-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>CentOS 6</td>
+<td></td>
+<td>stock R from EPEL</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Fedora Linux</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R-devel GCC</td>
+<td>x86_64-pc-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Fedora Linux</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R-devel clang gfortran</td>
+<td>x86_64-pc-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td></td>
+<td>R-release GCC</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td></td>
+<td>R-patched GCC</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R-devel GCC no long double</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R-devel GCC</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>RHub</td>
+<td>Linux</td>
+<td>Debian Linux</td>
+<td>R Under development (unstable) (2019-08-18 r77026)</td>
+<td>R-devel clang ISO-8859-15 locale</td>
+<td></td>
+<td>PREPERROR</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>AppVeyor</td>
+<td>Windows</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td>R_VERSION=release, R_ARCH=x64</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>AppVeyor</td>
+<td>Windows</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td>R_VERSION=devel</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>AppVeyor</td>
+<td>Windows</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R version 3.6.2 Patched (2020-01-03 r77629)</td>
+<td>R_VERSION=patched</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>AppVeyor</td>
+<td>Windows</td>
+<td>Windows Server 2012 R2 x64 (build 9600)</td>
+<td>R version 3.5.3 (2019-03-11)</td>
+<td>R_VERSION=oldrel, RTOOLS_VERSION=33, CRAN=<a href="http://cran.rstudio.com" class="uri">http://cran.rstudio.com</a>
+</td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Travis</td>
+<td>linux</td>
+<td>Ubuntu 16.04.6 LTS</td>
+<td>R version 3.5.3 (2017-01-27)</td>
+<td>R: oldrel</td>
+<td>x86_64-pc-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Travis</td>
+<td>linux</td>
+<td>Ubuntu 16.04.6 LTS</td>
+<td>R version 3.6.1 (2017-01-27)</td>
+<td>R: release</td>
+<td>x86_64-pc-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Travis</td>
+<td>osx</td>
+<td>macOS High Sierra 10.13.6</td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td>R: release</td>
+<td>x86_64-apple-darwin15.6.0 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Travis</td>
+<td>linux</td>
+<td>Ubuntu 16.04.6 LTS</td>
+<td>R Under development (unstable) (2020-01-03 r77628)</td>
+<td>R: devel</td>
+<td>x86_64-pc-linux-gnu (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>WinBuilder</td>
+<td>Windows</td>
+<td></td>
+<td>R version 3.5.3 (2019-03-11)</td>
+<td></td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>WinBuilder</td>
+<td>Windows</td>
+<td></td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td></td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>WinBuilder</td>
+<td>Windows</td>
+<td></td>
+<td>R Under development (unstable) (2020-01-03 r77629)</td>
+<td></td>
+<td>x86_64-w64-mingw32 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="even">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Local</td>
+<td>Windows</td>
+<td>Windows 10 x64 (build 17134)</td>
+<td>R version 3.6.1 (2019-07-05)</td>
+<td></td>
+<td>x86_64-w64-mingw32/x64 (64-bit)</td>
+<td>OK</td>
+</tr>
+<tr class="odd">
+<td>tidycells</td>
+<td>0.2.2</td>
+<td>2020-01-06</td>
+<td>Local</td>
+<td>Windows</td>
+<td>Windows 10 x64 (build 17134)</td>
+<td>R version 3.6.2 (2019-12-12)</td>
+<td></td>
+<td>x86_64-w64-mingw32/x64 (64-bit)</td>
+<td>OK</td>
 </tr>
 </tbody>
 </table>
