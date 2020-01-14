@@ -66,10 +66,10 @@ visual_data_block_inspection <- function(x) {
   }
 
   shiny_check()
-  shiny_app_data_block(x)
+  dout <- shiny_app_data_block(x)
   shiny_unload()
 
-  return(invisible(NULL))
+  return(invisible(dout))
 }
 
 #' @return `visual_orientation_modification` returns a cell_analysis after the interactive operations.

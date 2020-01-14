@@ -1,3 +1,11 @@
+runGadget_this <- function(...){
+  if (isTRUE(getOption("shiny.testmode"))) {
+    identity(list(...)[[1]])
+  }else{
+    runGadget(...)
+  }
+}
+
 common_finish <- function(ui, server, title, viewer_pane, test_this) {
   if (test_this) {
     es <- new.env()
@@ -7,7 +15,7 @@ common_finish <- function(ui, server, title, viewer_pane, test_this) {
   }
 
   if (viewer_pane) {
-    runGadget(shinyApp(ui, server),
+    runGadget_this(shinyApp(ui, server),
       stopOnCancel = FALSE
     )
   } else {
@@ -15,7 +23,7 @@ common_finish <- function(ui, server, title, viewer_pane, test_this) {
       width = 900,
       height = 700
     )
-    runGadget(shinyApp(ui, server),
+    runGadget_this(shinyApp(ui, server),
       viewer = viewer,
       stopOnCancel = FALSE
     )
