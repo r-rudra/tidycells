@@ -2,9 +2,7 @@
 shiny_check <- function(force_load = FALSE) {
   if (!force_load) {
     if (!interactive()) {
-      if(!(isTRUE(getOption("shiny.testmode")))){
-        abort("need an interactive session for this functionality.")
-      }
+      abort("need an interactive session for this functionality.")
     }
   }
 
@@ -24,13 +22,11 @@ shiny_check <- function(force_load = FALSE) {
 }
 
 shiny_unload <- function() {
-  if(!(isTRUE(getOption("shiny.testmode")))){
-    AutoUnloadShiny <- options("AutoUnloadShiny")[[1]]
-    if (is.null(AutoUnloadShiny)) AutoUnloadShiny <- TRUE
-    if (AutoUnloadShiny) {
-      suppressWarnings(try(unloadNamespace("miniUI"), silent = TRUE))
-      suppressWarnings(try(unloadNamespace("shiny"), silent = TRUE))
-    }
+  AutoUnloadShiny <- options("AutoUnloadShiny")[[1]]
+  if (is.null(AutoUnloadShiny)) AutoUnloadShiny <- TRUE
+  if (AutoUnloadShiny) {
+    suppressWarnings(try(unloadNamespace("miniUI"), silent = TRUE))
+    suppressWarnings(try(unloadNamespace("shiny"), silent = TRUE))
   }
 }
 
