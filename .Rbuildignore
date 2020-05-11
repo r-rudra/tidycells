@@ -13,3 +13,6 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^\.circleci$
+^\.circleci/config\.yml$
+^\.github$

@@ -3,6 +3,9 @@
 before_install:
     - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo apt-add-repository -y ppa:libreoffice/ppa; fi
     - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo apt-get install libreoffice; fi
+    # temp fix for ps in osx
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then R -e "install.packages(c('ps'), repos = 'http://cran.rstudio.com/')"  ; fi
+
 
 language: R
 
@@ -21,9 +24,6 @@ os:
 
 matrix:
   exclude:
-    -
-      os: osx
-      r: oldrel
     -
       os: osx
       r: devel

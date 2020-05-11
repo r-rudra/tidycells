@@ -90,15 +90,3 @@ Here is the flowchart of the same:
 
 }
 }
-\examples{
-# see supported files
-read_cells()
-
-fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-# File extension is intentionally given wrong
-# while filename is the actual identifier of the file type
-fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
-# read the data
-read_cells(fcsv)
-read_cells(fcsv, simplify = FALSE)
-}

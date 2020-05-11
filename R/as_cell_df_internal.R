@@ -44,7 +44,7 @@ as_cell_df_internal.default <- function(d,
 
     if (hasName(d, "value")) {
       if (rlang::is_atomic(d$value)) {
-        d_out <- d %>% mutate(data_type = ifelse(is.numeric(d$value), "numeric", "character"))
+        d_out <- d %>% mutate(data_type = if_else(is.numeric(d$value), "numeric", "character"))
         conv_done <- TRUE
       } else {
         warn_msg <- warn_msg %>%
@@ -61,7 +61,7 @@ as_cell_df_internal.default <- function(d,
           d_out <- d %>%
             mutate(
               value = rest_col,
-              data_type = ifelse(is.numeric(value), "numeric", "character")
+              data_type = if_else(is.numeric(value), "numeric", "character")
             )
 
           conv_done <- TRUE
@@ -151,7 +151,7 @@ as_cell_df_internal.tidyxl <- function(d) {
       data_type == "character" ~ as.character(character),
       TRUE ~ NA_character_
     )) %>%
-    mutate(data_type = ifelse(data_type == "numeric", "numeric", "character")) %>%
+    mutate(data_type = if_else(data_type == "numeric", "numeric", "character")) %>%
     filter(!is.na(value)) %>%
     distinct(row, col, data_type, value)
 
@@ -191,16 +191,16 @@ as_cell_df_internal.unpivotr <- function(d) {
     mutate(value = case_when(
       data_type == "chr" ~ as.character(chr),
       data_type == "cplx" ~ as.character(cplx),
-      data_type == "fct" ~ (fct %>% map(as.character) %>% map_chr(~ ifelse(length(.x), .x, NA_character_))),
+      data_type == "fct" ~ (fct %>% map(as.character) %>% map_chr(~ if_else(length(.x) > 0, .x[1], NA_character_))),
       data_type == "dbl" ~ as.character(dbl),
       data_type == "int" ~ as.character(int),
       data_type == "lgl" ~ as.character(lgl),
-      data_type == "ord" ~ (ord %>% map(as.character) %>% map_chr(~ ifelse(length(.x), .x, NA_character_))),
+      data_type == "ord" ~ (ord %>% map(as.character) %>% map_chr(~ if_else(length(.x) > 0, .x[1], NA_character_))),
       data_type == "date" ~ as.character(date),
       data_type == "dttm" ~ as.character(dttm),
       TRUE ~ NA_character_
     )) %>%
-    mutate(data_type = ifelse(data_type %in% c("cplx", "dbl", "int"), "numeric", "character")) %>%
+    mutate(data_type = if_else(data_type %in% c("cplx", "dbl", "int"), "numeric", "character")) %>%
     filter(!is.na(value)) %>%
     distinct(row, col, data_type, value)
 
@@ -218,7 +218,7 @@ as_cell_df_internal.readr <- function(d) {
 
   d_out <- d %>%
     filter(data_type != "missing") %>%
-    mutate(data_type = ifelse(data_type %in% c("integer", "double"), "numeric", "character")) %>%
+    mutate(data_type = if_else(data_type %in% c("integer", "double"), "numeric", "character")) %>%
     filter(!is.na(value)) %>%
     distinct(row, col, data_type, value)
 

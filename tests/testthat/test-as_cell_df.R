@@ -31,13 +31,13 @@ test_that("as_cell_df() works on readr::melt_csv", {
   skip_if_not_installed("readr")
   skip_if_not_installed("datasets")
   tf <- tempfile()
-  write.csv(datasets::iris, tf, row.names = FALSE)
+  write.csv(head(iris, n = 7), tf, row.names = FALSE)
   d0 <- readr::melt_csv(tf) %>% as_cell_df()
   unlink(tf)
 
   expect_identical(d0, as_cell_df(d0))
   expect_true(inherits(d0, "cell_df"))
-  expect_output(summary(d0), "151 x 5")
+  expect_output(summary(d0), "8 x 5")
 })
 
 test_that("as_cell_df() works on unpivotr::as_cells", {

@@ -74,7 +74,7 @@ get_group_id_boundary <- function(drc_id) {
 get_group_id_join_gids <- function(old_group_id_info, gid_map) {
   old_group_id_info$group_id_map <- old_group_id_info$group_id_map %>%
     left_join(gid_map, by = "gid") %>%
-    mutate(new_gid = ifelse(is.na(new_gid), gid, new_gid)) %>%
+    mutate(new_gid = if_else(is.na(new_gid), gid, new_gid)) %>%
     select(-gid) %>%
     rename(gid = new_gid)
   old_group_id_info$group_id_boundary <- get_group_id_boundary(old_group_id_info$group_id_map)

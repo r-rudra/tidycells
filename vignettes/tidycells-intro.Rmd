@@ -28,6 +28,10 @@ knitr::opts_chunk$set(
 library(tidycells)
 ```
 
+```{r, echo=FALSE}
+tce <- asNamespace("tidycells")
+```
+
 <img src="ext/logo.png" align="right" width="100"/>
 
 
@@ -335,7 +339,7 @@ system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>%
   read_cells()
 ```
 ```{r, echo=FALSE}
-if(rlang::is_installed("tidyxl")){
+if(tce$is_available("tidyxl")){
   system.file("extdata", "marks.xlsx", package = "tidycells", mustWork = TRUE) %>% 
     read_cells() %>% 
     knitr::kable()
@@ -425,19 +429,23 @@ dm <- dm %>%
       purrr::map_chr(~ basename(.x) %>%
         stringr::str_split("\\.") %>%
         purrr::map_chr(1)))
-if(!(rlang::is_installed("readxl") | rlang::is_installed("xlsx"))){
+# making sure csv always remains in 1st position
+dm <- dm %>% dplyr::filter(original=="csv") %>% 
+  dplyr::bind_rows(dm %>% dplyr::filter(original!="csv"))
+
+if(!(tce$is_available("readxl") | tce$is_available("xlsx"))){
   dm <- dm %>% dplyr::filter(original!="xls")
 }
-if(!(rlang::is_installed("tidyxl"))){
+if(!(tce$is_available("tidyxl"))){
   dm <- dm %>% dplyr::filter(original!="xlsx")
 }
-if(!(rlang::is_installed("docxtractr"))){
+if(!(tce$is_available("docxtractr"))){
   dm <- dm %>% dplyr::filter(original!="docx" & original!="doc")
 }
-if(!(rlang::is_installed("tabulizer"))){
+if(!(tce$is_available("tabulizer"))){
   dm <- dm %>% dplyr::filter(original!="pdf")
 }
-if(!(rlang::is_installed("XML"))){
+if(!(tce$is_available("XML"))){
   dm <- dm %>% dplyr::filter(original!="html")
 }
 ```

@@ -40,7 +40,7 @@ ui_part_plot_tune <- function(id = "ui_plot_tune",
     ),
     miniButtonBlock(
       conditionalPanel(
-        ifelse(fill_option, "true", "false"),
+        if_else(fill_option, "true", "false"),
         radioButtons(ns("fill"),
           label = "Fill type:",
           choices = c("data_type", "type"),
@@ -150,7 +150,7 @@ ui_part_data_block <- function(id = "ui_data_block", zoom_this = FALSE, directio
         div(
           style = "display: inline-block;vertical-align:top; width: 90px;",
           conditionalPanel(
-            ifelse(plot_issues_option, "true", "false"),
+            if_else(plot_issues_option, "true", "false"),
             checkboxInput(ns("plot_issues"), label = "Plot Issues", value = FALSE)
           )
         )

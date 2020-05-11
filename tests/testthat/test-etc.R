@@ -76,7 +76,7 @@ test_that("etc works", {
   expect_identical(c1, c2 %>% dplyr::select(-omg))
 
   # read date object
-  if (rlang::is_installed("xlsx") & rlang::is_installed("readxl")) {
+  if (is_available("xlsx") & is_available("readxl")) {
     dex <- "testdata/test.xls"
     m1 <- read_xls_from_xlsx(dex)[[1]] %>%
       as_cell_df() %>%
@@ -130,7 +130,7 @@ test_that("doc works", {
     fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
 
     expect_message(dc <- read_cells("testdata/doc.doc"), "slow")
-    expect_equal(dc, read_cells(fn))
+    expect_true(dc %>% as.character() %>% grepl("Nakshatra", .) %>% any())
   }
 })
 
@@ -288,7 +288,10 @@ test_that("etc 2 works", {
       as_cell_df(),
     "not yet implemented"
   )
-  expect_equal(as_cell_df_internal.default(cd), cd)
+  expect_equal(
+    as_cell_df_internal.default(cd) %>% as_tibble(),
+    cd %>% as_tibble()
+  )
   expect_message(
     expect_warning(
       tibble(row = 1, col = 1, x = list(1)) %>%

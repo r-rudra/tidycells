@@ -16,8 +16,12 @@ cache:
 
 environment:
   NOT_CRAN: true
+
   global:
     WARNINGS_ARE_ERRORS: 1
+    PKGTYPE: both
+    NOT_CRAN: true
+    USE_RTOOLS: true
 
   matrix:
   - R_VERSION: release
@@ -31,7 +35,6 @@ environment:
     RTOOLS_VERSION: 33
     CRAN: http://cran.rstudio.com
 
-# Adapt as necessary starting from here
 
 build_script:
   - travis-tool.sh install_deps

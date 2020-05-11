@@ -71,17 +71,6 @@ read_cell_task_orders <- c("detect_and_read", "make_cells", "va_classify", "anal
 #'
 #' @rdname read_cells
 #'
-#' @examples
-#' # see supported files
-#' read_cells()
-#'
-#' fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-#' # File extension is intentionally given wrong
-#' # while filename is the actual identifier of the file type
-#' fcsv <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
-#' # read the data
-#' read_cells(fcsv)
-#' read_cells(fcsv, simplify = FALSE)
 read_cells <- function(x,
                        at_level = c("collate", "detect_and_read", "make_cells", "va_classify", "analyze", "compose"),
                        omit = NULL,

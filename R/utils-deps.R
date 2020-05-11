@@ -15,6 +15,9 @@ NULL
 #' @importFrom dplyr pull
 NULL
 
+#' @importFrom dplyr if_else
+NULL
+
 #' @importFrom dplyr rename
 NULL
 

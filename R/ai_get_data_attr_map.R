@@ -18,13 +18,13 @@ ai_get_data_attr_map <- function(dat_boundary,
   # for each attr_gid (gid), data_gid, direction, direction_group :- get minimum distance
   d_gid_att_map <- d_att_map %>%
     group_by(gid, data_gid, direction, direction_group) %>%
-    summarise(md = min(dist)) %>%
+    summarise(md = min(c(dist, Inf))) %>%
     ungroup()
 
   # attach nearest attr_gid to each data gid
   d_gid_att_map_min_d <- d_gid_att_map %>%
     group_by(data_gid, direction_group) %>%
-    mutate(m_dist = min(md)) %>%
+    mutate(m_dist = min(c(md, Inf))) %>%
     ungroup() %>%
     filter(md == m_dist) %>%
     select(-md) %>%
@@ -37,7 +37,7 @@ ai_get_data_attr_map <- function(dat_boundary,
 
     d_gid_att_map_min_d <- d_gid_att_map_min_d %>%
       group_by(attr_gid) %>%
-      mutate(md = min(dist)) %>%
+      mutate(md = min(c(dist, Inf))) %>%
       ungroup() %>%
       filter(md == dist) %>%
       select(-md)

@@ -33,7 +33,7 @@ ai_relative_data_join_attr <- function(admap_main, d_att) {
       group_by(new_attr_gid, data_gid) %>%
       mutate(
         # this is possibly not required anymore as attr_group is in grouping vars
-        new_attr_group = ifelse(any(attr_group == "major"), "major", "minor"),
+        new_attr_group = if_else(any(attr_group == "major"), "major", "minor"),
         new_dist = min(dist)
       ) %>%
       ungroup()

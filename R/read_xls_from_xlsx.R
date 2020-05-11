@@ -1,8 +1,12 @@
 
-read_xls_from_xlsx <- function(fn) {
-  if (!is_available("xlsx")) {
-    abort("'xlsx' package is required")
+read_xls_from_xlsx <- function(fn, no_pkg_check = F) {
+  if (!no_pkg_check) {
+    # this is created for safe dependency checks
+    if (!is_available("xlsx")) {
+      abort("'xlsx' package is required")
+    }
   }
+
 
   # local functions
   get_date <- function(x) {
@@ -80,10 +84,10 @@ read_xls_from_xlsx <- function(fn) {
           mutate(date_raw = raw_value %>% map(get_date))
 
         dat_n_d <- dat_n_d %>%
-          mutate(data_type = ifelse(
+          mutate(data_type = if_else(
             date_raw %>% map_lgl(~ inherits(.x, "POSIXct")),
-            yes = "dttm",
-            no = "date"
+            true = "dttm",
+            false = "date"
           ))
 
         dat_n_d_dt <- dat_n_d %>%

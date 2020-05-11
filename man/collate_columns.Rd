@@ -40,14 +40,3 @@ vs if you don't have it.
 Hence it is always recommended to \code{\link[base:set.seed]{set.seed}} if reproducibility is a matter of concern.
 }
 }
-\examples{
-
-d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) \%>\%
-  readRDS()
-d <- numeric_values_classifier(d)
-da <- analyze_cells(d)
-
-dc <- compose_cells(da, print_attribute_overview = TRUE)
-
-collate_columns(dc)
-}

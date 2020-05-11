@@ -25,10 +25,12 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE, pe
   }
 
   # extra check for rJava dependency of xlsx
+  # this is not required but not a problem if kept
+  # in view of safe_dependency_check
   if ("xls" %in% st$file_type) {
     if (!is_xlsx_ok()) {
       st <- st %>%
-        mutate(support_possible = ifelse(file_type == "xls", FALSE, support_possible))
+        mutate(support_possible = if_else(file_type == "xls", FALSE, support_possible))
     }
   }
 
@@ -36,7 +38,7 @@ possible_to_support <- function(print_info = TRUE, return_print_info = FALSE, pe
   if ("doc" %in% st$file_type) {
     if (!detect_LibreOffice()) {
       st <- st %>%
-        mutate(support_possible = ifelse(file_type == "doc", FALSE, support_possible))
+        mutate(support_possible = if_else(file_type == "doc", FALSE, support_possible))
     }
   }
 
@@ -189,11 +191,11 @@ possible_to_support_real_file_type_checks_raw <- function() {
   dtypes <- dm$fn %>% purrr::map(~ try(read_cells(.x, at_level = "make_cells", simplify = FALSE), silent = TRUE))
   chk <- dtypes %>% map_lgl(~ {
     e <- try(nrow(.x$cell_list[[1]]) > 0, silent = TRUE)
-    ifelse(is.logical(e), e, FALSE)
+    if_else(is.logical(e), e, FALSE)
   })
   passed_types <- dtypes %>% map_chr(~ {
     e <- try(.x$info$type, silent = TRUE)
-    ifelse(inherits(e, "try-error"), "", e)
+    if_else(inherits(e, "try-error"), "", e)
   })
   passed_types <- passed_types[chk]
 

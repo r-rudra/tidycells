@@ -1,9 +1,12 @@
 
 
 # function to detect if xlsx working
-is_xlsx_ok <- function() {
-  if (!is_available("xlsx")) {
-    return(FALSE)
+is_xlsx_ok <- function(no_pkg_check = F) {
+  if (!no_pkg_check) {
+    # this is created for safe dependency checks
+    if (!is_available("xlsx")) {
+      return(FALSE)
+    }
   }
 
   sample_xls <- system.file("extdata", "messy", "xls.pdf", package = "tidycells", mustWork = TRUE)

@@ -35,8 +35,8 @@ ai_get_data_attr_map_details <- function(basic_map, d_dat, d_att, major_directio
     ) %>%
     ungroup() %>%
     inner_join(dimension_analysis$data_gid_dim, by = c("data_gid" = "gid")) %>%
-    mutate(rel_dim = ifelse(direction_group == "NS", c_dim / c_dim_data, r_dim / r_dim_data)) %>%
-    mutate(rel_dim = ifelse(direction_group == "corner", 0, rel_dim)) %>%
+    mutate(rel_dim = if_else(direction_group == "NS", c_dim / c_dim_data, r_dim / r_dim_data)) %>%
+    mutate(rel_dim = if_else(direction_group == "corner", 0, rel_dim)) %>%
     mutate(full_dim = (rel_dim >= 1))
 
   # in case only non full dim major (NS or WE) attr present
@@ -49,9 +49,9 @@ ai_get_data_attr_map_details <- function(basic_map, d_dat, d_att, major_directio
       ) %>%
       ungroup() %>%
       rename(full_dim_orig = full_dim) %>%
-      mutate(full_dim = ifelse(direction_group == "corner",
+      mutate(full_dim = if_else(direction_group == "corner",
         full_dim_orig,
-        ifelse(is_full_dim_present,
+        if_else(is_full_dim_present,
           full_dim_orig,
           this_attr_max_rel
         )
@@ -63,7 +63,7 @@ ai_get_data_attr_map_details <- function(basic_map, d_dat, d_att, major_directio
   d_att_dat_map <- dimension_analysis$attr_data_dim %>%
     distinct(attr_gid, data_gid, full_dim) %>%
     right_join(d_att_dat_map, by = c("attr_gid", "data_gid")) %>%
-    mutate(attr_group = ifelse(full_dim, "major", "minor")) %>%
+    mutate(attr_group = if_else(full_dim, "major", "minor")) %>%
     select(-full_dim)
 
 

@@ -11,7 +11,7 @@ test_that("read_cells for external packages works", {
     "tabulizer", "XML"
   )
 
-  if (rlang::is_installed("cli")) {
+  if (is_available("cli")) {
     cli_tck <- cli::symbol$tick
     cli_crs <- cli::symbol$cross
   } else {
@@ -20,7 +20,7 @@ test_that("read_cells for external packages works", {
   }
 
   ext_pkgs %>% purrr::map(~ {
-    if (!rlang::is_installed(.x)) {
+    if (!is_available(.x)) {
       expect_output(read_cells(), "These packages are required")
       expect_output(read_cells(), .x)
       expect_output(read_cells(), paste0(.x, " +", cli_crs))
@@ -34,34 +34,13 @@ test_that("read_cells for external packages works", {
 test_that("read_cells: csv works", {
   fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
   fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
-  dcomp <- read_cells(fn, at_level = "compose") %>%
-    dplyr::select(value, major_1, major_2) %>%
-    dplyr::arrange(value)
-
 
   dc0 <- read_cells(fn) %>%
-    dplyr::arrange(value) %>%
+    dplyr::arrange(as.character(value)) %>%
     as.matrix() %>%
     as.character() %>%
-    sort()
+    base::sort()
 
-
-  # strict check
-  expct_d <- structure(list(
-    value = c("1.5", "12", "16", "6"),
-    major_1 = c(
-      "Nakshatra", "Nakshatra",
-      "Titas", "Titas"
-    ), major_2 = c(
-      "Age", "Weight",
-      "Weight", "Age"
-    )
-  ),
-  row.names = c(NA, -4L), class = c(
-    "tbl_df",
-    "tbl", "data.frame"
-  )
-  )
 
   expct_d2 <- c(
     "1.5", "12", "16", "6", "Age", "Age", "Kid Name", "Kid Name",
@@ -71,7 +50,6 @@ test_that("read_cells: csv works", {
   )
 
 
-  expect_equal(dcomp, expct_d)
   expect_equal(dc0, expct_d2)
 })
 

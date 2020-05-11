@@ -160,7 +160,7 @@ test_temp_app <- function(x, test_img, untar_adds) {
 }
 
 inst_deps <- function(x) {
-  if (rlang::is_installed("shinytest")) {
+  if (is_available("shinytest")) {
     if (!shinytest::dependenciesInstalled()) {
       shinytest::installDependencies()
     }

@@ -104,7 +104,6 @@ as_rc_df <- function(d) {
     abort("Data does not conforms to rcdf format")
   }
   class(d0) <- setdiff(class(d0), c("cell_df", "cells")) %>%
-    c("rc_df", .) %>%
-    unique()
+    c("rc_df", .)
   d0
 }

@@ -64,7 +64,7 @@ detect_cell_df_pattern <- function(dat) {
 
 
 attach_intermediate_class <- function(dat) {
-  class(dat) <- c(class(dat), detect_cell_df_pattern(dat)) %>% unique()
+  class(dat) <- c(detect_cell_df_pattern(dat), class(dat))
 
   dat
 }

@@ -18,9 +18,9 @@ read_excel_whole_part_readxl <- function(fn, sheet = 1L, possible_date_range = c
 
   d0f <- as.matrix(d0) %>% as.character()
   d1f <- as.matrix(d1) %>% as.character()
-  d1f <- ifelse(d1f <= max(possible_date_range) & d1f >= min(possible_date_range), d1f, NA_character_)
+  d1f <- if_else(d1f <= max(possible_date_range) & d1f >= min(possible_date_range), d1f, NA_character_)
 
-  df <- ifelse(is.na(d1f), d0f, d1f)
+  df <- if_else(is.na(d1f), d0f, d1f)
 
   d <- matrix(df, nrow = nrow(d0))
 

@@ -28,6 +28,10 @@ status](https://img.shields.io/badge/Depends-9/28-orange.svg?style=flat-square)]
 [![See
 DevNotes](https://img.shields.io/badge/See-DevNotes-blue.svg?style=flat-square)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md)
 
+[![CircleCI build
+status](https://circleci.com/gh/r-rudra/tidycells.svg?style=svg)](https://circleci.com/gh/r-rudra/tidycells)
+[![R build
+status](https://github.com/r-rudra/tidycells/workflows/Actions/badge.svg)](https://github.com/r-rudra/tidycells/actions)
 <!-- badges: end -->
 
 ## Author

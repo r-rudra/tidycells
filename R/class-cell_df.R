@@ -68,8 +68,7 @@ new_cell_df <- function(dat) {
 
   # re-attach cell_df class
   class(dat) <- class(dat) %>%
-    c(cell_df_class, .) %>%
-    unique()
+    c(cell_df_class, .)
 
 
 
@@ -78,8 +77,7 @@ new_cell_df <- function(dat) {
 
 unset_cell_df_class <- function(dat) {
   class(dat) <- class(dat) %>%
-    setdiff(cell_df_class_internal) %>%
-    unique()
+    setdiff(cell_df_class_internal)
   dat
 }
 

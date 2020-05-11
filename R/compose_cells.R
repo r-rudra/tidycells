@@ -209,7 +209,7 @@ compose_cells_raw_post_process <- function(dcomp, details = FALSE, discard_raw_c
     bind_rows()
 
   #  add rc_df class
-  class(dcomp_r) <- c(class(dcomp_r), "rc_df") %>% unique()
+  class(dcomp_r) <- c("rc_df", class(dcomp_r))
 
   this_cols <- colnames(dcomp_r)
   f_cols <- c("row", "col", "data_block", "value")

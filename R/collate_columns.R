@@ -24,16 +24,6 @@
 #'
 #' @export
 #'
-#' @examples
-#'
-#' d <- system.file("extdata", "marks_cells.rds", package = "tidycells", mustWork = TRUE) %>%
-#'   readRDS()
-#' d <- numeric_values_classifier(d)
-#' da <- analyze_cells(d)
-#'
-#' dc <- compose_cells(da, print_attribute_overview = TRUE)
-#'
-#' collate_columns(dc)
 collate_columns <- function(composed_data,
                             combine_threshold = 1,
                             rest_cols = Inf,

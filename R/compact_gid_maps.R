@@ -20,7 +20,7 @@ compact_gid_maps <- function(gid_map, admap_main) {
 
   gid_map_raw_new <- gid_map_raw %>% left_join(ngmap, by = "gid")
   gid_map_raw_new <- gid_map_raw_new %>%
-    mutate(new_gid = ifelse(is.na(new_gid), gid, new_gid)) %>%
+    mutate(new_gid = if_else(is.na(new_gid), gid, new_gid)) %>%
     select(-gid) %>%
     rename(gid = new_gid) %>%
     distinct()
@@ -31,7 +31,7 @@ compact_gid_maps <- function(gid_map, admap_main) {
   admap_main_raw_map_new <- admap_main$raw_map %>%
     left_join(ngmap %>% rename(attr_gid = gid, new_attr_gid = new_gid), by = "attr_gid")
   admap_main_raw_map_new <- admap_main_raw_map_new %>%
-    mutate(new_attr_gid = ifelse(is.na(new_attr_gid), attr_gid, new_attr_gid)) %>%
+    mutate(new_attr_gid = if_else(is.na(new_attr_gid), attr_gid, new_attr_gid)) %>%
     select(-attr_gid) %>%
     rename(attr_gid = new_attr_gid) %>%
     distinct()

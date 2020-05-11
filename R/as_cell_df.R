@@ -36,6 +36,11 @@ as_cell_df <- function(d, take_row_names = FALSE, take_col_names = FALSE) {
 }
 
 #' @export
+as_cell_df.cells <- function(d, ...) {
+  d
+}
+
+#' @export
 as_cell_df.data.frame <- function(d, ...) {
   d %>%
     attach_intermediate_class() %>%

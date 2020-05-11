@@ -145,7 +145,7 @@ basic_classifier_raw <- function(d) {
   }
 
   if (!hasName(d, "type")) {
-    d <- d %>% mutate(type = ifelse(data_type == "numeric", "value", "attribute"))
+    d <- d %>% mutate(type = if_else(data_type == "numeric", "value", "attribute"))
   }
 
   d
@@ -188,12 +188,12 @@ sample_based_part <- function(dat, item_sample, expected_type, partial_match = F
 
     d0_g_r <- d0_g %>%
       group_by(row, gid) %>%
-      mutate(new_type = ifelse(any(!is.na(new_type)), new_type[!is.na(new_type)][1], NA)) %>%
+      mutate(new_type = if_else(any(!is.na(new_type)), new_type[!is.na(new_type)][1], NA_character_)) %>%
       ungroup()
 
     d0_g_c <- d0_g %>%
       group_by(col, gid) %>%
-      mutate(new_type = ifelse(any(!is.na(new_type)), new_type[!is.na(new_type)][1], NA)) %>%
+      mutate(new_type = if_else(any(!is.na(new_type)), new_type[!is.na(new_type)][1], NA_character_)) %>%
       ungroup()
 
     d0_g <- d0_g_r %>%
@@ -201,7 +201,7 @@ sample_based_part <- function(dat, item_sample, expected_type, partial_match = F
       right_join(d0_g_c, by = c("row", "col"), suffix = c("_r", "_c"))
 
     d0_g <- d0_g %>%
-      mutate(new_type = ifelse(is.na(new_type_r), new_type_c, new_type_r)) %>%
+      mutate(new_type = if_else(is.na(new_type_r), new_type_c, new_type_r)) %>%
       select(-new_type_c, -new_type_r)
   }
 
@@ -246,7 +246,7 @@ sample_based_raw <- function(d, value_sample, attribute_sample, empty_sample, pa
     select(row, col, g_id_e) %>%
     right_join(d0, by = c("row", "col"))
   d0 <- d0 %>%
-    mutate(gid = ifelse(is.na(g_id_a), ifelse(is.na(g_id_v), g_id_e, g_id_v), g_id_a)) %>%
+    mutate(gid = if_else(is.na(g_id_a), if_else(is.na(g_id_v), g_id_e, g_id_v), g_id_a)) %>%
     select(-g_id_v, -g_id_a, -g_id_e) %>%
     filter(!is.na(gid))
 
@@ -292,7 +292,7 @@ sample_based_raw <- function(d, value_sample, attribute_sample, empty_sample, pa
   }
 
   if (!hasName(d0, "new_type")) {
-    d0 <- d0 %>% mutate(new_type = NA)
+    d0 <- d0 %>% mutate(new_type = NA_character_)
   }
 
   if (take_att) {
@@ -311,7 +311,7 @@ sample_based_raw <- function(d, value_sample, attribute_sample, empty_sample, pa
       d0 <- d0_n %>%
         select(row, col, nt = new_type) %>%
         right_join(d0, by = c("row", "col")) %>%
-        mutate(new_type = ifelse(is.na(nt), new_type, nt)) %>%
+        mutate(new_type = if_else(is.na(nt), new_type, nt)) %>%
         select(-nt)
     }
   }
@@ -332,12 +332,12 @@ sample_based_raw <- function(d, value_sample, attribute_sample, empty_sample, pa
       d0 <- d0_n %>%
         select(row, col, nt = new_type) %>%
         right_join(d0, by = c("row", "col")) %>%
-        mutate(new_type = ifelse(is.na(nt), new_type, nt)) %>%
+        mutate(new_type = if_else(is.na(nt), new_type, nt)) %>%
         select(-nt)
     }
   }
 
-  d0 <- d0 %>% mutate(new_type = ifelse(is.na(new_type), type, new_type))
+  d0 <- d0 %>% mutate(new_type = if_else(is.na(new_type), type, new_type))
   d0 <- d0 %>% select(row, col, data_type, value, type, new_type)
 
   # discovered objects
@@ -398,16 +398,16 @@ check_num <- function(x, allowed_strings) {
       filter(!present_num_c_b))
 
   # 1st decision
-  xd <- xd %>% mutate(decision = ifelse(num_c_len != 1,
-    ifelse(((present_num_c_b & is_blank_not_num_cb) | (is_blank_not_num_c)) &
+  xd <- xd %>% mutate(decision = if_else(num_c_len != 1,
+    if_else(((present_num_c_b & is_blank_not_num_cb) | (is_blank_not_num_c)) &
       num_c_len == 0,
     "blank",
     "non_num"
     ),
-    ifelse(is_blank_not_num_c,
-      NA,
-      ifelse(present_num_c_b & is_blank_not_num_cb,
-        NA, "non_num"
+    if_else(is_blank_not_num_c,
+      NA_character_,
+      if_else(present_num_c_b & is_blank_not_num_cb,
+        NA_character_, "non_num"
       )
     )
   ))
@@ -420,7 +420,7 @@ check_num <- function(x, allowed_strings) {
     mutate(
       num_and_pm = num_c %>% map_chr(~ paste0(.x, collapse = "")) %>% stringr::str_remove_all(this_reg_dc),
       num_try = suppressWarnings(as.numeric(num_and_pm)),
-      decision = ifelse(is.na(num_try), "non_num", "num")
+      decision = if_else(is.na(num_try), "non_num", "num")
     ) %>%
     bind_rows(xd %>% filter(!is.na(decision)))
 

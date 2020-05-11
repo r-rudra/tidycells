@@ -4,6 +4,7 @@ get_connected_cols <- function(col_map_with_dist) {
   col_map_with_dist
   col_map <- tibble()
   repeat({
+    if (nrow(col_map_with_dist) == 0) break()
     col_map_this <- col_map_with_dist %>% filter(dist == min(dist))
     if (nrow(col_map_this) == 0) break()
     col_map <- col_map %>% bind_rows(col_map_this)
@@ -69,7 +70,7 @@ reduce_2dfs <- function(dc1, dc2, combine_th = 0.6, rest_cols = Inf, retain_othe
     })
   }
 
-  cmap <- tibble(new_name = NA, old_name = NA, block = NA) %>% filter(FALSE)
+  cmap <- tibble(new_name = NA_character_, old_name = NA_character_, block = NA_real_) %>% filter(FALSE)
 
   if (nrow(amap_ok) > 0) {
     amap_ok <- amap_ok %>%

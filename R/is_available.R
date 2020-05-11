@@ -5,6 +5,13 @@ is_available <- function(pkgname) {
   if (pkgname %in% tidycells_pkg_env$na_pkgs) {
     return(FALSE)
   }
+  # kept for safe_dependency_check
+  if (pkgname %in% names(tidycells_pkg_env$safe_dependency_check)) {
+    chk <- tidycells_pkg_env$safe_dependency_check[[pkgname]]()
+    if (isFALSE(chk)) {
+      return(FALSE)
+    }
+  }
   rlang::is_installed(pkgname)
 }
 

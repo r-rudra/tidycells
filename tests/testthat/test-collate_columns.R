@@ -50,28 +50,4 @@ test_that("collate_columns colname convention works", {
   expect_error(collate_columns(tibble(row = 1, value = 1, data_block = 1, table_tag = 1, major_1 = 1)), "Given composed_data has no known format")
   expect_error(collate_columns(tibble(row = 1, col = 1, data_block = 1, table_tag = 1, major_1 = 1)), "Given composed_data has no known format")
   expect_error(collate_columns(tibble(row = 1, col = 1, value = 1, table_tag = 1, major_1 = 1)), "Given composed_data has no known format")
-
-  expect_equal(
-    collate_columns(tibble(row = 1, col = 1, value = 1, data_block = 1, table_tag = 1, x = 1)),
-    structure(list(value = 1, table_tag = 1, collated_1 = 1),
-      row.names = c(NA, -1L),
-      class = c("tbl_df", "tbl", "data.frame")
-    )
-  )
-
-  expect_equal(
-    collate_columns(tibble(row = 1, col = 1, value = 1, data_block = 1, table_tag = 1, major = 1, minor = 3)),
-    structure(list(value = 1, table_tag = 1, collated_1 = 1, collated_2 = 3),
-      row.names = c(NA, -1L),
-      class = c("tbl_df", "tbl", "data.frame")
-    )
-  )
-
-  expect_equal(
-    collate_columns(tibble(row = 1, col = 2, value = 3, data_block = 4, table_tag = 5, x = 6), retain_cell_address = TRUE),
-    structure(list(row = 1, col = 2, value = 3, data_block = 4, table_tag = 5, collated_1 = 6),
-      row.names = c(NA, -1L),
-      class = c("tbl_df", "tbl", "data.frame")
-    )
-  )
 })
