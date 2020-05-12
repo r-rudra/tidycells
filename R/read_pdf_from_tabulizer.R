@@ -1,9 +1,12 @@
 
 
-read_pdf_from_tabulizer <- function(fn) {
-  if (!is_available("tabulizer")) {
-    abort("'tabulizer' package is required")
+read_pdf_from_tabulizer <- function(fn, no_pkg_check = F) {
+  if (!no_pkg_check) {
+    if (!is_available("tabulizer")) {
+      abort("'tabulizer' package is required")
+    }
   }
+
 
   # read in both ways [time consuming!]
   # as decide may not function as expected
