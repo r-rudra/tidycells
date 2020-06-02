@@ -14,9 +14,7 @@ status](https://travis-ci.org/r-rudra/tidycells.svg?branch=master)](https://trav
 status](https://ci.appveyor.com/api/projects/status/github/r-rudra/tidycells?branch=master&svg=true)](https://ci.appveyor.com/project/bedantaguru/tidycells)
 [![R-hub
 checks](https://img.shields.io/badge/R_Hub-10/20_OK-green?style=flat-square&logo=R)](https://github.com/r-rudra/tidycells/blob/master/dev-notes.md#all-r-hub-build-summary)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status: Suspended – Initial development has started, but there has not yet been a stable, usable release; work has been stopped for the time being but the author(s) intend on resuming work.](https://www.repostatus.org/badges/latest/suspended.svg)](https://www.repostatus.org/#suspended)
 [![Codecov Coverage
 Status](https://codecov.io/gh/r-rudra/tidycells/branch/master/graph/badge.svg)](https://codecov.io/gh/r-rudra/tidycells?branch=master)
 [![Coveralls Coverage
