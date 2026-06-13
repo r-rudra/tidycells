@@ -1,962 +1,1337 @@
 
-# sps: shiny parts server
 
-# attach this module in shiny server body like this:
-# plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
-sps_part_plot_now <- function(input, output, session, d_now) {
-  if (!is.reactive(d_now)) {
-    .d <- d_now
-    d_now <- function() {
-      .d
-    }
-  }
-
-  plot_now <- reactive({
-    if (is.null(input$fill)) {
-      graphics::plot(d_now(), no_plot = TRUE)
-    } else {
-      graphics::plot(
-        d_now(),
-        fill = input$fill, adaptive_txt_size = input$adaptive_txt_size,
-        txt_size = input$txt_size, txt_alpha = input$txt_alpha,
-        no_txt = input$no_txt,
-        no_plot = TRUE
-      )
-    }
-  })
-
-  output$plot_tune <- renderPlot({
-    graphics::plot(plot_now())
-  })
-
-  return(plot_now)
-}
+# Here shiny server components for the Shiny modules of this package are
+# defined. These functions are used in the main shiny application defined in
+# shiny_parts_server.R.
+#
+# Here sps: shiny parts server
 
 
-# helper function
+# Dev Note : For brushing to work, always return the ggplot object directly in
+# renderPlot. Never wrap a ggplot in plot() inside Shiny.
 
-# kept for a known limitation / issue in plotly
-# ref :
-# https://github.com/ropensci/plotly/issues/1562
-# https://stackoverflow.com/questions/46604893/issue-when-trying-to-plot-geom-tile-using-ggplotly/56888579
-patch_plot_for_plotly <- function(g) {
-  aes_old <- g$mapping %>% map_chr(rlang::as_label)
+shiny_sps_part_row_col_selection <- function(
+    input, output, session,
+    d_cells, ca_react = NULL, plot_config) {
 
-  if (is.na(aes_old["fill"])) {
-    # re-attach the fill asthetic manually
-    glsel <- g$layers %>% map_lgl(~ "GeomTile" %in% class(.x$geom))
+  if(!is.null(ca_react)) {
+    # Note if ca_react is not NULL then plot_config (plot_handle) is required
 
-    # in this case only fist Tile will not have a fill asthetic
-    glsel <- glsel %>% which()
+    # If cells analysis is provided, use it to derive the cells data
 
-    if (length(glsel) != 2) {
-      abort("not sure whether things are fine!")
-    }
-
-    glsel1 <- glsel[1]
-    glsel2 <- glsel[2]
-
-
-
-    gl1 <- g$layers[[glsel1]]
-    gl2 <- g$layers[[glsel2]]
-
-    gl1$mapping <- gl2$mapping
-    gl1$mapping$x <- NULL
-    gl1$mapping$y <- NULL
-    gl1$mapping$fill <- rlang::as_quosure("z_dummy")
-
-    gl1 -> g$layers[[glsel1]]
-
-    plt <- plotly::ggplotly(g)
-
-    for (i in seq_along(plt$x$data)) {
-      if (identical(plt$x$data[[i]]$legendgroup, "z_dummy")) {
-        plt$x$data[[i]]$showlegend <- FALSE
-      }
-    }
-  } else {
-    plt <- plotly::ggplotly(g)
-  }
-
-  plt
-}
-
-# optional server logic
-sps_part_plotly_raw <- function(input, output, session, plot_now) {
-  plot_this <- reactiveVal()
-
-  observe({
-    if (is.reactive(plot_now)) {
-      plot_this(plot_now())
-    } else {
-      plot_this(plot_now)
-    }
-  })
-
-  noti_id <- reactiveVal()
-  noti_id(NULL)
-
-  output$plot_plotly <- plotly::renderPlotly({
-    withProgress(message = "Generating plotly", value = 0, {
-      incProgress(0.1, detail = paste("Please wait (don't change tabs)"))
-
-      ggp <- plot_this() %>%
-        patch_plot_for_plotly()
-
-      incProgress(0.1, detail = paste("Almost Done"))
-
-      ggp <- ggp %>%
-        plotly::style(hovertemplate = paste(c(
-          "<i>Row</i>:%{y:.0f}",
-          "<i>Col</i>:-%{x:.0f}",
-          "<b>%{text}</b>"
-        ), collapse = "<br>"))
-
-      incProgress(0.8, detail = paste("Done"))
+    # Derive the current data from the cells analysis
+    d_cells <- shiny::reactiveVal(
+      tibble::tibble(row = integer(),
+                     col = integer(),
+                     value = character(),
+                     data_type = character()))
+    shiny::observe({
+      ph <- plot_config()
+      # If CA mode, use the cells analysis data to retrieve the induced cells
+      dh <- util_convert_cells_analysis_for_plot(
+        ca_react(),
+        focus_on_data_blocks = ph$plot_params$focus_on_data_blocks,
+        color_attrs_separately = ph$plot_params$color_attrs_separately,
+        show_values_in_cells = ph$plot_params$show_values_in_cells)
+      d_cells(dh$combined_data)
     })
+  }
 
-    id_ <- showNotification("Kindly wait for few seconds yet, to load the plotly!", duration = 0)
+  # Filtered cells (based on row and column selection)
+  cells_for_plot <- shiny::reactive({
 
-    noti_id(id_)
+    shiny::req(input$selected_rows, input$selected_cols)
 
-    ggp
+    d0 <- d_cells()
+
+    d0 %>%
+      dplyr::filter(
+        .data$row >= input$selected_rows[1] &
+          .data$row <= input$selected_rows[2] &
+          .data$col >= input$selected_cols[1] &
+          .data$col <= input$selected_cols[2])
   })
 
-  observeEvent(noti_id(), {
-    if (!is.null(noti_id())) {
-      removeNotification(noti_id())
-      noti_id(NULL)
+  # Checking if plot is OK (row and column selection is within limits)
+  cells_plot_ok <- shiny::reactive({
+    shiny::req(input$selected_rows, input$selected_cols)
+    (input$selected_cols[2] - input$selected_cols[1]) <= 30 &&
+      (input$selected_rows[2] - input$selected_rows[1]) <= 100 &&
+      NROW(d_cells()) > 0
+  })
+
+  # Action of SPS : adjusting the row and column selection sliders if they
+  # exceed the limits
+  shiny::observe({
+    shiny::req(input$selected_rows, input$selected_cols)
+
+    if ((input$selected_rows[2] - input$selected_rows[1]) > 100) {
+      shiny::updateSliderInput(
+        session,
+        "selected_rows",
+        value = c(input$selected_rows[1], input$selected_rows[1] + 100 - 1)
+      )
+      shiny::showNotification(
+        "Maximum 100 rows can be selected at a time.",
+        type = "warning",
+        duration  = 1
+      )
+    }
+
+    if ((input$selected_cols[2] - input$selected_cols[1]) > 30) {
+      shiny::updateSliderInput(
+        session,
+        "selected_cols",
+        value = c(input$selected_cols[1], input$selected_cols[1] + 30 - 1)
+      )
+      shiny::showNotification(
+        "Maximum 30 columns can be selected at a time.",
+        type = "warning",
+        duration  = 1
+      )
     }
   })
+
+
+  # Update mini plot based on row and column selection. It plots all cells but
+  # with a boundary defined by the selected rows and columns.
+  output$plot_rc_select <- shiny::renderPlot({
+
+    if (cells_plot_ok()) {
+      plot.cells(
+        d_cells(),
+        fill = "data_type",
+        fill_alpha = 1,
+        no_fill = TRUE,
+        no_txt = TRUE,
+        no_legend = TRUE,
+        boundaries = data.frame(
+          r_min = input$selected_rows[1], r_max = input$selected_rows[2],
+          c_min = input$selected_cols[1], c_max = input$selected_cols[2]
+        ),
+        # For Speed
+        ignore_validation =  TRUE
+      )
+    }
+  }, bg = "transparent")
+
+  # Return as list
+  return(list(
+    cells_for_plot = cells_for_plot,
+    cells_plot_ok = cells_plot_ok
+  ))
 }
 
-# attach like
-# callModule(sps_part_plotly, "ui_visualize", plot_now = plot_now)
-sps_part_plotly <- function(input, output, session, plot_now) {
-  if (plotly_present()) {
-    sps_part_plotly_raw(input, output, session, plot_now)
-  }
-}
+shiny_sps_part_plot_tune <- function(
+    input, output, session,
+    d_now, ca_now = NULL) {
 
 
-# attach like
-# dat_new_va_classify <- callModule(sps_part_va_classify, "ui_va_classify", plot_now = plot_now, d_now = d_now, d_orig = d)
-sps_part_va_classify <- function(input, output, session, plot_now, d_now, d_orig) {
-  if (!is.reactive(d_now)) {
-    .d <- d_now
-    d_now <- function() {
-      .d
-    }
-  }
+  # The main plot handle for the plot tuning to be returned
+  plot_handle <- shiny::reactive({
 
-  if (!is.reactive(d_orig)) {
-    .d_orig <- d_orig
-    d_orig <- function() {
-      .d_orig
-    }
-  }
+    shiny::req(input$fill)
 
+    lst_info <- list()
 
-  if (!is.reactive(plot_now)) {
-    .p <- plot_now
-    plot_now <- function() {
-      .p
-    }
-  }
-
-
-  selected_points <- reactive({
-    brushedPoints(d_now() %>%
-      mutate(x = col, y = -row),
-    input$brush_va_classify,
-    xvar = "x", yvar = "y"
+    # Capture all plot parameters too
+    lst_info$plot_params <- list(
+      fill = input$fill,
+      fill_alpha = input$fill_alpha,
+      txt_size = input$txt_size,
+      txt_alpha = input$txt_alpha,
+      no_txt = input$no_txt,
+      max_txt_len = input$max_txt_len,
+      add_cell_address = input$add_cell_address,
+      no_legend = input$no_legend,
+      auto_round_values = input$auto_round_values,
+      color_attrs_separately = input$color_attrs_separately,
+      show_values_in_cells = input$show_values_in_cells
     )
+
+    lst_info
   })
 
-  output$plot_va_classify <- renderPlot({
-    plot_now() +
-      # show selected points
-      ggplot2::geom_tile(
-        mapping = ggplot2::aes(col, -row),
-        data = selected_points(),
-        color = "#F07973", fill = "#949684A8", inherit.aes = FALSE,
-        alpha = 0.5, na.rm = TRUE,
-        width = 1, height = 1
+
+  # Row and column selection for the plot tuning
+  rc_sel <- shiny_sps_part_row_col_selection(
+    input, output, session,
+    d_cells = d_now, ca_react = ca_now, plot_config = plot_handle)
+
+  # Render the plot based on the selected parameters
+  output$plot_tune <- shiny::renderPlot({
+    shiny::req(input$fill_alpha)
+    # Check the size of the selection and then plot the cells
+    if(rc_sel$cells_plot_ok()) {
+      # If row and column selection is within limits, plot the cells
+
+      ph <- plot_handle()
+      shiny_util_cells_plot_it(
+        ui_params = ph$plot_params,
+        rc_sel = rc_sel,
+        ca_now = ca_now
       )
-  })
-
-
-  new_dv <- reactiveVal()
-  new_dv(NULL)
-
-  observeEvent(input$make_value_va_classify, {
-    selected_cells <- selected_points()
-    if (nrow(selected_cells) > 0) {
-      dat <- d_now()
-      d_rest <- dat %>% anti_join(selected_cells, by = c("row", "col"))
-      dat_new <- selected_cells %>%
-        mutate(type = "value") %>%
-        bind_rows(d_rest)
-      session$resetBrush(input$brush_va_classify$brushId)
-    } else {
-      dat_new <- d_now()
     }
-    new_dv(dat_new)
-  })
-
-  new_da <- reactiveVal()
-  new_da(NULL)
-
-  observeEvent(input$make_attr_va_classify, {
-    selected_cells <- selected_points()
-    if (nrow(selected_cells) > 0) {
-      dat <- d_now()
-      d_rest <- dat %>% anti_join(selected_cells, by = c("row", "col"))
-      dat_new <- selected_cells %>%
-        mutate(type = "attribute") %>%
-        bind_rows(d_rest)
-      session$resetBrush(input$brush_va_classify$brushId)
-    } else {
-      dat_new <- d_now()
-    }
-    new_da(dat_new)
-  })
-
-  is_reset <- reactiveVal()
-  is_reset(FALSE)
+  }, execOnResize = TRUE)
 
 
-  observeEvent(input$reset_va_classify, {
-    is_reset(TRUE)
-  })
-
-
-
-  new_d <- reactive({
-    input$make_attr_va_classify
-    input$make_value_va_classify
-    input$reset_va_classify
-
-    nd <- NULL
-    isolate({
-      if (!is_reset()) {
-        if (!is.null(new_dv())) {
-          nd <- new_dv()
-          new_dv(NULL)
-        }
-        if (!is.null(new_da())) {
-          nd <- new_da()
-          new_da(NULL)
-        }
-      } else {
-        is_reset(FALSE)
-        nd <- d_orig()
-        new_dv(NULL)
-        new_da(NULL)
-      }
-
-      if (is.null(nd)) {
-        nd <- d_now()
-      } else {
-        session$resetBrush(input$brush_crop$brushId)
-        new_dv(NULL)
-        new_da(NULL)
-      }
-    })
-    nd
-  })
-
-  return(invisible(new_d))
+  # Return the plot handle
+  return(plot_handle)
 }
 
+shiny_sps_part_crop  <- function(
+    input, output, session,
+    d_now, d_orig, plot_handle) {
 
-# attach like
-# dat_new_crop <- callModule(sps_part_crop, "ui_crop", plot_now = plot_now, d_now = d_now, d_orig = d)
-sps_part_crop <- function(input, output, session, plot_now, d_now, d_orig) {
-  if (!is.reactive(d_now)) {
-    .d <- d_now
-    d_now <- function() {
-      .d
-    }
-  }
-
-  if (!is.reactive(d_orig)) {
-    .d_orig <- d_orig
-    d_orig <- function() {
-      .d_orig
-    }
-  }
-
-
-  if (!is.reactive(plot_now)) {
-    .p <- plot_now
-    plot_now <- function() {
-      .p
-    }
-  }
-
-  selected_points <- reactive({
-    brushedPoints(d_now() %>%
-      mutate(x = col, y = -row),
-    input$brush_crop,
-    xvar = "x", yvar = "y"
-    )
+  # The main reactiveVal to store current data
+  current <- shiny::reactiveVal()
+  shiny::observe({
+    # Initialize current data with the present
+    current(d_now())
   })
 
-  output$plot_crop <- renderPlot({
-    plot_now() +
-      # show selected points
-      ggplot2::geom_tile(
-        mapping = ggplot2::aes(col, -row),
-        data = selected_points(),
-        color = "#F07973", fill = "#949684A8", inherit.aes = FALSE,
-        alpha = 0.5, na.rm = TRUE,
-        width = 1, height = 1
-      )
+  # Row and column selection for the plot tuning
+  rc_sel <- shiny_sps_part_row_col_selection(
+    input, output, session,
+    d_cells = current)
+
+  # Get selected points based on brush input
+  selected_points <- shiny::reactive({
+    # Dev Note: This can not be done here shiny::req(input$brush_crop)
+    shiny::brushedPoints(
+      rc_sel$cells_for_plot() %>%
+        dplyr::mutate(x = .data$col, y = -.data$row),
+      input$brush_crop,
+      xvar = "x", yvar = "y"
+    ) %>%
+      # Remove the temporary columns used for brushing
+      dplyr::select(c("row", "col"))
+
   })
 
-  new_dd <- reactiveVal()
-  new_dd(NULL)
-
-  observeEvent(input$data_del, {
-    selected_cells <- selected_points()
-    if (nrow(selected_cells) > 0) {
-      dat <- d_now()
-      d_rest <- dat %>% anti_join(selected_cells, by = c("row", "col"))
-      dat_new <- d_rest
-      session$resetBrush(input$brush_crop$brushId)
-    } else {
-      dat_new <- d_now()
-    }
-    new_dd(dat_new)
-  })
-
-  new_dc <- reactiveVal()
-  new_dc(NULL)
-
-  observeEvent(input$data_crop, {
-    selected_cells <- selected_points()
-    if (nrow(selected_cells) > 0) {
-      dat_new <- selected_cells
-      session$resetBrush(input$brush_crop$brushId)
-    } else {
-      dat_new <- d_now()
-    }
-    new_dc(dat_new)
-  })
-
-  is_reset <- reactiveVal()
-  is_reset(FALSE)
-
-
-  observeEvent(input$data_reset, {
-    is_reset(TRUE)
-  })
-
-  new_d <- reactive({
-    input$data_crop
-    input$data_del
-    input$data_reset
-
-    nd <- NULL
-    isolate({
-      if (!is_reset()) {
-        if (!is.null(new_dc())) {
-          nd <- new_dc()
-          new_dc(NULL)
-        } else {
-          if (!is.null(new_dd())) {
-            nd <- new_dd()
-            new_dd(NULL)
-          }
-        }
-      } else {
-        is_reset(FALSE)
-        nd <- d_orig()
-      }
-
-
-      if (is.null(nd)) {
-        nd <- d_now()
-      } else {
-        session$resetBrush(input$brush_crop$brushId)
-      }
-    })
-    nd
-  })
-
-  return(invisible(new_d))
-}
-
-# attach like
-# info_dblock <- callModule(sps_part_data_block, "ui_data_block", plot_now = plot_now, ca = x)
-sps_part_data_block <- function(input, output, session, plot_now, ca, now_gids) {
-  if (!is.reactive(plot_now)) {
-    .p <- plot_now
-    plot_now <- function() {
-      .p
-    }
-  }
-
-  arg_there <- FALSE
-  if (!missing(now_gids)) {
-    if (is.reactive(now_gids)) {
-      arg_there <- TRUE
-    }
-  }
-
-
-  now_gids_this <- reactiveVal()
-
-  observe({
-    if (arg_there) {
-      now_gids_this(now_gids())
-    } else {
-      now_gids_this("All")
-    }
-  })
-
-
-  # ca : cell analysis
-  if (!is.reactive(ca)) {
-    .ca <- ca
-    ca <- function() {
-      .ca
-    }
-  }
-
-  observe({
-    updateSelectizeInput(session,
-      inputId = "gids",
-      label = "Select Data Block ids",
-      choices = c("All", ca()$cells$natural_gid %>% unique()),
-      selected = now_gids_this(),
-      options = list(
-        placeholder = "Please select any group id...",
-        onInitialize = I('function() { this.setValue(""); }')
-      )
-    )
-  })
-
-
-  gids_this <- reactive({
-    gids0 <- input$gids
-
-    if (any(gids0 == "All") & length(gids0) > 1) {
-      gids0 <- setdiff(gids0, "All")
-    }
-
-    if (is.null(gids0)) {
-      gids0 <- "All"
-    }
-
-    if (any(gids0 == "All")) {
-      gids0 <- ca()$cells$natural_gid %>% unique()
-    } else {
-      gids0 <- as.numeric(gids0)
-    }
-    gids0
-  })
-
-  plot_this <- reactive({
-    graphics::plot(ca(),
-      prior_plot = plot_now(),
-      gids = gids_this(),
-      zoom_selected_gids = input$zoom_selected_gids,
-      plot_cell_base_color = FALSE,
-      block_boundary = input$block_boundary,
-      direction_text = input$direction_text,
-      direction_text_on_all = input$direction_text_on_all,
-      dat_att_boundary = input$dat_att_boundary,
-      plot_issues = input$plot_issues,
-      no_plot = TRUE
-    )
-  })
-
-  output$plot_data_block <- renderPlot({
-    graphics::plot(plot_this())
-  })
-
-  return(list(plot = plot_this, gids = gids_this))
-}
-
-# attach like
-# callModule(sps_part_orientation_modification, "ui_orientation_modification", plot_now = info_dblock$plot, ca = x, gid_now = info_dblock$gids)
-sps_part_orientation_modification <- function(input, output, session, plot_now, ca, gid_now) {
-  if (!is.reactive(plot_now)) {
-    .p <- plot_now
-    plot_now <- function() {
-      .p
-    }
-  }
-
-  # ca : cell analysis
-  if (!is.reactive(ca)) {
-    .ca <- ca
-    ca <- function() {
-      .ca
-    }
-  }
-
-  click_pt <- reactiveVal()
-  click_pt(NULL)
-
-  observeEvent(input$click_omod, {
-    if (!is.null(input$click_omod)) {
-      if (!identical(input$click_omod, click_pt())) {
-        click_pt(input$click_omod)
-      }
-    }
-  })
-
-  observeEvent(input$dbclick_omod, {
-    click_pt(NULL)
-    session$resetBrush(input$brush_omod$brushId)
-  })
-
-  selected_points <- reactive({
-    d0 <- ca()$cell_df
-
-    d00 <- d0 %>%
-      mutate(x = col, y = -row)
-
-    if (!is.null(input$brush_omod)) {
-      init_sel <- brushedPoints(d00,
-        input$brush_omod,
-        xvar = "x", yvar = "y"
-      )
-    } else {
-      init_sel <- nearPoints(d00, click_pt(), xvar = "x", yvar = "y", threshold = 80, addDist = TRUE)
-      if (nrow(init_sel) > 0) {
-        init_sel <- init_sel %>% filter(dist_ == min(dist_))
-      }
-    }
-
-    final_sel <- init_sel
-
-    isolate({
-      if (nrow(init_sel) > 0) {
-        gid0 <- gid_now()
-        dam0 <- ca()$details$data_attr_map_raw
-        dam0_this <- dam0 %>% filter(natural_gid %in% gid0)
-        dam0_this_a <- init_sel %>%
-          select(row_a = row, col_a = col) %>%
-          inner_join(dam0_this, by = c("row_a", "col_a"))
-
-        attr_gid0 <- dam0_this_a %>%
-          distinct(attr_gid) %>%
-          pull(1)
-        attr_gid_split0 <- dam0_this_a %>%
-          distinct(attr_gid_split) %>%
-          pull(1)
-
-        final_sel <- dam0_this %>%
-          filter(attr_gid %in% attr_gid0) %>%
-          filter(attr_gid_split %in% attr_gid_split0) %>%
-          select(row = row_a, col = col_a) %>%
-          inner_join(d0, by = c("row", "col")) %>%
-          full_join(init_sel, by = c("row", "col", "data_type", "type")) %>%
-          distinct(row, col, data_type, type)
-      }
-    })
-
-    final_sel
-  })
-
-  output$plot_omod <- renderPlot({
-    plot_now() +
-      # show selected points
-      ggplot2::geom_tile(
-        mapping = ggplot2::aes(col, -row),
-        data = selected_points(),
-        color = "#F07973", fill = "#949684A8", inherit.aes = FALSE,
-        alpha = 0.5, na.rm = TRUE,
-        width = 1, height = 1
-      )
-  })
-
-  # reactiveness not utilized
-  info_this <- reactiveVal()
-  info_this(list())
-
-  # reactiveness not utilized
-  doable <- reactiveVal()
-  doable(FALSE)
-
-  ca_now <- reactiveVal()
-  observe(ca_now(ca()))
-
-
-  # update new_direction using updateSelectizeInput
-  observe({
-    input$allow_all_dirs
-
-    sel_pts <- selected_points()
-
-    reset_this <- FALSE
-
-    isolate({
-      if (nrow(sel_pts) > 0) {
-        if ("attribute" %in% sel_pts$type) {
-          gid0 <- gid_now()
-          gid_map <- ca()$cells
-
-          if (length(gid0) == 0) {
-            this_gids <- gid_map %>%
-              inner_join(sel_pts, by = c("row", "col")) %>%
-              pull(gid) %>%
-              unique()
-          } else {
-            this_gids <- gid_map %>%
-              filter(natural_gid %in% gid0) %>%
-              pull(gid) %>%
-              unique()
-          }
-
-
-          dam_old <- ca()$details$data_attr_map_raw
-          dam_old <- dam_old %>% mutate(id = seq(gid))
-
-          this_dam <- dam_old %>%
-            filter(gid %in% this_gids) %>%
-            inner_join(sel_pts %>%
-              filter(type == "attribute") %>%
-              select(row_a = row, col_a = col),
-            by = c("row_a", "col_a")
-            )
-          n_dg <- this_dam$direction_group %>%
-            unique() %>%
-            length()
-
-
-
-          if (n_dg == 1) {
-            all_dirs <- get_unpivotr_direction_names()
-
-            all_dirs_mains <- all_dirs[c("N", "E", "W", "S")]
-
-            max_dir <- this_dam %>%
-              group_by(direction) %>%
-              summarise(n = n())
-
-
-            valid_main_dirs <- all_dirs_mains %>%
-              map_lgl(~ any(max_dir$direction %in% .x)) %>%
-              which() %>%
-              names()
-
-            if (length(intersect(valid_main_dirs, c("E", "W"))) == 2 |
-              length(intersect(valid_main_dirs, c("N", "S"))) == 2) {
-              updateSelectizeInput(session,
-                inputId = "new_direction",
-                label = paste0(
-                  "Select Direction\n",
-                  "(selected cells possibly in different data block or simply in opposite direction)"
-                ),
-                choices = "Not Applicable",
-                options = list(
-                  placeholder = "Select a specific data block / attribute block ...",
-                  onInitialize = I('function() { this.setValue(""); }')
-                )
-              )
-            } else {
-              valid_dirs <- all_dirs %>%
-                map_lgl(~ any(max_dir$direction %in% .x)) %>%
-                all_dirs[.] %>%
-                unlist() %>%
-                unique()
-
-              max_dir <- max_dir %>%
-                summarise(direction[which.max(n)]) %>%
-                pull(1)
-
-              if (length(setdiff(all_dirs, valid_dirs)) == 0) {
-                warn("all_dirs and valid_dirs same which is not expected")
-              }
-
-              if (input$allow_all_dirs) {
-                give_dirs <- all_dirs
-              } else {
-                give_dirs <- valid_dirs
-              }
-
-              doable(TRUE)
-
-              lst <- list(dam = dam_old, this = this_dam)
-              info_this(lst)
-
-              updateSelectizeInput(session,
-                inputId = "new_direction",
-                label = "Select Direction",
-                choices = give_dirs,
-                selected = max_dir,
-                options = list(
-                  placeholder = "Select direction to apply ...",
-                  onInitialize = I('function() { this.setValue(""); }')
-                )
-              )
-            }
-          } else {
-            updateSelectizeInput(session,
-              inputId = "new_direction",
-              label = "Select Direction (selected cells in different direction groups)",
-              choices = "Not Applicable",
-              options = list(
-                placeholder = "Select cells in single direction ...",
-                onInitialize = I('function() { this.setValue(""); }')
-              )
-            )
-          }
-        } else {
-          reset_this <- TRUE
-        }
-      } else {
-        reset_this <- TRUE
-      }
-
-      if (reset_this) {
-        updateSelectizeInput(session,
-          inputId = "new_direction",
-          label = "Select Direction",
-          choices = "Not Applicable",
-          options = list(
-            placeholder = "Please Select Cells ...",
-            onInitialize = I('function() { this.setValue(""); }')
-          )
+  # Update the cells plot
+  output$plot_crop <- shiny::renderPlot({
+    # If row and column selection is within limits, plot the cells with selected
+    # points highlighted
+    if(rc_sel$cells_plot_ok()) {
+      ph <- plot_handle()
+      # Base plot for selected cells (based on row/col selection)
+      shiny_util_cells_plot_it(
+        ui_params = ph$plot_params,
+        rc_sel = rc_sel
+      ) +
+        # Section for highlighting the selected points
+        ggplot2::geom_tile(
+          mapping = ggplot2::aes(.data$col, -.data$row),
+          # If no points are selected, it will return an empty data frame and
+          # the plot will work
+          data = selected_points(),
+          color = "#F07973", fill = "#949684A8", inherit.aes = FALSE,
+          alpha = 0.5, na.rm = TRUE,
+          width = 1, height = 1
         )
-      }
-    })
-  })
-
-  observeEvent(input$apply_direction, {
-    if (doable() & !is.null(input$new_direction)) {
-      dam_this <- info_this()$dam
-      part_this <- info_this()$this
-      dir_this <- input$new_direction[1]
-      all_dirs <- get_unpivotr_direction_names() %>% unlist()
-      if (dir_this %in% all_dirs) {
-        if (length(setdiff(part_this$direction, dir_this))) {
-          part_this$direction <- dir_this
-          dam_this_ex <- dam_this %>% anti_join(part_this, by = "id")
-          dam_new <- dam_this_ex %>%
-            bind_rows(part_this) %>%
-            select(-id)
-          ca_new <- ca()
-          if (identical(dim(dam_new), dim(ca_new$details$data_attr_map_raw))) {
-            ca_new$details$data_attr_map_raw <- dam_new
-            ca_now(ca_new)
-          } else {
-            warn("failed to create new CA")
-          }
-        }
-      }
     }
   })
 
-  return(invisible(ca_now))
+  ### Action to crop the data based on selected points ----
+
+  # Delete Option
+  shiny::observeEvent(input$data_del, {
+    pts <- selected_points()
+    if (NROW(pts) > 0) {
+      # Update the current data by removing the selected points
+      current(current() %>% dplyr::anti_join(pts, by = c("row", "col")))
+      # Reset the brush
+      session$resetBrush(input$brush_crop$brushId)
+    }
+  })
+
+  # Crop Option
+  shiny::observeEvent(input$data_crop, {
+    pts <- selected_points()
+    if (NROW(pts) > 0) {
+      # Update the current data by keeping only the selected points
+      current(
+        current() %>%
+          dplyr::inner_join(pts[c("row","col")], by = c("row", "col")))
+      # Reset the brush
+      session$resetBrush(input$brush_crop$brushId)
+    }
+  })
+
+  # Reset Option
+  shiny::observeEvent(input$data_reset, {
+    current(d_orig())
+  })
+
+  # Return the current data
+  return(current)
 }
 
+shiny_sps_part_va_classify <- function(
+    input, output, session,
+    d_now, d_orig, plot_handle) {
 
-# helper function
 
-# optional server logic
-sps_part_traceback_raw <- function(input, output, session, dcomp, ca, prior_ca_plot) {
-  if (!is.reactive(dcomp)) {
-    .dcomp <- dcomp
-    dcomp <- function() {
-      .dcomp
-    }
-  }
+  # The main reactiveVal to store current data
+  current <- shiny::reactiveVal()
+  shiny::observe({
+    # Initialize current data with the working copy of cells data
+    current(d_now())
+  })
 
-  # ca : cell analysis
-  if (!is.reactive(ca)) {
-    .ca <- ca
-    ca <- function() {
-      .ca
-    }
-  }
+  # Row and column selection for the plot tuning
+  rc_sel <- shiny_sps_part_row_col_selection(
+    input, output, session,
+    d_cells = current)
 
-  if (!is.reactive(prior_ca_plot)) {
-    .prior_ca_plot <- prior_ca_plot
-    prior_ca_plot <- function() {
-      .prior_ca_plot
-    }
-  }
+  # Get selected points based on brush input
+  selected_points <- shiny::reactive({
+    shiny::brushedPoints(
+      rc_sel$cells_for_plot() %>%
+        dplyr::mutate(x = .data$col, y = -.data$row),
+      input$brush_va_classify,
+      xvar = "x", yvar = "y"
+    ) %>%
+      # Remove the temporary columns used for brushing
+      dplyr::select(c("row", "col"))
 
-  rev_sel_row <- reactiveVal()
-  rev_sel_row(NULL)
+  })
 
-  proxy <- DT::dataTableProxy("dt_trace", session = session)
-
-  this_dc <- reactiveVal()
-  this_dc(NULL)
-
-  output$dt_trace <- DT::renderDT(
-    {
-      dc0 <- dcomp()
-
-      showcols <- colnames(dc0) %>%
-        stringr::str_detect("[major|minor|collated]_[0-9]+$") %>%
-        colnames(dc0)[.]
-
-      std_opts <- list(
-        pageLength = 5,
-        keys = TRUE,
-        sDom = '<"top">lrt<"bottom">ipB',
-        deferRender = TRUE,
-        scrollX = TRUE,
-        scrollY = 200,
-        scroller = TRUE,
-        ordering = FALSE,
-        # basic : buttons = I("colvis")
-        buttons = list(
-          list(
-            extend = "colvis",
-            text = as.character(tags$a("Columns", style = "font-size:70%"))
-          )
+  # Plot the cells with selected points highlighted
+  output$plot_va_classify <- shiny::renderPlot({
+    # If row and column selection is within limits, plot the cells with selected
+    # points highlighted
+    if(rc_sel$cells_plot_ok()) {
+      ph <- plot_handle()
+      # Set the fill parameter for the plot to PoA (Probability of Attribute)
+      ph$plot_params$fill <- "PoA"
+      # Base plot for selected cells (based on row/col selection)
+      shiny_util_cells_plot_it(
+        ui_params = ph$plot_params,
+        rc_sel = rc_sel
+      ) +
+        # Section for highlighting the selected points
+        ggplot2::geom_tile(
+          mapping = ggplot2::aes(.data$col, -.data$row),
+          data = selected_points(),
+          color = "#F07973", fill = "#949684A8", inherit.aes = FALSE,
+          alpha = 0.5, na.rm = TRUE,
+          width = 1, height = 1
         )
-      )
-
-      if (is.null(rev_sel_row())) {
-        opts <- std_opts
-        dc0_disp <- dc0[c("RN", "value", "data_block", showcols)]
-      } else {
-
-        # kept for later
-        # below option is not working properly for all rows
-        # hence using custom solution
-        #
-        # # this is the ideal way but not always working
-        # # specifically is the selected row is beyond some number
-        # # this number is not fixed it's sometime 30 in viewer
-        # # ref :
-        # # https://stackoverflow.com/questions/47911673/r-shiny-scrolling-to-a-given-row-of-datatable-with-javascript-callback
-        # sel_opt <- list(
-        #   initComplete  = JS(paste("function() {",
-        #                            # this is  not working (kept for reference):# paste0("this.api().table().row(",rev_sel_row()-1,").node().scrollIntoView();"),
-        #                            # below and this are same : paste0("this.api().table().row(",rev_sel_row()-1,").scrollTo();"),
-        #                            paste0("this.api().row( ",rev_sel_row()-1," ).scrollTo();"),
-        #                            # this is  not working (kept for reference):# paste0("this.api().table().scroller.toPosition(",rev_sel_row()-1,")"),
-        #                            "}",
-        #                            sep = "\n"))
-        # )
-        #
-        # opts <- c(std_opts, sel_opt)
-
-        # instead of above I simply rearranged
-        opts <- std_opts
-
-        rw <- rev_sel_row()
-
-        dc0 <- dc0 %>%
-          mutate(dummy_order = (RN - rw)^2)
-
-        dc0_disp <- dc0 %>% arrange(dummy_order, RN)
-
-        dc0_disp <- dc0_disp[c("RN", "value", "data_block", showcols)]
+    }
+  }, execOnResize = TRUE)
 
 
-        proxy %>% DT::selectRows(1)
-      }
+  # Action to classify the data based on selected points
 
-      this_dc(dc0_disp)
+  # Since structure of action in both value and attribute classification is
+  # similar here we take help of additional variable (reactive).
 
-
-      DT::datatable(dc0_disp %>% select(-data_block),
-        selection = "single",
-        escape = FALSE,
-        rownames = FALSE,
-        style = "bootstrap",
-        class = "cell-border stripe",
-        extensions = c("KeyTable", "Scroller", "Buttons"),
-        options = opts
-      )
-    },
-    server = TRUE
+  VA_probs <- shiny::reactiveValues(
+    VA_trigger = FALSE, # Default initial value - "Trigger of VA classification"
+    PoV = 0, # Default initial value for PoV
+    PoA = 0  # Default initial value for PoA
   )
 
-  selected_row <- reactiveVal()
-  selected_row(NULL)
-
-  selected_gid <- reactiveVal()
-  selected_gid(NULL)
-
-
-  output$plot_traceback <- renderPlot({
-    cell_trace_plot(dcomp(), trace_row = selected_row(), ca = ca(), prior_ca_plot = prior_ca_plot())
+  # Value Option
+  shiny::observeEvent(input$make_value_va_classify, {
+    VA_probs$VA_trigger <- TRUE # Trigger the VA classification
+    VA_probs$PoA <- 0 # Sets probability of attribute to 0
+    VA_probs$PoV <- 1 # Sets probability of value to 1
   })
 
+  # Attribute Option
+  shiny::observeEvent(input$make_attr_va_classify, {
+    VA_probs$VA_trigger <- TRUE # Trigger the VA classification
+    VA_probs$PoA <- 1 # Sets probability of attribute to 1
+    VA_probs$PoV <- 0 # Sets probability of value to 0
+  })
 
-  click_pt <- reactiveVal()
-  click_pt(NULL)
+  # VA Action through VA_probs
 
-  noti_id <- reactiveVal()
-  noti_id(NULL)
+  shiny::observeEvent(VA_probs$VA_trigger, {
+    pts <- selected_points()
+    if (NROW(pts) > 0) {
+      cells_now <- current()
 
-  observe({
-    if (is.null(selected_row())) {
-      id_ <- showNotification(paste("Bi-directional selection is possible.",
-        "Either select a row from table or <double click> on plot to select a cell.",
-        "Select a row to start",
-        sep = " "
-      ),
-      duration = 0
-      )
-      noti_id(id_)
+      # PoA and PoV columns are added to the current data for value cells
+      pts$PoV <- VA_probs$PoV
+      pts$PoA <- VA_probs$PoA
+
+      # Update PoA and PoV columns in the current data based on the selected
+      # points
+      cells_updated  <- cells_now %>% dplyr::left_join(
+        pts, by = c("row", "col"), suffix = c("", "_new")
+      ) %>%
+        dplyr::mutate(
+          # Update the PoV and PoA column with the new value from the brush
+          # value = ifelse(is.na(.data$value_new), .data$value, .data$value_new)
+          PoV = ifelse(is.na(.data$PoV_new), .data$PoV, .data$PoV_new),
+          PoA = ifelse(is.na(.data$PoA_new), .data$PoA, .data$PoA_new)
+        ) %>%
+        dplyr::select(-c("PoV_new", "PoA_new"))
+
+      # Update the current data by removing the selected points
+      current(cells_updated)
+      # Reset the brush
+      session$resetBrush(input$brush_crop$brushId)
+      # Reset the trigger on action completion
+      VA_probs$VA_trigger <- FALSE
+    } else {
+      # Reset the trigger if no points are selected
+      VA_probs$VA_trigger <- FALSE
     }
   })
 
-  observeEvent(input$click_traceback, {
-    if (!is.null(input$click_traceback)) {
-      click_pt(input$click_traceback)
-    }
-  })
-
-  observeEvent(input$dt_trace_rows_selected, {
-    dc0 <- this_dc()
-    this_rn <- dc0$RN[input$dt_trace_rows_selected]
-    if (!identical(selected_row(), this_rn)) {
-      if (!is.null(noti_id())) {
-        removeNotification(noti_id())
-        noti_id(NULL)
-      }
-      selected_row(this_rn)
-      selected_gid(dc0$data_block[input$dt_trace_rows_selected])
-      # this is not required as otherwise theselection will be removed : rev_sel_row(NULL)
-    }
+  # Reset Option
+  shiny::observeEvent(input$reset_va_classify, {
+    VA_probs$VA_trigger <- FALSE
+    current(d_orig())
   })
 
 
-  observe({
-    click_pt()
-
-    isolate({
-      d00 <- dcomp() %>%
-        mutate(x = col, y = -row, r_num = seq(value))
-
-      this_sel <- nearPoints(d00, click_pt(), xvar = "x", yvar = "y", threshold = 80, addDist = TRUE)
-      if (nrow(this_sel) > 0) {
-        this_sel <- this_sel %>% filter(dist_ == min(dist_))
-      }
-
-      if (nrow(this_sel) > 0) {
-        if (!identical(this_sel$r_num, input$dt_trace_rows_selected)) {
-          rev_sel_row(as.numeric(this_sel$r_num))
-          click_pt(NULL)
-        }
-      }
-    })
-  })
-
-
-  return(selected_gid)
+  return(current)
 }
 
-# attach like
-# gid_sel <- callModule(sps_part_traceback, "ui_traceback", dcomp = dcomp, ca = x, prior_ca_plot = info_dblock$plot)
-sps_part_traceback <- function(input, output, session, dcomp, ca, prior_ca_plot) {
-  if (DT_present()) {
-    sps_part_traceback_raw(input, output, session, dcomp, ca, prior_ca_plot)
-  }
+shiny_sps_part_orientation_modification <- function(
+    input, output, session,
+    ca_now, ca_orig, plot_handle) {
+  # NS is required as dynamic UI is used
+  ns <- session$ns  # Get the namespace function
+
+  # The main reactiveVal to store current data
+  current <- shiny::reactiveVal()
+  current_rcdf <- shiny::reactiveVal()
+  # The working copy of plot_handle
+  current_plot_handle <- shiny::reactiveVal()
+
+  # For data_block focus
+  current_focus_on_data_blocks <- shiny::reactiveVal(NULL)
+  # Variable to store current state
+  selection_1 <- shiny::reactiveVal(NULL)
+  selection_2 <- shiny::reactiveVal(NULL)
+
+  click_count <- shiny::reactiveVal(0)
+
+  action_to_perform <- shiny::reactiveVal(NULL)
+
+  # Initialize these state variables
+  shiny::observe({
+    # Initialize current data with the original data
+    current(ca_now())
+  })
+
+  shiny::observe({
+    # This to depend on changes in current
+    current()
+    # Generate the initial reactive cells induced by cells_analysis
+    ph <- plot_handle()
+    ph$plot_params$focus_on_data_blocks <- current_focus_on_data_blocks()
+
+    # Update the current plot handle for focus
+    current_plot_handle(ph)
+
+    conv_d <- util_convert_cells_analysis_for_plot(
+      current(),
+      focus_on_data_blocks = current_focus_on_data_blocks(),
+      color_attrs_separately = ph$plot_params$color_attrs_separately,
+      # Note intentionally not using `ph$plot_params$show_values_in_cells`. As
+      # values in cells only for display but cell info is crucial for other
+      # operations.
+      show_values_in_cells = FALSE)
+    current_rcdf(conv_d$combined_data)
+  })
+
+
+  # Row and column selection for the plot tuning
+  rc_sel <- shiny_sps_part_row_col_selection(
+    input, output, session,
+    ca_react = current, plot_config = current_plot_handle)
+
+
+  # Render the plot based on the selected parameters
+  output$plot_omod <- shiny::renderPlot({
+    # Check the size of the selection and then plot the cells
+    if(rc_sel$cells_plot_ok()) {
+      # If row and column selection is within limits, plot the cells
+
+      ph <- plot_handle()
+      shiny_util_cells_plot_it(
+        ui_params = ph$plot_params,
+        rc_sel = rc_sel,
+        ca_now = current) +
+        # Section for highlighting the selected points (selection 1 and 2)
+        ggplot2::geom_tile(
+          mapping = ggplot2::aes(.data$col, -.data$row),
+          # If no points are selected, it will return an empty data frame and
+          # the plot will work
+          data = shiny_util_get_full_block_from_cells_analysis(
+            selection = selection_1()$which,
+            ca_cells = current_rcdf()
+          ),
+          color = "#F07973", fill = "#94F484", inherit.aes = FALSE,
+          alpha = 0.2, na.rm = TRUE, lwd = 0.7, lty = 5,
+          width = 1, height = 1) +
+        # Section for highlighting the selected points (selection 1 and 2)
+        ggplot2::geom_tile(
+          mapping = ggplot2::aes(.data$col, -.data$row),
+          # If no points are selected, it will return an empty data frame and
+          # the plot will work
+          data = shiny_util_get_full_block_from_cells_analysis(
+            selection = selection_2()$which,
+            ca_cells = current_rcdf()
+          ),
+          color = "#F073D9", fill = "#848F06", inherit.aes = FALSE,
+          alpha = 0.2, na.rm = TRUE, lwd = 0.7, lty = 4,
+          width = 1, height = 1
+        )
+    }
+  }, execOnResize = TRUE)
+
+
+  # Update Selection 1 and Selection 2 based on user input
+  shiny::observeEvent(input$click_omod, {
+
+    click_count(click_count()+1)
+
+    # Capture the clicked cell
+    d_sel <- shiny_util_clicked_tile(current_rcdf(), input$click_omod)
+
+    # Selection 1: Click on the data block or attribute block
+    if(NROW(d_sel) > 0 && is.null(selection_1())) {
+
+      # Either data block or attribute block is selected
+
+      if(d_sel$type[1] == "data") {
+        # Data block selected
+        selection_1(list(type="data", which = d_sel))
+
+        # Change the focus on data blocks to selected data block
+        if(input$dynamic_focus){
+          current_focus_on_data_blocks(d_sel$value)
+        }
+      } else {
+        # Attribute block selected
+        selection_1(list(type="attr", which = d_sel))
+
+        # Shift the focus on data blocks to the attribute block only if
+        # Navigation-Only mode enabled.
+        if (input$dynamic_focus) {
+          # Retrieve the data blocks connected to this attribute block
+          ad_map_attr_wise <- current()$attr_data_map
+          connected_data_blocks <- ad_map_attr_wise %>%
+            dplyr::inner_join(d_sel[c("row", "col")],
+                              by = c("row", "col"))
+          connected_data_blocks <- unique(connected_data_blocks$data_gid)
+
+          # Change the focus on data blocks to the connected data blocks
+          current_focus_on_data_blocks(connected_data_blocks)
+        }
+
+      }
+    } else if(NROW(d_sel) == 0) {
+      # No selection made, reset the selections
+      current_focus_on_data_blocks(NULL)
+      selection_1(NULL)
+      selection_2(NULL)
+      click_count(0)
+    }
+
+    # Selection 2: Click or Brush on the data block or attribute block after
+    # selection 1
+
+    # Proceed only if selection_1 is made and selection_2 is not set (tracked
+    # via click_count)
+    if(!is.null(selection_1()) && click_count()>1 && NROW(d_sel) > 0){
+
+      # Check if clicked cell is a data block or attribute block
+      if(d_sel$type[1] == "data") {
+        # Data block selected
+        selection_2(list(type="data", which = d_sel))
+      } else {
+        # Attribute block selected
+        selection_2(list(type="attr", which = d_sel))
+      }
+    }
+
+  })
+
+
+  # Reset Option
+  shiny::observeEvent(input$reset_omod, {
+    current(ca_orig())
+  })
+
+
+  # Dynamic UI Section ----
+
+  output$ui_omod_control <- shiny::renderUI({
+    # Start Case when no click detected/ Selection 1 is not made
+    if(is.null(selection_1())) {
+      return(shiny::tagList(
+        shiny::h5(
+          "Click on the cells to select data-block/attribute-block to proceed."
+        ),
+        shiny::h6(
+          ifelse(
+            !input$dynamic_focus,
+            paste0(
+              "Tip: You can turn on Dynamic Focus to automatically focus on ",
+              "the first selected data-block, or on the data-block(s) ",
+              "connected to the first selected attribute-block. This is useful ",
+              "when performing actions on a single data-block, such as ",
+              "detaching an attribute or changing the header orientation tag."
+            ),
+            paste0(
+              "Tip: You can turn off Dynamic Focus to allow selection of ",
+              "multiple data-blocks or attribute-blocks without automatically ",
+              "focusing on the selected block."
+            )
+          )
+        )
+      ))
+    } else if(is.null(selection_2())) {
+      # Clicked Case / Selection 1 is made
+      return(shiny::tagList(
+        shiny::h5(
+          paste0(
+            tools::toTitleCase(selection_1()$type), "-Block Selected:",
+            selection_1()$which$value[1]
+          )
+        ),
+        shiny::div(style = "height:1px;"),
+        shiny::h5(
+          paste0(
+            "\nNow click on another cells to select ",
+            "second data-block/attribute-block to proceed."
+          )
+        )
+      ))
+    } else {
+
+      common_top <- shiny::tagList(
+        shiny::h6(
+          "First ",
+          shiny::strong(tools::toTitleCase(selection_1()$type)),
+          "-Block Selected:",
+          shiny::strong(selection_1()$which$value[1]), " Then "
+
+        ),
+        shiny::div(style = "margin-top: 1px;"),
+        shiny::h6(
+          shiny::strong(tools::toTitleCase(selection_2()$type)),
+          "-Block Selected:",
+          shiny::strong(selection_2()$which$value[1])
+        )
+      )
+
+      actions_available <- infer_util_cells_analysis_modification(
+        current(),
+        point_1 = selection_1(),
+        point_2 = selection_2(),
+        return_actions = TRUE)
+
+
+      # For "detach" & "change_HOT" situations
+      if("detach" %in% actions_available) {
+        return(shiny::tagList(
+          common_top,
+          shiny::h5(
+            "These actions can be done:"
+          ),
+
+          shiny::fluidRow(
+            shiny::column(
+              width = 6,
+              shiny::actionButton(
+                ns("omod_detach"),
+                "Unlink/Detach",
+                title = paste0(
+                  "Unlink/Detach ", selection_1()$type, ":- ", selection_1()$which$value[1],
+                  " from ", selection_2()$type, ":- ", selection_2()$which$value[1]
+                ),
+                icon = shiny::icon("unlink")
+              )
+            ),
+            shiny::column(
+              width = 6,
+              shiny::actionButton(
+                ns("omod_change_HOT"),
+                "Modify - HOT",
+                title = "Modify - Header Orientation Tag",
+                icon = shiny::icon("edit")
+              )
+            )
+          ),
+
+          shiny::selectInput(
+            ns("omod_HOT_to"),
+            "Choose Header Orientation Tag (HOT)",
+            choices = unique(unlist(infer_get_valid_header_orientation_tags()))
+          )
+        ))
+      }
+
+      # For "join" case
+      if("join" %in% actions_available) {
+        return(shiny::tagList(
+          common_top,
+          shiny::h5(
+            "This action can be done:"
+          ),
+          shiny::actionButton(
+            ns("omod_join"),
+            "Join Them",
+            title = paste0(
+              "Join ", selection_1()$type, ":- ", selection_1()$which$value[1],
+              " and ", selection_2()$type, ":- ", selection_2()$which$value[1]
+            ),
+            icon = shiny::icon("link")
+          ),
+          shiny::div(style = "height:3px;")
+        ))
+      }
+
+      # For "connect" case
+      if("connect" %in% actions_available) {
+        return(shiny::tagList(
+          common_top,
+          shiny::h5(
+            "This action can be done:"
+          ),
+          shiny::actionButton(
+            ns("omod_connect"),
+            "Connect Them",
+            title = paste0(
+              "Connect ", selection_1()$type, ":- ", selection_1()$which$value[1],
+              " and ", selection_2()$type, ":- ", selection_2()$which$value[1]
+            ),
+            icon = shiny::icon("plug")
+          ),
+          shiny::selectInput(
+            ns("omod_HOT_to"),
+            "Choose Header Orientation Tag (HOT)",
+            choices = unique(unlist(infer_get_valid_header_orientation_tags()))
+          )
+        ))
+      }
+
+      # Conflict Cases
+      if(any(stringr::str_detect(actions_available,"conflict"))) {
+        if ("conflict_multiple_selection" %in% actions_available) {
+          return(shiny::tagList(
+            common_top,
+            shiny::h6(
+              paste0(
+                "No action can be performed because multiple selections were detected in a single cell.",
+                " Please select only one data-block first, then select another data-block or attribute-block.",
+                " If cells of this type are present, they have to first be detached from multiple connected data-blocks for further actions."
+              )
+            )
+          ))
+        }
+
+
+        if ("conflict_same_selection" %in% actions_available) {
+          return(shiny::tagList(
+            common_top,
+            shiny::h6(
+              paste0(
+                "No action can be performed because the same block was selected twice.",
+                " Please select two different blocks to proceed."
+              )
+            )
+          ))
+        }
+
+      }
+
+
+    }
+
+
+    # Default case return empty UI
+    return(shiny::tagList())
+
+  })
+
+
+  # Dynamic UI-based Actions ----
+
+  # Put all action to perform in variable "action_to_perform" and then from
+  # there update current()
+  shiny::observeEvent(input$omod_detach,{
+    action_to_perform(
+      list(action = "detach")
+    )
+  })
+
+  shiny::observeEvent(input$omod_change_HOT,{
+    action_to_perform(
+      list(action = "change_HOT",
+           HOT_to = input$omod_HOT_to)
+    )
+  })
+
+  shiny::observeEvent(input$omod_join,{
+    action_to_perform(
+      list(action = "join")
+    )
+  })
+
+  shiny::observeEvent(input$omod_connect,{
+    action_to_perform(
+      list(action = "connect",
+           HOT_to = input$omod_HOT_to)
+    )
+  })
+
+  # Finally perform it
+  shiny::observeEvent(action_to_perform(),{
+    if(!is.null(selection_1()) &&
+       !is.null(selection_2()) &&
+       !is.null(action_to_perform()$action)){
+
+      ca_mod <- infer_util_cells_analysis_modification(
+        ca = current(),
+        point_1 = selection_1(), point_2 = selection_2(),
+        return_actions = FALSE,
+        do_action = action_to_perform()$action,
+        HOT_to = action_to_perform()$HOT_to)
+
+      current(ca_mod)
+
+      # If no other blocks are connected, the entire block will be removed from
+      # the plot. In such cases, the code will identify which block is affected
+      # and reset the selection accordingly.
+      conv_d <- util_convert_cells_analysis_for_plot(ca_mod)
+      cells_now <- conv_d$combined_data
+
+      chk1 <- selection_1()$which[c("row","col")] %>%
+        dplyr::inner_join(cells_now, by = c("row","col"))
+
+      if (NROW(chk1) == 0) selection_1(NULL)
+
+      chk2 <- selection_2()$which[c("row","col")] %>%
+        dplyr::inner_join(cells_now, by = c("row","col"))
+
+      if (NROW(chk2) == 0) selection_2(NULL)
+
+      # Reset the action_to_perform
+      action_to_perform(NULL)
+
+    }
+  })
+
+
+  # Return
+  return(current)
+}
+
+
+
+
+shiny_sps_part_traceback <- function(
+    input, output, session,
+    ca_now, plot_handle) {
+  # NS is required for DT
+  ns <- session$ns  # Get the namespace function
+
+  # Variable to store present traceback render
+  traceback_render_now <- shiny::reactiveVal(NULL)
+  data_for_DT <- shiny::reactiveVal(tibble::tibble())
+
+  # The main reactiveVal to store current whole data (without data-block focus)
+  whole_rcdf <- shiny::reactiveVal()
+
+  # The main reactiveVal to store current data
+  current_rcdf <- shiny::reactiveVal()
+  # The working copy of plot_handle
+  current_plot_handle <- shiny::reactiveVal()
+
+  # For data_block focus
+  current_focus_on_data_blocks <- shiny::reactiveVal(NULL)
+  # Variable to store current state
+  selection_from_plot <- shiny::reactiveVal(NULL)
+  selection_from_DT <- shiny::reactiveVal(NULL)
+  # Variable to fuse combined selection
+  selection_combined <- shiny::reactiveVal(NULL)
+
+  # DT Color and Arrow map for traceback
+  DT_traceback_meta <- shiny::reactiveVal(
+    tibble::tibble())
+
+  return_handle <- shiny::reactiveVal(NULL)
+
+
+
+  # Initialize these state variables
+
+  shiny::observe({
+    # Generate the initial reactive cells induced by cells_analysis
+    ph <- plot_handle()
+    ph$plot_params$focus_on_data_blocks <- current_focus_on_data_blocks()
+
+    # Update the current plot handle for focus
+    current_plot_handle(ph)
+
+    conv_d <- util_convert_cells_analysis_for_plot(
+      ca_now(),
+      focus_on_data_blocks = current_focus_on_data_blocks(),
+      color_attrs_separately = ph$plot_params$color_attrs_separately,
+      # Note intentionally not using `ph$plot_params$show_values_in_cells`. As
+      # values in cells only for display but cell info is crucial for other
+      # operations.
+      show_values_in_cells = FALSE)
+    current_rcdf(conv_d$combined_data)
+
+    # Take all data_blocks for furtehr use
+    conv_d_all_data_blocks <- util_convert_cells_analysis_for_plot(
+      ca_now(),
+      # Since it is mainly required for data_block identification only data_gid
+      # is taken
+      attr_cols = "data_gid",
+      show_values_in_cells = FALSE)
+
+    whole_rcdf(conv_d_all_data_blocks$combined_data)
+  })
+
+  # Initiate and Link traceback_render_now to ca_now to trigger re-render on
+  # ca_now change
+  shiny::observeEvent(ca_now(), {
+    tr_rndr <- util_get_traceback_composition(ca_now())
+    traceback_render_now(tr_rndr)
+  })
+
+  # Prepare data_for_DT based on the selected comp_type
+  shiny::observe({
+    shiny::req(traceback_render_now())
+
+    collated_options <- c(
+      "Collated Columns","Info Columns",
+      "Uncollated Columns","Cell Address")
+
+    composed_options <- c(
+      "High Priority Columns","Mid Priority Columns",
+      "Low Priority Columns","Cell Address")
+
+    ok_state <- FALSE
+
+    if(input$comp_type == "collated" &&
+       any(input$show_cols %in% collated_options[-4])) {
+      dt0 <- traceback_render_now()$comp_orig_collate
+      chk <- intersect(input$show_cols_fine_sel, setdiff(colnames(dt0), c("col","row","data_gid","value")))
+      if(length(chk)==0){
+        shiny::updateSelectizeInput(
+          inputId = "show_cols_fine_sel",
+          label = shiny::span(
+            "Columns Filter (Further Selection)",
+            title = shiny_util_msg()$fine_col_sel),
+          choices = colnames(dt0),
+          selected =colnames(dt0)
+        )
+      }
+      ok_state <- TRUE
+    }
+
+    if(input$comp_type != "collated" &&
+       any(input$show_cols %in% composed_options[-4])) {
+
+      dt0 <- traceback_render_now()$comp_orig
+      chk <- intersect(input$show_cols_fine_sel, setdiff(colnames(dt0), c("col","row","data_gid","value")))
+      if(length(chk)==0){
+        shiny::updateSelectizeInput(
+          inputId = "show_cols_fine_sel",
+          label = shiny::span(
+            "Columns Filter (Further Selection)",
+            title = shiny_util_msg()$fine_col_sel),
+          choices = colnames(dt0),
+          selected =colnames(dt0)
+        )
+      }
+
+      ok_state <- TRUE
+    }
+
+    if(ok_state) {
+
+      if(input$comp_type == "collated") {
+        # Use output of collate_column
+        d_this <- traceback_render_now()$comp_orig_collate
+
+        if(input$discard_const_cols){
+          cols_to_keep <- c("col", "row", "data_gid", "value")
+          d_this <- d_this %>%
+            dplyr::select(
+              dplyr::any_of(cols_to_keep),
+              dplyr::where(~ dplyr::n_distinct(.x, na.rm = TRUE) > 1)
+            )
+        }
+
+        cnames_this <- colnames(d_this)
+
+        if(!("Uncollated Columns" %in% input$show_cols)){
+          cnames_this <- cnames_this %>%
+            setdiff(cnames_this[stringr::str_detect(cnames_this,"^uncollated_")])
+        }
+
+        if(!("Info Columns" %in% input$show_cols)){
+          cnames_this <- cnames_this %>%
+            setdiff(cnames_this[stringr::str_detect(cnames_this,"^info_")])
+        }
+
+        cn_try <- intersect(input$show_cols_fine_sel, cnames_this)
+        if(length(setdiff(cn_try,c("value","row","col","data_gid")))>0){
+          cnames_this <- union(cn_try, c("value","row","col","data_gid"))
+        }
+
+        d_this <- d_this[cnames_this]
+
+      } else {
+        # Use output of compose
+        d_this <- traceback_render_now()$comp_orig
+
+        if(input$discard_const_cols){
+          cols_to_keep <- c("col", "row", "data_gid", "value")
+          d_this <- d_this %>%
+            dplyr::select(
+              dplyr::any_of(cols_to_keep),
+              dplyr::where(~ dplyr::n_distinct(.x, na.rm = TRUE) > 1)
+            )
+        }
+
+        cnames_this <- colnames(d_this)
+
+        if(!("Mid Priority Columns" %in% input$show_cols)){
+          cnames_this <- cnames_this %>%
+            setdiff(cnames_this[stringr::str_detect(cnames_this,"^mid_")])
+        }
+
+        if(!("Low Priority Columns" %in% input$show_cols)){
+          cnames_this <- cnames_this %>%
+            setdiff(cnames_this[stringr::str_detect(cnames_this,"^low_")])
+        }
+
+        cn_try <- intersect(input$show_cols_fine_sel, cnames_this)
+        if(length(setdiff(cn_try,c("value","row","col","data_gid")))>0){
+          cnames_this <- union(cn_try, c("value","row","col","data_gid"))
+        }
+
+        d_this <- d_this[cnames_this]
+      }
+
+      # Add row_id for DT
+      d_this <- dplyr::mutate(d_this, row_id = seq_len(dplyr::n()))
+
+      # Reorder columns
+      d_this <- d_this[c(
+        # Safe option is this but d_thiswill always have these columns:
+        # intersect(colnames(d_this),c("data_gid","row","col")),
+        c("data_gid","row","col"),
+        setdiff(colnames(d_this),c("data_gid","row","col","value","row_id")),
+        "value",
+        "row_id"
+      )]
+
+      # Update the data_for_DT to be used in DT section
+      data_for_DT(d_this)
+    }
+
+  })
+
+  # Dev Note : Note that input$show_cols is used in different mode - This means
+  # for some values of input$show_cols it is directly removed before DT and some
+  # are hidden at DT
+
+  # Update the check-box group based on the selected comparison type
+  shiny::observeEvent(input$comp_type,{
+
+    if(input$comp_type == "collated") {
+
+      collated_options <- c(
+        "Collated Columns","Info Columns",
+        "Uncollated Columns","Cell Address")
+
+      # If none of the collated options are selected, update the checkbox group
+      if(!any(input$show_cols %in% collated_options[-4])){
+        shiny::updateCheckboxGroupInput(
+          inputId = "show_cols",
+          label = "Show Columns",
+          choices = collated_options,
+          selected = collated_options[1]
+        )
+      }
+
+    } else {
+
+      composed_options <- c(
+        "High Priority Columns","Mid Priority Columns",
+        "Low Priority Columns","Cell Address")
+
+      # If none of the composed options are selected, update the checkbox group
+      if(!any(input$show_cols %in% composed_options[-4])){
+        shiny::updateCheckboxGroupInput(
+          inputId = "show_cols",
+          label = "Show Columns",
+          choices = composed_options,
+          selected = composed_options[c(1,2)]
+        )
+      }
+    }
+
+  })
+
+
+  # Row and column selection for the plot tuning
+  rc_sel <- shiny_sps_part_row_col_selection(
+    input, output, session,
+    ca_react = ca_now, plot_config = current_plot_handle)
+
+
+  # Render the plot based on the selected parameters
+  output$plot_traceback <- shiny::renderPlot({
+    # Check the size of the selection and then plot the cells
+    if(rc_sel$cells_plot_ok()) {
+      # If row and column selection is within limits, plot the cells
+
+      # Color and arrow mapping
+      arrow_and_color_map <- DT_traceback_meta()
+      if(NROW(arrow_and_color_map)>0){
+        sel_pt <- arrow_and_color_map %>% dplyr::slice(1)
+      } else {
+        sel_pt <- tibble::tibble(row_from = numeric(0), col_from = numeric(0))
+      }
+
+      ph <- plot_handle()
+
+      shiny_util_cells_plot_it(
+        ui_params = ph$plot_params,
+        rc_sel = rc_sel,
+        ca_now = ca_now,
+        # These arguments are for traceback
+        cell_connection_map = arrow_and_color_map,
+        connection_line_type = input$connection_line_type,
+        connection_line_alpha = input$connection_line_alpha,
+        connection_line_add_jitter = input$connection_line_add_jitter
+      ) +
+        # Section for highlighting the selected point
+        ggplot2::geom_tile(
+          mapping = ggplot2::aes(.data$col_from, -.data$row_from),
+          data = sel_pt,
+          color = "#F07973", fill = "#94F484", inherit.aes = FALSE,
+          alpha = 0.2, na.rm = TRUE, lwd = 0.7, lty = 5,
+          width = 1, height = 1)
+    }
+  }, execOnResize = TRUE)
+
+
+  output$dt_trace <- DT::renderDT({
+    shiny::req(data_for_DT())
+
+    # Color mapping
+    col_name_to_color_map <- DT_traceback_meta()
+
+    if(NROW(col_name_to_color_map)>0){
+      # If value column is missing, add it
+      if(!("value" %in% col_name_to_color_map$colname)){
+        col_name_to_color_map <- col_name_to_color_map %>%
+          dplyr::bind_rows(
+            data.frame(colname = "value", color = "black")
+          )
+      }
+    }
+
+    # Specify columns to hide
+    hide_these_cols <- character()
+    if(!("Cell Address" %in% input$show_cols)){
+      hide_these_cols <- c("data_gid","row","col")
+    }
+
+    # Check if any columns present apart from display requested columns
+    cnames_this <- colnames(data_for_DT())
+    rem_cols <- setdiff(cnames_this, c(hide_these_cols,"row_id"))
+    if(length(rem_cols)<3){
+      shiny::showNotification(
+        paste0(
+          "Too few columns are visible! ",
+          "Consider enabling more column types in the controls."),
+        duration = 3)
+    }
+
+    # Render the DT table with the selected row and column highlighted
+    out_DT <- shiny_util_DT(
+      # The final data to display in DT as linked with data_for_DT
+      data = data_for_DT(),
+      target_row = selection_combined()$row[1],
+      target_col = selection_combined()$col[1],
+      col_colors = col_name_to_color_map,
+      hide_these_cols = hide_these_cols,
+      DT_animate_scroll = isTRUE(input$animate_DT_scroll)
+    )
+
+    out_DT
+
+  }, server = TRUE)
+
+
+
+  # Update Selections base on plot or DT ----
+
+  # Section from plot
+  shiny::observeEvent(input$click_traceback, {
+
+    # Capture the clicked cell
+    d_sel <- shiny_util_clicked_tile(current_rcdf(), input$click_traceback)
+
+    # Selection from Plot: Click on the data block in the plot
+    if(NROW(d_sel) > 0) {
+
+      # Consider the case of only data block selection
+
+      if(d_sel$type[1] == "data") {
+        # Data block selected
+        selection_from_plot(d_sel)
+        selection_from_DT(NULL) # Reset selection from DT
+      }
+      # Note here attribute block selection is not considered as traceback
+      # focuses on data blocks only
+    } else if(NROW(d_sel) == 0) {
+      # No selection made, reset the selections
+      selection_from_plot(NULL)
+      selection_combined(NULL)
+      current_focus_on_data_blocks(NULL)
+      proxy <- DT::dataTableProxy("dt_trace")
+      # Deselect all rows
+      DT::selectRows(proxy, NULL)
+      selection_from_DT(NULL)
+    }
+
+  })
+
+
+  # Selection from DT
+  shiny::observeEvent(input$dt_trace_rows_selected, {
+
+    d_this <- traceback_render_now()$comp_orig
+    # Update the selection_from_DT based on selected rows in DT
+    selection_from_DT(
+      d_this[input$dt_trace_rows_selected,c("row","col")]
+    )
+    selection_from_plot(NULL) # Reset selection from plot
+  })
+
+  # Update selection_combined based on selection from plot or DT
+  shiny::observe({
+    if(!is.null(selection_from_plot())){
+      # Update from plot
+      selection_combined(
+        selection_from_plot()[1,c("row","col")]
+      )
+    }
+
+    if(!is.null(selection_from_DT())){
+      # Update from DT
+      selection_combined(
+        selection_from_DT()[1,c("row","col")]
+      )
+    }
+
+  })
+
+  # Action based on selection (selection_combined) ----
+
+  shiny::observe({
+
+    if(!is.null(selection_combined())){
+
+      # Update the focus on data blocks to selected data block
+      if(input$dynamic_focus_traceback){
+        d_sel <- selection_combined()
+        d_sel <- d_sel %>%
+          dplyr::inner_join(
+            whole_rcdf() %>%
+              dplyr::select(c("row","col","value","type")),
+            by = c("row","col")
+          )
+        if(NROW(d_sel) > 0 && d_sel$type[1] == "data") {
+          current_focus_on_data_blocks(d_sel$value[1])
+        }
+      } else {
+        current_focus_on_data_blocks(NULL)
+      }
+
+      # Traceback operation - meta update
+      dtr <- util_traceback(
+        cell_row = selection_combined()$row[1],
+        cell_col = selection_combined()$col[1],
+        traceback_render = traceback_render_now(),
+        do_collated = (input$comp_type=="collated"))
+
+      if(input$comp_type=="collated") {
+        dtr_this <- dtr$connected_collated_cells
+      } else {
+        dtr_this <- dtr$connected_cells
+      }
+
+      dtr_this <- stats::na.omit(dtr_this)
+
+      if(input$show_displayed_cols_only){
+        cnames_now <- colnames(data_for_DT())
+        dtr_this <- dtr_this %>%
+          dplyr::filter(.data$colname %in% cnames_now)
+      }
+
+
+      if(NROW(dtr_this)>0){
+
+        # 1. Define your base colors
+        base_cols <- c(
+          "#FF0000", "#FF7F00", "#007FFF", "#E84C20",
+          "#008B5A", "#0000FF", "#A1330F", "#8B00FF"
+        )
+
+        # 2. Generate the palette function
+        pal <- shiny_util_create_separated_palette(
+          colors = base_cols, seed = 1, return_palette = TRUE)
+
+        dtr_this$color <- pal(NROW(dtr_this))
+
+        dtr_this <- dtr_this %>%
+          dplyr::mutate(
+            row_from = selection_combined()$row[1],
+            col_from = selection_combined()$col[1],
+            row_to = .data$row,
+            col_to = .data$col)
+
+        dtr_this <- dtr_this %>%
+          dplyr::select(c("colname", "row_from", "col_from",
+                          "row_to", "col_to", "color"))
+
+
+
+
+        DT_traceback_meta(dtr_this)
+
+      }
+
+    } else {
+      DT_traceback_meta(NULL)
+    }
+  })
+
+
+
+  shiny::observe({
+    if(input$comp_type=="collated"){
+      return_handle(traceback_render_now()$comp_orig_collate)
+    } else {
+      return_handle(traceback_render_now()$comp_orig)
+    }
+  })
+
+  # Return
+  return(return_handle)
+
+
 }

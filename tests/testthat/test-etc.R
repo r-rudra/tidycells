@@ -1,309 +1,54 @@
-# few misc test for further code coverage
 
-test_that("etc works", {
-  fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-  fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
+test_that("infer_group_connected_blocks checks", {
 
-  cd <- read_cells(fn, at_level = "make_cells")[[1]]
-  expect_true(stringr::str_detect(cd %>% unlist() %>% paste0(collapse = "\n"), "Nakshatra"))
-  expect_false(stringr::str_detect(mask_data(cd) %>% unlist() %>% paste0(collapse = "\n"), "Nakshatra"))
-
-  cd <- numeric_values_classifier(cd)
-  ca <- analyze_cells(cd)
-  dcomp1 <- compose_cells(ca)
-  expect_error(attach_trace_info(dc = dcomp1), "'ca' is not given")
-  expect_error(attach_trace_info(dc = dcomp1), "not contain trace information")
-  dc2 <- attach_trace_info(ca, dcomp1)
-  dc3 <- attach_trace_info(ca, dcomp1 %>% dplyr::filter(row > 2))
-  expect_equal(nrow(dc2), 4)
-  expect_equal(nrow(dc3), 2)
-  expect_false(identical(dc2, dcomp1))
-
-  expect_message(get_col_representative(rnorm(3000), silent = FALSE), "set.seed")
-  expect_equal(norm_this(0.6), 1)
-  expect_equal(norm_this(0.1), 0)
-
-  # once fj is called through purrr::reduce covr is not seeing it
-  # writing separate test for it
-  expect_equal(
-    fj(tibble(x = c(1, 2), y = 2), tibble(x = c(2, 3), y0 = 2), join_by = "x"),
-    tibble(x = c(1, 2, 3), y = c(2, 2, NA), y0 = c(NA, 2, 2))
-  )
-
-  expect_error(
-    fj(tibble(x = c(1, 2), y = 2), tibble(x = c(2, 3), y = 2), join_by = "x"),
-    "unexpected error while joining"
-  )
-
-  expect_equal(
-    fj(tibble(x = c(1, 2), y = 2), tibble(x = c(2, 3), y = 2), join_by = "x", sallow_join = TRUE),
-    tibble(x = c(1, 2, 3), y = c(2, 2, ""))
-  )
-
-  expect_equal(
-    fj(tibble(x = c(1, 2), y = 2), tibble(x = c(2, 3), y = c(2, NA)), join_by = "x", sallow_join = TRUE),
-    tibble(x = c(1, 2, 3), y = c(2, 2, ""))
-  )
-
-  expect_equal(
-    fj(tibble(x = c(1, 2), y = 2), tibble(x = c(2, 3), y = 3), join_by = "x", sallow_join = TRUE, sep = "+"),
-    tibble(x = c(1, 2, 3), y = c("2+", "2+3", "+3"))
-  )
-
-  dc0 <- readRDS("testdata/enron_from_unpivotr_processed.rds") %>%
-    analyze_cells()
-
-  expect_warning(
-    dc00 <- dc0 %>%
-      compose_cells_raw(post_process = FALSE, ask_user = FALSE),
-    "failed to compose"
-  )
-
-  dc01 <- dc00 %>%
-    collate_columns(combine_threshold = 0.1)
-  dc02 <- dc00 %>%
-    collate_columns(combine_threshold = 1)
-
-  expect_false(identical(colnames(dc02), colnames(dc01)))
-
-  # test as_cell_df_internal.default
-  c1 <- dc2 %>%
-    dplyr::select(row, col, value) %>%
-    as_cell_df_internal.default()
-  c2 <- dc2 %>%
-    dplyr::select(row, col, omg = value) %>%
-    as_cell_df_internal.default()
-  expect_identical(c1, c2 %>% dplyr::select(-omg))
-
-  # read date object
-  if (is_available("xlsx") & is_available("readxl")) {
-    dex <- "testdata/test.xls"
-    m1 <- read_xls_from_xlsx(dex)[[1]] %>%
-      as_cell_df() %>%
-      as.matrix()
-    m2 <- read_excel_whole_readxl(dex)[[1]] %>%
-      as_cell_df() %>%
-      as.matrix()
-
-    expect_identical(m1[, -3], m2[, -3])
-    expect_equal(m1[4, 2], "2019-06-15")
-    expect_equal(m1[5, 2], "1245")
-
-    cd0 <- read_xls_from_xlsx(dex)[[1]] %>%
-      as_cell_df() %>%
-      numeric_values_classifier()
-    ca0 <- analyze_cells(cd0)
-
-    expect_output(print(ca0), "Potential Issues:")
-
-    # test few of the plot issues section
-    g <- plot(ca0, plot_issues = TRUE)
-
-    expect_true(inherits(g, "ggplot"))
+  # This will be slower but more explicit version of the
+  # infer_group_connected_blocks function.
+  infer_group_connected_blocks_slow <- function(df){
+    groups <- list()
+    for(i in seq_len(nrow(df))) {
+      this_row <- as.character(df[i,])
+      chk <- purrr::map_lgl(groups, ~ length(intersect(.x,this_row))>0)
+      if(!any(chk)){
+        # If no group found, create a new group
+        groups <- append(groups, list(this_row))
+      } else {
+        # If a group is found, merge this row with that group
+        idx <- which(chk)[1]
+        groups[[idx]] <- unique(c(groups[[idx]], this_row))
+      }
+    }
+    groups %>% purrr::map(unique)
   }
 
-  lvls <- 1:5
+  # Example 1: Simple chain (single connected component)
+  df1 <- data.frame(a = c("A", "B", "C"), b = c("B", "C", "D"))
+  res_fast1 <- infer_group_connected_blocks(df1)
+  res_slow1 <- infer_group_connected_blocks_slow(df1)
+  expect_equal(res_fast1, res_slow1)
 
-  lvls %>%
-    purrr::map(~ expect_output(print(read_cells(fn, at_level = .x, simplify = FALSE)), read_cell_task_orders[.x]))
-  expect_output(print(read_cells(fn, at_level = 2, simplify = FALSE)), "A partial read_cell")
+  # Example 2: Disconnected pairs (two components)
+  df2 <- data.frame(a = c("A", "C"), b = c("B", "D"))
+  res_fast2 <- infer_group_connected_blocks(df2)
+  res_slow2 <- infer_group_connected_blocks_slow(df2)
+  expect_equal(res_fast2, res_slow2)
+
+  # Example 3: Single node (self loop)
+  df3 <- data.frame(a = "A", b = "A")
+  res_fast3 <- infer_group_connected_blocks(df3)
+  res_slow3 <- infer_group_connected_blocks_slow(df3)
+  expect_equal(res_fast3, res_slow3)
+
+  # Example 4: Complex graph with merging (two components)
+  df4 <- data.frame(a = c("A", "B", "C", "E"), b = c("B", "C", "D", "F"))
+  res_fast4 <- infer_group_connected_blocks(df4)
+  res_slow4 <- infer_group_connected_blocks_slow(df4)
+  expect_equal(res_fast4, res_slow4)
 })
 
-test_that("doc works", {
-
-  # CRAN system level dependency, which is not good idea
-  skip_on_cran()
-
-  #  too slow in local windows
-  if (!isTRUE(as.logical(Sys.getenv("CI")))) {
-    # to test in local (windows) open LibreOffice outside and comment following
-    skip_on_os("windows")
+test_that("dplyr things", {
+  f<- function(){
+    iris |> dplyr::group_by(.data$Species) |> dplyr::summarise(m = mean(.data$Sepal.Length))
+    TRUE
   }
-
-  u <- possible_to_support(print_info = FALSE)
-  fty <- u %>%
-    dplyr::filter(support_possible) %>%
-    dplyr::pull(file_type)
-
-  if ("doc" %in% fty) {
-    fold <- system.file("extdata", "messy", package = "tidycells", mustWork = TRUE)
-    fn <- list.files(fold, pattern = "^csv.", full.names = TRUE)[1]
-
-    expect_message(dc <- read_cells("testdata/doc.doc"), "slow")
-    expect_true(dc %>% as.character() %>% grepl("Nakshatra", .) %>% any())
-  }
-})
-
-test_that("etc 2 works", {
-  expect_equal(
-    is_conforms_to_rcdf(tibble(x = 1, row = 1, col = c(NA, 2))) %>%
-      attr("msg"),
-    "NA present in cols"
-  )
-  expect_equal(
-    is_conforms_to_rcdf(tibble(x = 1, col = 1, row = c(NA, 2))) %>%
-      attr("msg"),
-    "NA present in rows"
-  )
-
-  expect_equal(
-    is_conforms_to_rcdf(tibble(x = 1, col = -1, row = 2)) %>%
-      attr("msg"),
-    "all cols are not positive"
-  )
-  expect_equal(
-    is_conforms_to_rcdf(tibble(x = 1, col = 1, row = -2)) %>%
-      attr("msg"),
-    "all rows are not positive"
-  )
-
-  expect_message(
-    expect_warning(
-      tibble(row = 1, col = -1, x = 1, y = 1) %>%
-        as_cell_df(),
-      "all cols are not positive"
-    )
-  )
-
-  expect_message(
-    expect_warning(
-      tibble(row = -1, col = 1, x = 1, y = 1) %>%
-        as_cell_df(),
-      "all rows are not positive"
-    )
-  )
-
-  expect_message(
-    expect_warning(
-      tibble(row = 1, col = 2, x = 1, y = 1) %>%
-        as_cell_df(),
-      "column containing value is not detectable"
-    )
-  )
-
-  # this should be ok [with no warn or error]
-  tibble(row = 1, col = 2, value = 1, x = 1, y = 1) %>%
-    as_cell_df()
-  tibble(value = 1, x = 1, y = 1) %>%
-    as_cell_df()
-  tibble(x = 1, y = 1) %>%
-    as_cell_df()
-
-  expect_message(
-    expect_warning(
-      tibble(col = 2, x = 1, y = 1) %>%
-        as_cell_df(),
-      "row/col column not present"
-    )
-  )
-
-  expect_message(
-    expect_warning(
-      tibble(row = 2, x = 1, y = 1) %>%
-        as_cell_df(),
-      "row/col column not present"
-    )
-  )
-
-  expect_error(as_cell_df_internal.default(NULL))
-  expect_error(as_cell_df_internal.default(data.frame()))
-  expect_error(as_cell_df_internal.readr(NULL))
-  expect_error(as_cell_df_internal.readr(data.frame()))
-  expect_error(as_cell_df_internal.tidyxl(NULL))
-  expect_error(as_cell_df_internal.tidyxl(data.frame()))
-  expect_error(as_cell_df_internal.unpivotr(NULL))
-  expect_error(as_cell_df_internal.unpivotr(data.frame()))
-  expect_error(as_cell_df_internal.cell_df(NULL))
-  expect_error(as_cell_df_internal.cell_df(data.frame()))
-
-  expect_error(
-    value_attribute_classify(NULL),
-    "Cell DF Expected"
-  )
-  expect_error(
-    tibble(x = 1, y = 1) %>%
-      as_cell_df() %>%
-      value_attribute_classify(NULL),
-    "not a function"
-  )
-  expect_error(
-    tibble(x = 1, y = 1) %>%
-      as_cell_df() %>%
-      value_attribute_classify(function(x) x %>% dplyr::mutate(type = "not_valid")),
-    "content differs from value, attribute, empty"
-  )
-
-  # should be fine
-  tibble(x = 1, y = 1) %>%
-    as_cell_df() %>%
-    value_attribute_classify()
-
-  expect_identical(
-    tibble(x = 1, y = 1) %>%
-      as_cell_df(take_row_names = TRUE) %>%
-      basic_classifier() %>%
-      analyze_cells(),
-    tibble(x = 1, y = 1) %>%
-      as_cell_df(take_row_names = TRUE) %>%
-      basic_classifier() %>%
-      analyse_cells()
-  )
-
-  expect_error(tibble(x = 1, y = 1) %>%
-    as_cell_df() %>%
-    basic_classifier() %>%
-    analyze_cells(), "attribute")
-
-  expect_error(tibble(x = "a", y = "b") %>%
-    as_cell_df() %>%
-    basic_classifier() %>%
-    analyze_cells(), "value")
-
-  if (is_available("docxtractr")) {
-    lo1 <- detect_LibreOffice(type = 1)
-    options(path_to_libreoffice = NULL)
-    lo2 <- detect_LibreOffice(type = 2)
-    expect_equal(lo1, lo2)
-  }
-
-
-  not_available("tidyxl")
-  expect_null(system.file("extdata", "untidy.xlsx", package = "tidycells", mustWork = TRUE) %>% read_cells())
-  not_available()
-
-  expect_error(
-    fj(data.frame(x = 1, y = 4), data.frame(x = 1, y = 1)),
-    "unexpected error while joining"
-  )
-
-  cd <- readRDS("testdata/badcells.rds")
-  expect_true(length(intersect(mask_data(cd)$value, cd$value)) == 0)
-  ca <- analyze_cells(cd)
-  plot(ca, plot_issues = TRUE, direction_text_on_all = TRUE)
-  cell_composition_traceback(ca, trace_row = 1)
-  expect_output(print(ca), "Potential Issues")
-
-  expect_warning(
-    tibble(x = list(1)) %>%
-      as_cell_df(),
-    "not yet implemented"
-  )
-  expect_equal(
-    as_cell_df_internal.default(cd) %>% as_tibble(),
-    cd %>% as_tibble()
-  )
-  expect_message(
-    expect_warning(
-      tibble(row = 1, col = 1, x = list(1)) %>%
-        as_cell_df(),
-      "not atomic"
-    )
-  )
-  expect_message(
-    expect_warning(
-      tibble(row = 1, col = 1, value = list(1)) %>%
-        as_cell_df(),
-      "not atomic"
-    )
-  )
+  expect_true(f())
 })

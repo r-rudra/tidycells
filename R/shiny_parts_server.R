@@ -1,185 +1,156 @@
 
-# attach like
-# server <- server_va_select(d)
-server_va_select <- function(d) {
-  if (!hasName(d, "type")) {
-    d <- basic_classifier(d)
-  }
+
+shiny_server_va_classify <- function(d) {
+
+  # Dev Notes:
+  #
+  # Following is done in parent function : shiny_app_va_classify
+  # - Ensure input cells is gone through value-attribute classification
+  #
+  # If the input data is not gone through value-attribute classification,
+  # perform a simple heuristic classification.
+  #
+  # if (!utils::hasName(d, "PoA") || !utils::hasName(d, "PoV")) {
+  #   d <- d %>%
+  #     value_attribute_classify(method = "simple_heuristic")
+  # }
 
   function(input, output, session) {
-    d_now <- reactiveVal()
-    d_now(d)
+    # d_now is working copy of d
+    d_now <- shiny::reactiveVal(d)
+    # d_orig is the original copy of d (reactive version)
+    d_orig <- shiny::reactiveVal(d)
 
-    d_va_now <- reactiveVal()
-    d_va_now(d)
+    # Plot parameters
+    plot_handle <- shiny::callModule(
+      shiny_sps_part_plot_tune, id = "ui_plot_tune",
+      d_now = d_now)
 
-    plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
+    # Cropped data (cells)
+    d_cropped <- shiny::callModule(
+      shiny_sps_part_crop, id = "ui_crop",
+      d_now = d_now, d_orig = d_orig, plot_handle = plot_handle)
 
-    callModule(sps_part_plotly, "ui_visualize", plot_now = plot_now)
+    # The "value-attribute classification" performed cells
+    d_now_va <- shiny::callModule(
+      shiny_sps_part_va_classify, id = "ui_va_classify",
+      d_now = d_now, d_orig = d_orig, plot_handle = plot_handle)
 
-    dat_new_va_classify <- callModule(sps_part_va_classify, "ui_va_classify", plot_now = plot_now, d_now = d_now, d_orig = d)
-
-    dat_new_crop <- callModule(sps_part_crop, "ui_crop", plot_now = plot_now, d_now = d_now, d_orig = d_va_now)
-
-    observeEvent(dat_new_crop(), {
-      if (!identical(dat_new_crop(), d_now())) {
-        d_now(dat_new_crop())
+    # Loop-back d_cropped to d_now
+    shiny::observeEvent(d_cropped(), {
+      if (!identical(d_cropped(), d_now())) {
+        d_now(d_cropped())
       }
     })
 
-    observeEvent(dat_new_va_classify(), {
-      if (!identical(dat_new_va_classify(), d_now())) {
-        d_now(dat_new_va_classify())
-        d_va_now(dat_new_va_classify())
+    # Loop-back d_now_va to d_now
+    shiny::observeEvent(d_now_va(), {
+      if (!identical(d_now_va(), d_now())) {
+        d_now(d_now_va())
       }
     })
 
-    observeEvent(input$cancel, {
-      stopApp(abort("Value-Attribute Classification Canceled"))
+    # Handle cancel and done events
+    shiny::observeEvent(input$cancel, {
+      shiny::stopApp({
+        cat(cli_red("Value-Attribute Classification Canceled\n"))
+      })
     })
 
-    observeEvent(input$done, {
-      stopApp(d_now() %>% select(row, col, data_type, value, type))
+    # Complete the app and return the classified data if Done is clicked
+    shiny::observeEvent(input$done, {
+      shiny::stopApp(d_now_va())
     })
   }
 }
 
-server_crop <- function(d) {
-  if (!hasName(d, "type")) {
-    d <- basic_classifier(d)
-  }
-
-
+shiny_server_orientation_modification <- function(ca) {
   function(input, output, session) {
-    d_now <- reactiveVal()
-    d_now(d)
 
-    plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
+    # ca_now is working copy of ca
+    ca_now <- shiny::reactiveVal(ca)
 
-    callModule(sps_part_plotly, "ui_visualize", plot_now = plot_now)
+    # ca_orig is the original copy of ca (reactive version)
+    ca_orig <- shiny::reactiveVal(ca)
 
-    dat_new_crop <- callModule(sps_part_crop, "ui_crop", plot_now = plot_now, d_now = d_now, d_orig = d)
+    # Plot parameters
+    plot_handle <- shiny::callModule(
+      shiny_sps_part_plot_tune, id = "ui_plot_tune",
+      ca_now = ca_now)
 
-    observeEvent(dat_new_crop(), {
-      if (!identical(dat_new_crop(), d_now())) {
-        d_now(dat_new_crop())
+    ca_mod <- shiny::callModule(
+      shiny_sps_part_orientation_modification, id = "ui_omod",
+      ca_now = ca_now, ca_orig = ca_orig, plot_handle = plot_handle)
+
+
+    # Loop-back ca_mod to ca_now
+    shiny::observeEvent(ca_mod(), {
+      if (!identical(ca_mod(), ca_now())) {
+        ca_now(ca_mod())
       }
     })
 
-    observeEvent(input$cancel, {
-      stopApp(abort("Crop Data Canceled"))
+    # Handle cancel and done events
+    shiny::observeEvent(input$cancel, {
+      shiny::stopApp({
+        cat(cli_red("Orientation Modification Canceled\n"))
+      })
     })
 
-    observeEvent(input$done, {
-      stopApp(d_now() %>% select(row, col, data_type, value, type))
+    # Complete the app and return the classified data if Done is clicked
+    shiny::observeEvent(input$done, {
+      shiny::stopApp(
+        # Fix for attr_data_map for nice_header_name which need to be unique per
+        # attribute block within a data-block connected scope.
+        infer_util_cells_analysis_fix_nice_header_name(
+          ca_mod()))
     })
+
+
   }
 }
 
-server_data_block <- function(x) {
-  d <- x$cell_df
-
+shiny_server_traceback <- function(ca) {
   function(input, output, session) {
-    d_now <- reactiveVal()
-    d_now(d)
 
-    plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
+    # ca_now is working copy of ca
+    ca_now <- shiny::reactiveVal(ca)
 
-    info_dblock <- callModule(sps_part_data_block, "ui_data_block", plot_now = plot_now, ca = x)
+    # ca_orig is the original copy of ca (reactive version)
+    ca_orig <- shiny::reactiveVal(ca)
 
-    callModule(sps_part_plotly, "ui_visualize", plot_now = info_dblock$plot)
+    # Plot parameters
+    plot_handle <- shiny::callModule(
+      shiny_sps_part_plot_tune, id = "ui_plot_tune",
+      ca_now = ca_now)
 
-    observeEvent(input$cancel, {
-      stopApp()
-    })
+    ca_mod <- shiny::callModule(
+      shiny_sps_part_orientation_modification, id = "ui_omod",
+      ca_now = ca_now, ca_orig = ca_orig, plot_handle = plot_handle)
 
-    observeEvent(input$done, {
-      stopApp()
-    })
-  }
-}
-
-server_orientation_modification <- function(x) {
-  d <- x$cell_df
-
-  function(input, output, session) {
-    d_now <- reactiveVal()
-    d_now(d)
-
-    ca_current <- reactiveVal()
-    ca_current(x)
-
-    gids_self <- reactiveVal()
-    gids_self("All")
-
-    plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
-
-    info_dblock <- callModule(sps_part_data_block, "ui_data_block",
-      plot_now = plot_now, ca = ca_current, now_gids = gids_self
-    )
-
-    callModule(sps_part_plotly, "ui_visualize", plot_now = info_dblock$plot)
-
-    ca_this <- callModule(sps_part_orientation_modification, "ui_orientation_modification",
-      plot_now = info_dblock$plot, ca = ca_current, gid_now = info_dblock$gids
-    )
+    rendered_df <- shiny::callModule(
+      shiny_sps_part_traceback, id = "ui_traceback",
+      ca_now = ca_now, plot_handle = plot_handle)
 
 
-    observeEvent(ca_this(), {
-      if (!identical(ca_this(), ca_current())) {
-        ca_current(ca_this())
-        gids_self(info_dblock$gids())
+    # Loop-back ca_mod to ca_now
+    shiny::observeEvent(ca_mod(), {
+      if (!identical(ca_mod(), ca_now())) {
+        ca_now(ca_mod())
       }
     })
 
-    observeEvent(input$cancel, {
-      stopApp(abort("Orientation Modification Canceled"))
+    # Handle cancel and done events
+    shiny::observeEvent(input$cancel, {
+      shiny::stopApp({
+        cat(cli_red("Trackback Operation Canceled\n"))
+      })
     })
 
-    observeEvent(input$done, {
-      stopApp(ca_this())
-    })
-  }
-}
-
-server_traceback <- function(x, dcomp) {
-  d <- x$cell_df
-
-  dcomp <- attach_trace_info(x, dcomp)
-
-  dcomp <- dcomp %>%
-    mutate(RN = seq(value))
-
-  function(input, output, session) {
-    d_now <- reactiveVal()
-    d_now(d)
-
-    plot_now <- callModule(sps_part_plot_now, "ui_plot_tune", d_now = d_now)
-
-    gids_self <- reactiveVal()
-    gids_self("All")
-
-    info_dblock <- callModule(sps_part_data_block, "ui_data_block",
-      plot_now = plot_now, ca = x,
-      now_gids = gids_self
-    )
-
-    callModule(sps_part_plotly, "ui_visualize", plot_now = info_dblock$plot)
-
-    gid_sel <- callModule(sps_part_traceback, "ui_traceback", dcomp = dcomp, ca = x, prior_ca_plot = info_dblock$plot)
-
-    observeEvent(gid_sel(), {
-      if (!identical(gid_sel(), info_dblock$gids())) {
-        gids_self(gid_sel())
-      }
+    # Complete the app and return the classified data if Done is clicked
+    shiny::observeEvent(input$done, {
+      shiny::stopApp(rendered_df())
     })
 
-    observeEvent(input$cancel, {
-      stopApp(abort("Traceback Canceled"))
-    })
-
-    observeEvent(input$done, {
-      stopApp(invisible(dcomp))
-    })
   }
 }

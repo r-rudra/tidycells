@@ -1,0 +1,39 @@
+
+
+# Why so much calls to :infer_data_block_merging_part_operation
+
+Browse[1]> where
+where 1 infer_helpers_analysis.R#1229: infer_data_block_merging_part_operation(data_join_map = data_join_map,
+    d_dat = d_dat, d_att = d_att, d_dat_dep = combined)
+where 2 infer_analysis_phases.R#99: infer_preliminary_data_block_merging(d_dat, d_att)
+where 3 infer_analysis_public.R#45: infer_analysis_phase_1_admap(l0)
+where 4: analyze_cells(dx$`Statement 1-2`)
+
+
+
+where 1 infer_helpers_analysis.R#1294: infer_data_block_merging_part_operation(data_join_map = d_under_cbd,
+    d_dat = d_dat, d_att = d_att, d_dat_dep = combined %>% dplyr::filter(FALSE))
+where 2 infer_analysis_phases.R#99: infer_preliminary_data_block_merging(d_dat, d_att)
+where 3 infer_analysis_public.R#45: infer_analysis_phase_1_admap(l0)
+where 4: analyze_cells(dx$`Statement 1-2`)
+
+
+where 1 infer_helpers_analysis.R#988: infer_data_block_merging_part_operation(data_join_map = data_gid_join_map,
+    d_dat = d_dat, d_att = d_att, d_dat_dep = ad_map, check_for_attr_inside = check_for_attr_inside)
+where 2 infer_helpers_analysis.R#1054: join_them(data_gid_join_map = combine_data_blocks, d_dat = d_dat,
+    d_att = d_att, ad_map = ad_map, check_for_attr_inside = chk_in_for_overlapping_cases)
+where 3 infer_helpers_analysis.R#1601: infer_data_block_merging(d_ad_stage2, d_dat, d_att)
+where 4 infer_analysis_phases.R#107: infer_major_direction_stats(d_dat, d_att)
+where 5 infer_analysis_public.R#45: infer_analysis_phase_1_admap(l0)
+where 6: analyze_cells(dx$`Statement 1-2`)
+(chk_in_for_overlapping_cases false at this stage)
+
+
+where 1 infer_helpers_analysis.R#988: infer_data_block_merging_part_operation(data_join_map = data_gid_join_map,
+    d_dat = d_dat, d_att = d_att, d_dat_dep = ad_map, check_for_attr_inside = check_for_attr_inside)
+where 2 infer_helpers_analysis.R#1070: join_them(data_gid_join_map = combine_data_blocks_partial, d_dat = step1_join$d_dat,
+    d_att = d_att, ad_map = step1_join$ad_map, check_for_attr_inside = TRUE)
+where 3 infer_helpers_analysis.R#1601: infer_data_block_merging(d_ad_stage2, d_dat, d_att)
+where 4 infer_analysis_phases.R#107: infer_major_direction_stats(d_dat, d_att)
+where 5 infer_analysis_public.R#45: infer_analysis_phase_1_admap(l0)
+where 6: analyze_cells(dx$`Statement 1-2`)
