@@ -74,6 +74,10 @@ Ignored for LSAP. \emph{(Warning for other cases also managed by same argument)}
 
 \item{reg_ex_match_bias}{Numeric. A tie-breaker bonus applied to regex match
 scores based on the absolute number of matched characters. Default \code{0.1}.}
+
+\item{unite_other_cols}{Logical. If \code{TRUE}, all columns not mapped (and not excluded via \code{exclude_cols}) are united into a single column. Default \code{FALSE}.}
+
+\item{united_others_col_name}{Character. The name of the newly united column if \code{unite_other_cols} is \code{TRUE}. Default \code{"united_info"}.}
 }
 \value{
 \code{d} with mapped columns renamed to their node names. Excluded,

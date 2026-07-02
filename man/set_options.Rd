@@ -13,7 +13,11 @@ set_options(
   collate_columns_on_whole = TRUE,
   auto_detach_shiny = TRUE,
   delink_corner_headers = FALSE,
-  threshold_complete_connect_attempt_partial_gid_joins = 1000
+  threshold_complete_connect_attempt_partial_gid_joins = 1000,
+  focus_value_range = c(-Inf, Inf),
+  focus_absolute_value_range = c(0, Inf),
+  single_data_chunk_filter = FALSE,
+  single_data_chunk_value_capture_threshold = 0.75
 )
 }
 \arguments{
@@ -42,6 +46,21 @@ Shiny when done? Default is \code{TRUE}.}
 
 \item{delink_corner_headers}{Logical. Should corner headers be delinked from
 data blocks? Default is \code{FALSE}.}
+
+\item{threshold_complete_connect_attempt_partial_gid_joins}{Numeric. Threshold
+limit for complete connect attempts on partial gid joins. Default is \code{1000}.}
+
+\item{focus_value_range}{Numeric vector of length 2. Defines the min and max
+value range to focus on. Default is \code{c(-Inf, Inf)}.}
+
+\item{focus_absolute_value_range}{Numeric vector of length 2. Defines the min
+and max absolute value range to focus on. Default is \code{c(0, Inf)}.}
+
+\item{single_data_chunk_filter}{Logical. Should filtering for a single data
+chunk be applied? Default is \code{FALSE}.}
+
+\item{single_data_chunk_value_capture_threshold}{Numeric. Threshold proportion
+for capturing values in a single data chunk. Default is \code{0.75}.}
 }
 \value{
 No return value; (called for side effects - setting user parameters.)

@@ -1,3 +1,4 @@
+
 #' Rename data-frame columns by string / regex matching of their values
 #'
 #' @description
@@ -68,6 +69,8 @@
 #'   Ignored for LSAP. *(Warning for other cases also managed by same argument)*
 #' @param reg_ex_match_bias Numeric. A tie-breaker bonus applied to regex match
 #'   scores based on the absolute number of matched characters. Default `0.1`.
+#' @param unite_other_cols Logical. If `TRUE`, all columns not mapped (and not excluded via `exclude_cols`) are united into a single column. Default `FALSE`.
+#' @param united_others_col_name Character. The name of the newly united column if `unite_other_cols` is `TRUE`. Default `"united_info"`.
 #'
 #' @return `d` with mapped columns renamed to their node names. Excluded,
 #'   non-included, invalid, and unmapped columns keep their original names.
@@ -317,7 +320,7 @@ rename_by_content <- function(
   scores <- tidyr::expand_grid(column = cand, node = nodes$node) |>
     dplyr::left_join(nodes, by = "node") |>
     dplyr::mutate(score = purrr::pmap_dbl(
-      list(column, node, kind),
+      list(.data$column, .data$node, .data$kind),
       \(cl, nd, kd) {
         if (kd == "string") {
           score_str(col_cache[[cl]], str_node_cache[[nd]])
@@ -333,7 +336,7 @@ rename_by_content <- function(
       rem <- acc$remaining
       if (nrow(rem) == 0L) return(acc)
 
-      top <- dplyr::slice_max(rem, score, n = 1, with_ties = TRUE)
+      top <- dplyr::slice_max(rem, .data$score, n = 1, with_ties = TRUE)
 
       if (warn && nrow(top) > 1L && top$score[1] > 0) {
         warning("Tie at score ", round(top$score[1], 4), " between { ",
@@ -344,7 +347,7 @@ rename_by_content <- function(
       pick <- dplyr::slice(top, 1)
 
       list(
-        remaining = dplyr::filter(rem, column != pick$column, node != pick$node),
+        remaining = dplyr::filter(rem, .data$column != pick$column, .data$node != pick$node),
         picks     = dplyr::bind_rows(acc$picks, pick)
       )
     }
@@ -354,13 +357,13 @@ rename_by_content <- function(
       step,
       .init = list(remaining = scores, picks = scores[0, ])
     )$picks |>
-      dplyr::select(node, column)
+      dplyr::select("node", "column")
   }
 
   assign_lsap <- function(scores) {
     mat <- scores |>
-      dplyr::select(node, column, score) |>
-      tidyr::pivot_wider(names_from = column, values_from = score) |>
+      dplyr::select("node", "column", "score") |>
+      tidyr::pivot_wider(names_from = "column", values_from = "score") |>
       tibble::column_to_rownames("node") |>
       as.matrix()
 
@@ -380,8 +383,8 @@ rename_by_content <- function(
   picks <- dplyr::left_join(pairs, scores, by = c("node", "column"))
 
   ## ---- threshold gate ------------------------------------------------------
-  applied <- dplyr::filter(picks, score >= min_score)
-  weak    <- dplyr::filter(picks, score <  min_score)
+  applied <- dplyr::filter(picks, .data$score >= min_score)
+  weak    <- dplyr::filter(picks, .data$score <  min_score)
 
   if (nrow(weak) && warn) {
     warning("Match(es) below min_score (", min_score, ") left unmapped: ",
@@ -405,7 +408,7 @@ rename_by_content <- function(
       ) |>
       # 2. Rename it dynamically using standard evaluation
       dplyr::rename(
-        tidyr::all_of(setNames(".TEMP_UNITED_COL", united_others_col_name))
+        tidyr::all_of(stats::setNames(".TEMP_UNITED_COL", united_others_col_name))
       )
   }
 
@@ -441,8 +444,8 @@ rename_by_content <- function(
 
   if (keep_details) {
     attr(d_out, "score_matrix") <- scores |>
-      dplyr::select(node, column, score) |>
-      tidyr::pivot_wider(names_from = column, values_from = score) |>
+      dplyr::select("node", "column", "score") |>
+      tidyr::pivot_wider(names_from = "column", values_from = "score") |>
       tibble::column_to_rownames("node") |>
       as.matrix()
 
@@ -534,6 +537,7 @@ rename_by_content <- function(
 #'
 #' @keywords internal
 #' @examples
+#' \dontrun{
 #' x_vec <- c(
 #'   "Agriculture & allied activities",
 #'   "Agriculture Forestry and Fishing",
@@ -569,15 +573,20 @@ rename_by_content <- function(
 #' ar_fuzzy_match_strings(x_vec, y_vec)
 #'
 #' # One-to-one with globally optimal LSAP assignment
-#' ar_fuzzy_match_strings(x_vec, y_vec,
-#'                     relationship       = "one_to_one",
-#'                     assignment_method  = "LSAP")
+#' ar_fuzzy_match_strings(
+#'   x_vec, y_vec,
+#'   relationship      = "one_to_one",
+#'   assignment_method = "LSAP"
+#' )
 #'
 #' # One-to-one with greedy assignment, emit score matrix
-#' ar_fuzzy_match_strings(x_vec, y_vec,
-#'                     relationship       = "one_to_one",
-#'                     assignment_method  = "greedy",
-#'                     emit_score_matrix  = TRUE)
+#' ar_fuzzy_match_strings(
+#'   x_vec, y_vec,
+#'   relationship      = "one_to_one",
+#'   assignment_method = "greedy",
+#'   emit_score_matrix = TRUE
+#' )
+#' }
 #'
 ar_fuzzy_match_strings <- function(
     x,
@@ -700,7 +709,7 @@ ar_fuzzy_match_strings <- function(
     tidyr::expand_grid(xi = seq_len(m), yj = seq_len(n)) |>
     dplyr::mutate(
       score = purrr::map2_dbl(
-        xi, yj,
+        .data$xi, .data$yj,
         \(i, j) composite_score(x_clean[i], y_clean[j])
       )
     )
@@ -720,16 +729,16 @@ ar_fuzzy_match_strings <- function(
   #                Multiple x rows may share the same y. assignment_method ignored.
   #
   # one_to_one   → "LSAP":   globally optimal bijection via clue::solve_LSAP().
-  #                           Pads to square so the solver always gets a square
-  #                           cost matrix; padding cells are given cost = 1 (worst).
-  #             → "greedy": ranked-pair heuristic; fast but sub-optimal.
+  #                            Pads to square so the solver always gets a square
+  #                            cost matrix; padding cells are given cost = 1 (worst).
+  #              → "greedy": ranked-pair heuristic; fast but sub-optimal.
 
   pairs <-
     if (relationship == "many_to_many") {
 
       score_vals |>
-        dplyr::group_by(xi) |>
-        dplyr::slice_max(score, n = 1L, with_ties = FALSE) |>
+        dplyr::group_by(.data$xi) |>
+        dplyr::slice_max(.data$score, n = 1L, with_ties = FALSE) |>
         dplyr::ungroup()
 
     } else if (assignment_method == "LSAP") {
@@ -743,17 +752,17 @@ ar_fuzzy_match_strings <- function(
       # assignment[i] is the column (1-indexed) assigned to padded row i.
       # Retain only rows where the assigned column falls within real y indices.
       tibble::tibble(xi = seq_len(m), yj = assignment[seq_len(m)]) |>
-        dplyr::filter(yj <= n) |>
-        dplyr::mutate(score = score_mat[cbind(xi, yj)])
+        dplyr::filter(.data$yj <= n) |>
+        dplyr::mutate(score = score_mat[cbind(.data$xi, .data$yj)])
 
     } else {
 
       # Greedy 1-to-1: accumulate used indices, accept pair only when both free
       score_vals |>
-        dplyr::arrange(dplyr::desc(score)) |>
+        dplyr::arrange(dplyr::desc(.data$score)) |>
         dplyr::mutate(
           accepted = purrr::accumulate(
-            purrr::map2(xi, yj, \(i, j) c(i, j)),
+            purrr::map2(.data$xi, .data$yj, \(i, j) c(i, j)),
             .init = list(ux = integer(0), uy = integer(0)),
             \(state, ij)
             if (ij[1L] %in% state$ux || ij[2L] %in% state$uy)
@@ -769,13 +778,13 @@ ar_fuzzy_match_strings <- function(
              )
             )()
         ) |>
-        dplyr::filter(accepted) |>
-        dplyr::select(xi, yj, score)
+        dplyr::filter(.data$accepted) |>
+        dplyr::select("xi", "yj", "score")
     }
 
   # ── 5. Threshold ──────────────────────────────────────────────────────────────
 
-  valid_pairs <- dplyr::filter(pairs, score >= score_threshold)
+  valid_pairs <- dplyr::filter(pairs, .data$score >= score_threshold)
 
   # ── 6. Output tibble — full-join semantics ────────────────────────────────────
   #   • All x rows appear (y / score = NA when unmatched)
@@ -785,11 +794,11 @@ ar_fuzzy_match_strings <- function(
     tibble::tibble(xi = seq_len(m), x = x) |>
     dplyr::left_join(
       valid_pairs |>
-        dplyr::mutate(y = y[yj], score = round(score, 4L)) |>
-        dplyr::select(xi, y, score),
+        dplyr::mutate(y = y[.data$yj], score = round(.data$score, 4L)) |>
+        dplyr::select("xi", "y", "score"),
       by = "xi"
     ) |>
-    dplyr::select(x, y, score)
+    dplyr::select("x", "y", "score")
 
   unmatched_y_side <- tibble::tibble(
     x     = NA_character_,
@@ -872,6 +881,7 @@ ar_resolve_by_arg_in_fuzzy_join <- function(x, y, by) {
 #' @param emit_score_matrix `logical(1)`. If `TRUE`, the full `m × n` numeric
 #'   score matrix from the matching step is attached to the output as
 #'   `attr(out, "score_matrix")`.
+#' @param retain_xy_cols `logical(1)`. If `TRUE`, retains the original matched columns as `.x_col` and `.y_col`. Default is `FALSE`.
 #' @param ... Further arguments forwarded to the underlying `dplyr` join
 #'   function (e.g., `suffix`, `na_matches`).
 #'
@@ -907,24 +917,25 @@ ar_resolve_by_arg_in_fuzzy_join <- function(x, y, by) {
 #' )
 #'
 #' @export
-fuzzy_join <- function(x, y,
-                       by = NULL,
-                       join_type = c("right", "left", "inner", "full"),
-                       retain_name_from = c("y", "x"),
-                       keep_score = FALSE,
-                       relationship = c("many_to_many", "one_to_one"),
-                       assignment_method = c("LSAP", "greedy"),
-                       case_sensitive = FALSE,
-                       retain_num = FALSE,
-                       add_acronyms = TRUE,
-                       wt_word = 0.55,
-                       wt_char = 0.15,
-                       wt_lcs = 0.30,
-                       lcs_min_chars = 3L,
-                       score_threshold = 0.10,
-                       emit_score_matrix = FALSE,
-                       retain_xy_cols = FALSE,
-                       ...) {
+fuzzy_join <- function(
+    x, y,
+    by = NULL,
+    join_type = c("right", "left", "inner", "full"),
+    retain_name_from = c("y", "x"),
+    keep_score = FALSE,
+    relationship = c("many_to_many", "one_to_one"),
+    assignment_method = c("LSAP", "greedy"),
+    case_sensitive = FALSE,
+    retain_num = FALSE,
+    add_acronyms = TRUE,
+    wt_word = 0.55,
+    wt_char = 0.15,
+    wt_lcs = 0.30,
+    lcs_min_chars = 3L,
+    score_threshold = 0.10,
+    emit_score_matrix = FALSE,
+    retain_xy_cols = FALSE,
+    ...) {
 
   # Validate arguments
   join_type <- match.arg(join_type)
@@ -965,7 +976,7 @@ fuzzy_join <- function(x, y,
 
   # ── bridge: x key → y key, optionally carrying the score ───────────────────
   bridge <- match_tbl |>
-    (\(tbl) if (keep_score) tbl else dplyr::select(tbl, -score))()
+    (\(tbl) if (keep_score) tbl else dplyr::select(tbl, -dplyr::any_of("score")))()
 
   # ── join x to bridge on x_col, then join result to y on y_col ──────────────
   xo <- x |>

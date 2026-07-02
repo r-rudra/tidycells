@@ -390,12 +390,12 @@ plot.cells <- function(
         dplyr::summarise(
           # Apply mean to all numeric columns
           dplyr::across(
-            tidyselect::where(is.numeric),
+            dplyr::where(is.numeric),
             \(x) mean(x, na.rm = TRUE)
           ),
           # Apply paste logic to EVERYTHING ELSE (the default behavior)
           dplyr::across(
-            !tidyselect::where(is.numeric),
+            !dplyr::where(is.numeric),
             \(x) unique(x) |> sort() |> paste0(collapse = "+")
           ),
           .groups = "drop"

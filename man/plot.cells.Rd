@@ -29,7 +29,9 @@
   omit_NSE = FALSE,
   display_warning_as_plot = FALSE,
   scale_fill_values = NULL,
-  auto_round_values = FALSE
+  auto_round_values = FALSE,
+  declutter_based_on_value = FALSE,
+  unify_on_row_col = FALSE
 )
 }
 \arguments{

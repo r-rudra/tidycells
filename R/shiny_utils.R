@@ -499,8 +499,8 @@ shiny_util_cells_plot_it <- function(
 
     # Below adjustment is required for data_focus (as directly it is not passed to this function)
     ds <- rc_sel$cells_for_plot() |>
-      dplyr::filter(type == "data") |>
-      dplyr::distinct(value) |>
+      dplyr::filter(.data$type == "data") |>
+      dplyr::distinct(.data$value) |>
       dplyr::pull()
 
     ds <- intersect(ds, ca_now()$data_blocks$data_gid)

@@ -237,14 +237,57 @@ infer_analysis_phase_3_header_orientation_tag <- function(
 }
 
 
-infer_analysis_phase_4_postprocess <- function(l3,
-                                               original_cells) {
+infer_analysis_phase_4_postprocess <- function(
+    l3,
+    original_cells,
+    single_data_chunk_filter =
+      core_opt_get( "single_data_chunk_filter", FALSE),
+    single_data_chunk_value_capture_threshold =
+      core_opt_get( "single_data_chunk_value_capture_threshold", 0.75)) {
 
-  obj <- list(
+  o1 <- list(
     attr_data_map = l3$tagged,
     data_blocks = l3$d_dat,
     original_sheet = original_cells
   )
+
+  # Post - Processing Filters and Fine Tuning (these are systematic post-processing)
+  if(single_data_chunk_filter){
+    # This checks if there is single large chunk of data (most usual case)
+    schk <- o1$data_blocks |>
+      dplyr::left_join(
+        o1$original_sheet |>
+          dplyr::select("row", "col", "value"),
+        by = c("row","col")) |>
+      dplyr::mutate(value = suppressWarnings(as.numeric(.data$value)))
+
+    schk <- schk |>
+      dplyr::group_by(.data$data_gid) |>
+      dplyr::summarise(nv = sum(!is.na(.data$value)), .groups = "drop")
+
+    schk <- schk |>
+      dplyr::mutate(v_frac = .data$nv / sum(.data$nv))
+
+    if(any(schk$v_frac > single_data_chunk_value_capture_threshold)){
+      # if this cross beyond certain fraction then rest data gids may be dropped (user demanded - not a general case)
+      schk <- schk |> dplyr::filter(.data$v_frac > single_data_chunk_value_capture_threshold)
+      o1$attr_data_map <- o1$attr_data_map |>
+        dplyr::filter(.data$data_gid %in% schk$data_gid)
+
+      o1$data_blocks <- o1$data_blocks |>
+        dplyr::filter(.data$data_gid %in% schk$data_gid)
+
+      o2 <- list(d_dat = o1$data_blocks, admap = o1$attr_data_map) |>
+        infer_relabel_data_group_id()
+
+      o1$attr_data_map <- o2$admap
+      o1$data_blocks <- o2$d_dat
+      o1$post_process <- unique(c(o1$post_process, "single_data_chunk_filter - applied"))
+    }
+
+  }
+
+  obj <- o1
 
   # Assign the 'core_cells_analysis_class' class to the object
   class(obj) <- core_cells_analysis_class

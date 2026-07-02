@@ -64,6 +64,8 @@ matching (must sum to 1).}
 score matrix from the matching step is attached to the output as
 \code{attr(out, "score_matrix")}.}
 
+\item{retain_xy_cols}{\code{logical(1)}. If \code{TRUE}, retains the original matched columns as \code{.x_col} and \code{.y_col}. Default is \code{FALSE}.}
+
 \item{...}{Further arguments forwarded to the underlying \code{dplyr} join
 function (e.g., \code{suffix}, \code{na_matches}).}
 }

@@ -12,7 +12,8 @@
   txt_size = 2.5,
   focus_on_data_blocks = NULL,
   color_attrs_separately = FALSE,
-  show_values_in_cells = FALSE
+  show_values_in_cells = FALSE,
+  declutter = TRUE
 )
 }
 \arguments{

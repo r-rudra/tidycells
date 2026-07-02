@@ -6,7 +6,9 @@
 \usage{
 value_attribute_classify(
   x,
-  method = c("auto", "probabilistic", "simple_heuristic", "manual")
+  method = c("auto", "probabilistic", "simple_heuristic", "manual"),
+  focus_range = core_opt_get("focus_value_range", c(-Inf, Inf)),
+  absolute_focus_range = core_opt_get("focus_absolute_value_range", c(0, Inf))
 )
 }
 \arguments{
@@ -25,6 +27,14 @@ accurate but slower for large data.}
 large tables, less nuanced.}
 \item{\code{"manual"}}{Uses human-provided tags in \code{av_class_tag} if present.}
 }}
+
+\item{focus_range}{Numeric vector of length 2 specifying the \code{c(min, max)} range
+of values to retain. Numeric values outside this range are reclassified as blank.
+Defaults to \code{c(-Inf, Inf)} or is fetched from options.}
+
+\item{absolute_focus_range}{Numeric vector of length 2 specifying the \code{c(min, max)}
+range of absolute values to retain. Values with an absolute value outside this
+range are reclassified as blank. Defaults to \code{c(0, Inf)} or is fetched from options.}
 }
 \value{
 The original \code{cells} object, with the columns \code{type}, \code{PoA}, and

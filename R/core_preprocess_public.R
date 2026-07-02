@@ -38,6 +38,12 @@
 #'     large tables, less nuanced.}
 #'     \item{`"manual"`}{Uses human-provided tags in `av_class_tag` if present.}
 #'   }
+#' @param focus_range Numeric vector of length 2 specifying the `c(min, max)` range
+#'   of values to retain. Numeric values outside this range are reclassified as blank.
+#'   Defaults to `c(-Inf, Inf)` or is fetched from options.
+#' @param absolute_focus_range Numeric vector of length 2 specifying the `c(min, max)`
+#'   range of absolute values to retain. Values with an absolute value outside this
+#'   range are reclassified as blank. Defaults to `c(0, Inf)` or is fetched from options.
 #'
 #' @return The original `cells` object, with the columns `type`, `PoA`, and
 #'   `PoV` added or updated.
@@ -52,7 +58,9 @@
 value_attribute_classify <- function(
     x,
     # Later visual method is to be added.
-    method = c("auto","probabilistic", "simple_heuristic", "manual")) {
+    method = c("auto","probabilistic", "simple_heuristic", "manual"),
+    focus_range = core_opt_get("focus_value_range", c(-Inf, Inf)),
+    absolute_focus_range = core_opt_get("focus_absolute_value_range", c(0, Inf))) {
 
   # Check and halt if the input is not a valid cells object. Otherwise, proceed
   # with the classification
@@ -87,6 +95,52 @@ value_attribute_classify <- function(
     x <- core_prep_va_simple_heuristic(x)
   } else if(method == "manual") {
     x <- core_prep_va_manual(x)
+  }
+
+  if(any(is.finite(focus_range))){
+    lb <- min(focus_range)
+    ub <- max(focus_range)
+
+    x <- x |>
+      dplyr::mutate(
+        v_num = suppressWarnings(as.numeric(.data$value)),
+        inside_range = .data$PoV>0.5 & (.data$v_num>=lb & .data$v_num<=ub),
+        inside_range = dplyr::if_else(is.na(.data$inside_range), FALSE, .data$inside_range)) |>
+      dplyr::mutate(
+        # Make PoE = 1 (make them empty - discard them)
+        PoA = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, 0, .data$PoA),
+        type = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, "blank", .data$type),
+        # Note PoV has to be updated last
+        PoV = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, 0, .data$PoV)
+      ) |>
+      # Discard intermediate columns
+      dplyr::select(-c("v_num","inside_range"))
+
+
+  }
+
+  if(any(is.finite(absolute_focus_range))){
+    lb <- min(absolute_focus_range)
+    ub <- max(absolute_focus_range)
+    if(lb>0 | ub < Inf){
+
+      x <- x |>
+        dplyr::mutate(
+          # This limit is on abs
+          v_num = suppressWarnings(as.numeric(.data$value)) |> abs(),
+          inside_range = .data$PoV>0.5 & (.data$v_num>=lb & .data$v_num<=ub),
+          inside_range = dplyr::if_else(is.na(.data$inside_range), FALSE, .data$inside_range)) |>
+        dplyr::mutate(
+          # Make PoE = 1 (make them empty - discard them)
+          PoA = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, 0, .data$PoA),
+          type = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, "blank", .data$type),
+          # Note PoV has to be updated last
+          PoV = dplyr::if_else(!.data$inside_range & .data$PoV>0.5, 0, .data$PoV)
+        ) |>
+        # Discard intermediate columns
+        dplyr::select(-c("v_num","inside_range"))
+
+    }
   }
 
   return(x)

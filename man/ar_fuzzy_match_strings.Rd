@@ -112,6 +112,7 @@ when \code{sw > 0} or \code{slcs > 0}.
 }
 }
 \examples{
+\dontrun{
 x_vec <- c(
   "Agriculture & allied activities",
   "Agriculture Forestry and Fishing",
@@ -147,15 +148,20 @@ y_vec <- c(
 ar_fuzzy_match_strings(x_vec, y_vec)
 
 # One-to-one with globally optimal LSAP assignment
-ar_fuzzy_match_strings(x_vec, y_vec,
-                    relationship       = "one_to_one",
-                    assignment_method  = "LSAP")
+ar_fuzzy_match_strings(
+  x_vec, y_vec,
+  relationship      = "one_to_one",
+  assignment_method = "LSAP"
+)
 
 # One-to-one with greedy assignment, emit score matrix
-ar_fuzzy_match_strings(x_vec, y_vec,
-                    relationship       = "one_to_one",
-                    assignment_method  = "greedy",
-                    emit_score_matrix  = TRUE)
+ar_fuzzy_match_strings(
+  x_vec, y_vec,
+  relationship      = "one_to_one",
+  assignment_method = "greedy",
+  emit_score_matrix = TRUE
+)
+}
 
 }
 \keyword{internal}

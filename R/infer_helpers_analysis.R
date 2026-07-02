@@ -919,14 +919,14 @@ infer_data_block_merging <- function(
       dplyr::filter(.data$fraction_of_area_covered==max(.data$fraction_of_area_covered)) %>%
       dplyr::ungroup()
 
-    best_solution_c2 <- best_solution |> dplyr::distinct(data_gid, data_gid_2)
+    best_solution_c2 <- best_solution |> dplyr::distinct(.data$data_gid, .data$data_gid_2)
     best_solution_c2_2 <- best_solution_c2
     colnames(best_solution_c2_2) <- rev(colnames(best_solution_c2_2))
     best_solution_c2 <- best_solution_c2 |>
       dplyr::bind_rows(best_solution_c2_2) |>
-      dplyr::distinct(data_gid, data_gid_2)
+      dplyr::distinct(.data$data_gid, .data$data_gid_2)
 
-    best_solution_c2 <- best_solution_c2 |> dplyr::filter(data_gid>data_gid_2)
+    best_solution_c2 <- best_solution_c2 |> dplyr::filter(.data$data_gid > .data$data_gid_2)
 
     if(NROW(best_solution_c2)<threshold_complete_connect_attempt_partial_gid_joins){
 
@@ -946,8 +946,6 @@ infer_data_block_merging <- function(
         dplyr::summarise(data_gid = .data$data_gid[1], .groups = "drop")
 
     }
-
-
 
   } else {
     # If no partial data blocks, set empty tibble
