@@ -32,12 +32,13 @@
 set_options <- function(
     derive_nice_names_for_attributes = TRUE,
     excel_specific_optimization = FALSE,
-    check_attr_entrapment_on_full_overlap_join = FALSE,
+    check_attr_entrapment_on_full_overlap_join = TRUE,
     finalize_through_stages = FALSE,
     finalize_till = "collate_column",
     collate_columns_on_whole = TRUE,
     auto_detach_shiny = TRUE,
-    delink_corner_headers = FALSE) {
+    delink_corner_headers = FALSE,
+    threshold_complete_connect_attempt_partial_gid_joins = 1000) {
 
   # Validate finalize_till argument
   finalize_till <- match.arg(
@@ -54,6 +55,7 @@ set_options <- function(
     collate_columns_on_whole = collate_columns_on_whole,
     auto_detach_shiny = auto_detach_shiny,
     delink_corner_headers = delink_corner_headers,
+    threshold_complete_connect_attempt_partial_gid_joins = threshold_complete_connect_attempt_partial_gid_joins,
     pkg_cache_head_name = "user")
 }
 

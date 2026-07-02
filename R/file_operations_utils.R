@@ -17,7 +17,30 @@ file_op_validate_file_input <- function(fn) {
       paste0("File does not exist (or you may not have permission): '", fn, "'"),
       call = NULL
     )
+  } else {
+    # try to read it
+    f_conn <- NULL
+    tryCatch({
+      f_conn <- file(fn, "rb")
+      close(f_conn)
+    }, error = function(e) {
+      msg <- tryCatch(
+        rev(strsplit(
+          as.character(e),
+          fn)[[1]])[1] |> stringr::str_remove_all("[^a-zA-Z ]"),
+        error = function(e) "unknown"
+      )
+      stop(paste0("Read failure: ", stringr::str_trim(msg)), call. = FALSE)
+    }, finally = {
+      if (inherits(f_conn, "connection")) {
+        tryCatch(
+          close(f_conn), error = function(e) {}
+        )
+      }
+    })
+
   }
+
   invisible(NULL)
 }
 
@@ -52,6 +75,7 @@ file_op_identify_format_by_signature <- function(fn) {
   file_op_validate_file_input(fn) # Ensures fn is valid before reading
 
   f_conn <- NULL
+  f_8 <- NULL
   tryCatch({
     f_conn <- file(fn, "rb")
     f_8 <- readBin(f_conn, n = 8, what = "raw")

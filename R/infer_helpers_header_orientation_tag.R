@@ -61,7 +61,9 @@ infer_dimension_analysis_details <- function(admap, d_dat) {
 
   # Overlapping rows (r_dim)
   r_overlap <- admap %>%
-    dplyr::inner_join(d_dat, by = c("data_gid", "row")) %>%
+    dplyr::inner_join(
+      d_dat, by = c("data_gid", "row"),
+      relationship = "many-to-many") %>%
     dplyr::group_by(.data$attr_gid, .data$data_gid) %>%
     dplyr::summarise(
       r_dim = dplyr::n_distinct(.data$row),
@@ -71,7 +73,9 @@ infer_dimension_analysis_details <- function(admap, d_dat) {
 
   # Overlapping columns (c_dim)
   c_overlap <- admap %>%
-    dplyr::inner_join(d_dat, by = c("data_gid", "col")) %>%
+    dplyr::inner_join(
+      d_dat, by = c("data_gid", "col"),
+      relationship = "many-to-many") %>%
     dplyr::group_by(.data$attr_gid, .data$data_gid) %>%
     dplyr::summarise(
       c_dim = dplyr::n_distinct(.data$col),

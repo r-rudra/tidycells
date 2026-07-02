@@ -454,6 +454,7 @@ util_convert_cells_analysis_for_plot <- function(
     attr_cols = c("data_gid", "nice_header_name", "header_orientation_tag"),
     focus_on_data_blocks = NULL,
     color_attrs_separately = FALSE,
+    color_attrs_on_unified_rc = FALSE,
     show_values_in_cells = FALSE) {
   # Convert cells_analysis to a cells object like for plotting.
 
@@ -499,6 +500,18 @@ util_convert_cells_analysis_for_plot <- function(
     all_attrs  <- unique(attr_data_with_combined_values$type)
     # We can order them nicely based on the natural segment rank
     all_attrs <- all_attrs[order(util_natural_segment_rank(all_attrs))]
+
+    if(color_attrs_on_unified_rc){
+      adup <- attr_data_with_combined_values |>
+        dplyr::group_by(.data$row, .data$col) |>
+        dplyr::summarise(
+          type_comb = .data$type |> unique() |> sort() |> paste0(collapse = "+"),
+          .groups = "drop")
+      adup <- unique(adup$type_comb)
+
+      all_attrs <- adup[order(util_natural_segment_rank(adup))]
+    }
+
     # Create color-ramp
     pal <- grDevices::colorRampPalette(
       c("#F8766D","#F2E88A")

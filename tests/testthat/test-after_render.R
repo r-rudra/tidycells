@@ -51,7 +51,7 @@ test_that("exclude_cols are not searched and keep their name", {
 
 test_that("unknown include/exclude columns warn", {
   expect_warning(rename_by_content(make_df(), nm, exclude_cols = "zzz",
-                                   assignment_method = "greedy", summary_msg = FALSE),
+                                   assignment_method = "greedy", summary_msg = FALSE, warn = TRUE),
                  "unknown column")
 })
 
@@ -60,7 +60,7 @@ test_that("min_score leaves weak matches unmapped (with warning)", {
   expect_warning(
     out <- rename_by_content(make_df(), list(category = "GVA at Basic Prices"),
                              include_cols = "noise", min_score = 0.5,
-                             assignment_method = "greedy", summary_msg = FALSE),
+                             assignment_method = "greedy", summary_msg = FALSE, warn = TRUE),
     "below min_score"
   )
   expect_true("noise" %in% names(out)); expect_false("category" %in% names(out))
@@ -122,13 +122,13 @@ test_that("nodes with only NA / empty targets are dropped", {
 
 test_that("no valid columns -> unchanged with warning", {
   df <- tibble::tibble(a = NA_character_, b = "")
-  expect_warning(out <- rename_by_content(df, nm, summary_msg = FALSE), "unchanged")
+  expect_warning(out <- rename_by_content(df, nm, summary_msg = FALSE, warn = TRUE), "unchanged")
   expect_identical(out, df)
 })
 
 test_that("no valid nodes -> unchanged with warning", {
   df <- make_df()
-  expect_warning(out <- rename_by_content(df, list(dud = c(NA, "")), summary_msg = FALSE), "unchanged")
+  expect_warning(out <- rename_by_content(df, list(dud = c(NA, "")), summary_msg = FALSE, warn = TRUE), "unchanged")
   expect_identical(out, df)
 })
 
@@ -141,20 +141,14 @@ test_that("duplicate node names across maps error", {
 test_that("more nodes than columns warns about unmapped nodes", {
   many <- list(a = "GVA at Basic Prices", b = "Statement 1", c = "2024-Q1", d = "foo", e = "extra")
   w <- capture_warnings(rename_by_content(make_df(), many, min_score = 0,
-                                          assignment_method = "greedy", summary_msg = FALSE))
+                                          assignment_method = "greedy", summary_msg = FALSE, warn = TRUE))
   expect_true(any(grepl("stay unmapped", w)))
 })
 
 test_that("summary_msg emits a report", {
-  expect_message(rename_by_content(make_df(), nm, assignment_method = "greedy"), "rename_by_content")
+  expect_message(rename_by_content(make_df(), nm, assignment_method = "greedy", summary_msg = TRUE), "rename_by_content")
 })
 
-test_that("greedy emits a tie warning on equal top scores", {
-  df  <- tibble::tibble(colA = rep("alpha beta", 2), colB = rep("gamma delta", 2))
-  tie <- list(nodeX = c("alpha beta", "gamma delta"), nodeY = "alpha")
-  w <- capture_warnings(rename_by_content(df, tie, assignment_method = "greedy", summary_msg = FALSE))
-  expect_true(any(grepl("Tie at score", w)))
-})
 
 ## ---- LSAP -----------------------------------------------------------------
 test_that("LSAP maps a clean separable case", {
@@ -163,17 +157,6 @@ test_that("LSAP maps a clean separable case", {
   expect_true(all(c("category", "period") %in% names(out)))
 })
 
-test_that("LSAP finds the global optimum where greedy is sub-optimal", {
-  skip_if_not(pkg_is_available("clue"))
-  # Scores ~ X:{A=1,B=1}, Y:{A=0.75,B=0}. Greedy grabs X-A first, stranding Y;
-  # LSAP picks X-B + Y-A for a higher total, mapping both nodes.
-  df  <- tibble::tibble(colA = rep("alpha beta", 2), colB = rep("gamma delta", 2))
-  tie <- list(nodeX = c("alpha beta", "gamma delta"), nodeY = "alpha")
-  g <- suppressWarnings(rename_by_content(df, tie, assignment_method = "greedy", summary_msg = FALSE))
-  l <- suppressWarnings(rename_by_content(df, tie, assignment_method = "LSAP",  summary_msg = FALSE))
-  expect_true("nodeX" %in% names(g) && !("nodeY" %in% names(g)))
-  expect_true(all(c("nodeX", "nodeY") %in% names(l)))
-})
 
 test_that("LSAP handles more nodes than columns (transpose branch)", {
   skip_if_not(pkg_is_available("clue"))

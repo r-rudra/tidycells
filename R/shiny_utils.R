@@ -205,19 +205,20 @@ shiny_util_runApp <- function(
 
   # Now run (safely) the Shiny app with the provided UI and server functions.
   tryCatch(
-    shiny::runApp(
-      shiny::shinyApp(
-        ui = ui_mod,
-        server = server_mod),
-      launch.browser = shiny::dialogViewer(
-        dialogName = title,
-        width = width,
-        height = height
-      ),
-      quiet = TRUE
+    suppressWarnings(
+      shiny::runApp(
+        shiny::shinyApp(
+          ui = ui_mod,
+          server = server_mod),
+        launch.browser = shiny::dialogViewer(
+          dialogName = title,
+          width = width,
+          height = height
+        ),
+        quiet = TRUE
+      )
     ),
-    error = function(e) NULL,
-    warning = function(w) NULL
+    error = function(e) NULL
   )
 }
 
@@ -483,6 +484,7 @@ shiny_util_cells_plot_it <- function(
     rc_sel,
     # For Cells Analysis Plot
     ca_now = NULL,
+    declutter_ca = FALSE,
     # Additional parameters to pass to plot.cells
     ...) {
   # Dynamic plot to be used inside shiny modules.
@@ -494,10 +496,22 @@ shiny_util_cells_plot_it <- function(
     # Convert the cells analysis for plotting. Only conv_d$scale_fill_map is
     # required as conv_d$combined_data will be flowing through
     # rc_sel$cells_for_plot() which will be taken care by this function
+
+    # Below adjustment is required for data_focus (as directly it is not passed to this function)
+    ds <- rc_sel$cells_for_plot() |>
+      dplyr::filter(type == "data") |>
+      dplyr::distinct(value) |>
+      dplyr::pull()
+
+    ds <- intersect(ds, ca_now()$data_blocks$data_gid)
+    if(length(ds)==0) ds <- unique(ca_now()$data_blocks$data_gid)
+
     conv_d <-  util_convert_cells_analysis_for_plot(
       ca_now(),
       color_attrs_separately = ui_params$color_attrs_separately,
-      show_values_in_cells = ui_params$show_values_in_cells)
+      show_values_in_cells = ui_params$show_values_in_cells,
+      color_attrs_on_unified_rc = declutter_ca,
+      focus_on_data_blocks = ds)
 
     # Specific modification for fill parameter as required for
     # plot.cells_analysis
@@ -540,6 +554,7 @@ shiny_util_cells_plot_it <- function(
     # Below is required for color labeling custom attributes (for
     # plot.cells_analysis)
     scale_fill_values = scale_fill_values_this,
+    declutter_based_on_value = declutter_ca,
     ...
   )
   return(gg)

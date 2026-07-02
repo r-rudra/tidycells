@@ -131,12 +131,12 @@ core_as_cells_internal.tidyxl <- function(df, dicard_extra_cols = TRUE, ...) {
     # error, logical, numeric, date, character, blank."; No need error & blank
     tidyr::unite("value", dplyr::any_of(c("character", "numeric", "logical", "date")), na.rm = TRUE) %>%
     dplyr::mutate(
-      data_type = dplyr::case_match(
+      data_type = dplyr::recode_values(
         .data$data_type,
         "numeric" ~ "numeric",
         "logical" ~ "logical",
         "date" ~ "date",
-        .default = "character"
+        default = "character"
       )
     )
 
@@ -168,7 +168,7 @@ core_as_cells_internal.unpivotr <- function(df, dicard_extra_cols = TRUE, ...) {
     df %>%
       tidyr::unite("value", dplyr::any_of(present_types), na.rm = TRUE, remove = FALSE) %>%
       dplyr::mutate(
-        data_type = dplyr::case_match(
+        data_type = dplyr::recode_values(
           .data$data_type,
           "date" ~ "date",
           "dttm" ~ "time",
@@ -176,7 +176,7 @@ core_as_cells_internal.unpivotr <- function(df, dicard_extra_cols = TRUE, ...) {
           c("dbl", "int", "cplx", "cpl") ~ "numeric",
           "lgl" ~ "logical",
           "chr" ~ "character",
-          .default = .data$data_type
+          default = .data$data_type
         )
       )
   } else {
@@ -200,14 +200,14 @@ core_as_cells_internal.meltr <- function(df, ...) {
   # Transformation for melted data from `meltr`.
   dplyr::mutate(
     df,
-    data_type = dplyr::case_match(
+    data_type = dplyr::recode_values(
       .data$data_type,
       "double" ~ "numeric",
       "integer" ~ "numeric",
       "logical" ~ "logical",
       "date" ~ "date",
       "datetime" ~ "time",
-      .default = "character"
+      default = "character"
     )
   )
 }

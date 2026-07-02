@@ -25,6 +25,7 @@
   connection_line_add_jitter = TRUE,
   connection_line_overlay_text_color = TRUE,
   allow_rc_df = FALSE,
+  rc_df_auto_txt_n_fill = TRUE,
   omit_NSE = FALSE,
   display_warning_as_plot = FALSE,
   scale_fill_values = NULL,

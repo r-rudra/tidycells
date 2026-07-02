@@ -17,6 +17,8 @@ file_op_read_attempt <- function(reader_fn, fn, silent = TRUE) {
     }
   )
 
+  read_try <- read_try |> purrr::keep(\(x) !is.null(x))
+
   if (!util_convertible_to_processable(read_try)) {
     return(NULL)
   }

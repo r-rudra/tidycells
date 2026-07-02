@@ -274,7 +274,7 @@ shiny_ui_part_orientation_modification <- function(id = "ui_omod", ca) {
       ),
       # Row Col Selection Panel
       shiny_ui_part_plot_rc_selection(
-        id = id, d = d, top = 260
+        id = id, d = d, top = 280
       ),
       # Inject JS that will collapse Row Col Selection Panel after 2 sec
       shiny::tags$script(shiny::HTML(
@@ -303,6 +303,12 @@ shiny_ui_part_orientation_modification <- function(id = "ui_omod", ca) {
             ns("dynamic_focus"),
             # Add a tooltip
             label = shiny::span("Dynamic Focus", title = "Enable or disable dynamic focus"),
+            value = TRUE
+          ),
+          shiny::checkboxInput(
+            ns("declutter_ca_plot"),
+            # Add a tooltip
+            label = shiny::span("Declutter", title = "Declutter Cell Analysis plot based on values clubbed. Works only if gid's are shown in cells."),
             value = TRUE
           ),
           shiny::div(style = "height:2px;"),

@@ -57,7 +57,7 @@ shiny_sps_part_row_col_selection <- function(
     shiny::req(input$selected_rows, input$selected_cols)
     (input$selected_cols[2] - input$selected_cols[1]) <= 30 &&
       (input$selected_rows[2] - input$selected_rows[1]) <= 100 &&
-      NROW(d_cells()) > 0
+      NROW(cells_for_plot()) > 0
   })
 
   # Action of SPS : adjusting the row and column selection sliders if they
@@ -457,10 +457,18 @@ shiny_sps_part_orientation_modification <- function(
       # If row and column selection is within limits, plot the cells
 
       ph <- plot_handle()
+
+      # declutter mode only if value is not shown
+      declutter_possibility <- FALSE
+      declutter_possibility_check <- rc_sel$cells_for_plot()$value |>
+        setdiff(util_convert_cells_analysis_for_plot(ca_now())$combined_data$value)
+      if(length(declutter_possibility_check)==0) declutter_possibility <- TRUE
+
       shiny_util_cells_plot_it(
         ui_params = ph$plot_params,
         rc_sel = rc_sel,
-        ca_now = current) +
+        ca_now = current,
+        declutter_ca = isTRUE(input$declutter_ca_plot) && declutter_possibility) +
         # Section for highlighting the selected points (selection 1 and 2)
         ggplot2::geom_tile(
           mapping = ggplot2::aes(.data$col, -.data$row),
@@ -468,7 +476,7 @@ shiny_sps_part_orientation_modification <- function(
           # the plot will work
           data = shiny_util_get_full_block_from_cells_analysis(
             selection = selection_1()$which,
-            ca_cells = current_rcdf()
+            ca_cells = rc_sel$cells_for_plot()
           ),
           color = "#F07973", fill = "#94F484", inherit.aes = FALSE,
           alpha = 0.2, na.rm = TRUE, lwd = 0.7, lty = 5,
@@ -480,7 +488,7 @@ shiny_sps_part_orientation_modification <- function(
           # the plot will work
           data = shiny_util_get_full_block_from_cells_analysis(
             selection = selection_2()$which,
-            ca_cells = current_rcdf()
+            ca_cells = rc_sel$cells_for_plot()
           ),
           color = "#F073D9", fill = "#848F06", inherit.aes = FALSE,
           alpha = 0.2, na.rm = TRUE, lwd = 0.7, lty = 4,
@@ -1109,6 +1117,7 @@ shiny_sps_part_traceback <- function(
         ui_params = ph$plot_params,
         rc_sel = rc_sel,
         ca_now = ca_now,
+        declutter_ca = FALSE,
         # These arguments are for traceback
         cell_connection_map = arrow_and_color_map,
         connection_line_type = input$connection_line_type,

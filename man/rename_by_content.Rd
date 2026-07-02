@@ -17,9 +17,11 @@ rename_by_content(
   min_score = 0.1,
   case_sensitive = FALSE,
   keep_details = FALSE,
-  summary_msg = TRUE,
-  warn = TRUE,
-  reg_ex_match_bias = 0.1
+  summary_msg = FALSE,
+  warn = FALSE,
+  reg_ex_match_bias = 0.1,
+  unite_other_cols = FALSE,
+  united_others_col_name = "united_info"
 )
 }
 \arguments{
@@ -89,7 +91,11 @@ Each (column, node) score lies in \verb{[0, 1]} and is computed over the column'
 reward, a whole-phrase containment reward, and a leftover-word penalty. Regex
 nodes (\code{name_map_regex}) use a pattern-match reward scaled by matched
 character coverage (no word-overlap term). For both families the column score
-is \verb{mean(score over matched uniques) * (1 - proportion non-matched)}.
+is \verb{weighted_mean(score over matched uniques) * (1 - weighted proportion non-matched) * node_coverage}, where each unique value is weighted by its
+frequency in the column and \code{node_coverage} is the share of the node's
+distinct targets matched by the column (so a column spanning more of the
+node's values ranks higher). Node targets are de-duplicated; column
+frequencies are not.
 
 Before scoring, columns that are entirely \code{NA} / empty and node targets that
 are \code{NA} / zero-length are dropped; a node left with no targets is dropped

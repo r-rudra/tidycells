@@ -185,7 +185,7 @@ infer_block_boundary <- function(df, coverage = 0.95, exact = TRUE) {
     .groups = "drop"
   ) %>%
     tidyr::unnest_wider(
-      .data$boundary,
+      "boundary",
       names_repair = "minimal",
       simplify = TRUE
     )
@@ -346,7 +346,9 @@ infer_calc_stats_for_admap_dimwise <- function(
 
   # 1. Join data and attributes on axis
   d_ad <- d_dat %>%
-    dplyr::left_join(d_att, by = axis_var, suffix = c("_dat", "_att"))
+    dplyr::left_join(
+      d_att, by = axis_var, suffix = c("_dat", "_att"),
+      relationship = "many-to-many")
 
   # 2. Add direction, direction_group, and distance
   d_ad <- d_ad %>%
@@ -643,7 +645,9 @@ infer_data_block_merging <- function(
     chk_in_for_overlapping_cases =
       # As variable name check_attr_entrapment_on_full_overlap_join is better
       # than check_for_attr_inside_while_joining_in_completely_overlapping_cases
-      core_opt_get("check_attr_entrapment_on_full_overlap_join", FALSE)){
+      core_opt_get("check_attr_entrapment_on_full_overlap_join", TRUE),
+    threshold_complete_connect_attempt_partial_gid_joins =
+      core_opt_get("threshold_complete_connect_attempt_partial_gid_joins", 1000)){
 
   # Helper function (it is to avoid repeating codes .. not meat for internal
   # end-use package-wide)
@@ -915,10 +919,35 @@ infer_data_block_merging <- function(
       dplyr::filter(.data$fraction_of_area_covered==max(.data$fraction_of_area_covered)) %>%
       dplyr::ungroup()
 
-    combine_data_blocks_partial <- best_solution %>%
-      dplyr::group_by(.data$data_gid_2) %>%
-      # In case of multiple solutions for a data_gid_2, take any one
-      dplyr::summarise(data_gid = .data$data_gid[1], .groups = "drop")
+    best_solution_c2 <- best_solution |> dplyr::distinct(data_gid, data_gid_2)
+    best_solution_c2_2 <- best_solution_c2
+    colnames(best_solution_c2_2) <- rev(colnames(best_solution_c2_2))
+    best_solution_c2 <- best_solution_c2 |>
+      dplyr::bind_rows(best_solution_c2_2) |>
+      dplyr::distinct(data_gid, data_gid_2)
+
+    best_solution_c2 <- best_solution_c2 |> dplyr::filter(data_gid>data_gid_2)
+
+    if(NROW(best_solution_c2)<threshold_complete_connect_attempt_partial_gid_joins){
+
+      best_solution_c2 <-
+        infer_data_block_merging_part_operation_attr_inside_filter(
+          data_join_map = best_solution_c2, d_dat = d_dat, d_att = d_att,
+          check_for_attr_inside = TRUE
+        )
+
+      combine_data_blocks_partial <- best_solution_c2
+
+    } else {
+
+      combine_data_blocks_partial <- best_solution_c2 %>%
+        dplyr::group_by(.data$data_gid_2) %>%
+        # In case of multiple solutions for a data_gid_2, take any one
+        dplyr::summarise(data_gid = .data$data_gid[1], .groups = "drop")
+
+    }
+
+
 
   } else {
     # If no partial data blocks, set empty tibble
@@ -963,6 +992,31 @@ infer_data_block_merging <- function(
   join_them <- function(data_gid_join_map, d_dat, d_att, ad_map,
                         check_for_attr_inside = TRUE) {
 
+    if(NROW(data_gid_join_map)==0){
+      # Early return without any change
+      return(
+        list(
+          d_dat = d_dat,
+          ad_map = ad_map
+        )
+      )
+    }
+
+    # Filter which are valid data_gid
+    data_gid_join_map <- data_gid_join_map |>
+      dplyr::filter(
+        .data$data_gid %in% d_dat$data_gid,
+        .data$data_gid_2 %in% d_dat$data_gid)
+
+    if(check_for_attr_inside) {
+      data_gid_join_map <-
+        infer_data_block_merging_part_operation_attr_inside_filter(
+          data_join_map = data_gid_join_map,
+          d_dat = d_dat, d_att = d_att,
+          check_for_attr_inside = TRUE)
+    }
+
+    # Second time as many filter happened already
     if(NROW(data_gid_join_map)==0){
       # Early return without any change
       return(
@@ -1115,39 +1169,11 @@ infer_util_gid_join <- function(gid_join_map, gid_linked_list_of_df, gid_tag = "
 }
 
 
-infer_data_block_merging_part_operation <- function(
-    data_join_map, d_dat, d_att, d_dat_dep,
-    check_for_attr_inside = TRUE,
-    # It should be resolve_fn_for_multi_data_gid to single data_gid
-    resolve_fn = c("min","max","random")){
+infer_data_block_merging_part_operation_attr_inside_filter <- function(
+    data_join_map, d_dat, d_att,
+    check_for_attr_inside = TRUE){
 
-  resolve_fn <- match.arg(resolve_fn)
-  if(resolve_fn == "min"){
-    rfun <- min
-  } else if(resolve_fn == "max"){
-    rfun <- max
-  } else {
-    rfun <- function(x){
-      sample(unique(x))[1]
-    }
-  }
-  # data_join_map must have comined_id and data_gid
   if(NROW(data_join_map) > 0){
-    # This function has two types of use. In one comined_id present in another
-    # one directly data_join_map with data_gid and data_gid_to is given.
-    if(utils::hasName(data_join_map,"comined_id")){
-      data_join_map <- data_join_map %>%
-        dplyr::group_by(.data$comined_id) %>%
-        # Allot the minimum data_gid to data_gids in the group
-        dplyr::mutate(data_gid_to = rfun(.data$data_gid)) %>%
-        dplyr::ungroup() %>%
-        dplyr::distinct(.data$data_gid, .data$data_gid_to)
-    }
-
-    # Check if each of these groups are valid or not. i.e. whether these
-    # data-gids can be merged together. If there is any attribute_gid in
-    # combined bounding box of these data-gids, then we can not merge them.
-
     if(check_for_attr_inside){
       # First, we need to find whether any rows of d_att is captured by combined
       # bounding box of these data_gids
@@ -1185,7 +1211,8 @@ infer_data_block_merging_part_operation <- function(
 
 
       data_join_map$is_valid <- purrr::map2_lgl(
-        data_join_map$data_gid, data_join_map$data_gid_to,
+        # Hardcoded colmn names: data_join_map$data_gid, data_join_map$data_gid_to,
+        data_join_map[[1]], data_join_map[[2]],
         chk_data_join_with_no_entrapped_attr
       )
 
@@ -1193,7 +1220,52 @@ infer_data_block_merging_part_operation <- function(
       # (filter)
       data_join_map <- data_join_map %>%
         dplyr::filter(.data$is_valid) %>%
-        dplyr::select(-.data$is_valid)
+        dplyr::select(-"is_valid")
+    }
+  }
+
+  data_join_map
+}
+
+infer_data_block_merging_part_operation <- function(
+    data_join_map, d_dat, d_att, d_dat_dep,
+    check_for_attr_inside = TRUE,
+    # It should be resolve_fn_for_multi_data_gid to single data_gid
+    resolve_fn = c("min","max","random")){
+
+  resolve_fn <- match.arg(resolve_fn)
+  if(resolve_fn == "min"){
+    rfun <- min
+  } else if(resolve_fn == "max"){
+    rfun <- max
+  } else {
+    rfun <- function(x){
+      sample(unique(x))[1]
+    }
+  }
+  # data_join_map must have comined_id and data_gid
+  if(NROW(data_join_map) > 0){
+    # This function has two types of use. In one comined_id present in another
+    # one directly data_join_map with data_gid and data_gid_to is given.
+    if(utils::hasName(data_join_map,"comined_id")){
+      data_join_map <- data_join_map %>%
+        dplyr::group_by(.data$comined_id) %>%
+        # Allot the minimum data_gid to data_gids in the group
+        dplyr::mutate(data_gid_to = rfun(.data$data_gid)) %>%
+        dplyr::ungroup() %>%
+        dplyr::distinct(.data$data_gid, .data$data_gid_to)
+    }
+
+    # Check if each of these groups are valid or not. i.e. whether these
+    # data-gids can be merged together. If there is any attribute_gid in
+    # combined bounding box of these data-gids, then we can not merge them.
+
+    if(check_for_attr_inside){
+      data_join_map <- infer_data_block_merging_part_operation_attr_inside_filter(
+        data_join_map = data_join_map,
+        d_dat = d_dat, d_att = d_att,
+        check_for_attr_inside = TRUE
+      )
     }
 
     # If now any data_gid_map is present, then we can proceed with the merging
@@ -1632,7 +1704,7 @@ infer_major_direction_stats <- function(
 
     # If there are multiple data blocks, we can proceed with merging
     data_block_merging <- infer_data_block_merging(
-      d_ad_stage2, d_dat, d_att
+      ad_map = d_ad_stage2, d_dat = d_dat, d_att = d_att
     )
 
     lo <- infer_relabel_data_group_id(
@@ -2187,7 +2259,7 @@ infer_bounding_L_shape <- function(df) {
 
   df_2 <- df_1 %>%
     tidyr::unnest_wider(
-      .data$boundary_L, names_repair = "minimal",
+      "boundary_L", names_repair = "minimal",
       simplify = TRUE)
 
   # If no bounding L-shape is found, return an empty tibble
@@ -2195,10 +2267,10 @@ infer_bounding_L_shape <- function(df) {
 
   df_2 %>%
     tidyr::unnest_longer(
-      c(.data$rect,
-        .data$r_min, .data$c_min, .data$r_max, .data$c_max,
-        .data$is_corner, .data$is_outside, .data$type_of_L,
-        .data$area_fraction),
+      c("rect",
+        "r_min", "c_min", "r_max", "c_max",
+        "is_corner", "is_outside", "type_of_L",
+        "area_fraction"),
       names_repair = "minimal",
       simplify = TRUE)
 

@@ -62,5 +62,8 @@ visual_traceback <- function(x) {
   if (missing(x)) {
     x <- shiny_util_global_object_picker("cells_analysis")
   }
+  if(!inherits(x, "cells_analysis") || !inherits(x, "sheet_analysis") || !is.list(x)){
+    stop("Note: <cell analysis> is expected!!", call. = FALSE)
+  }
   shiny_app_traceback(x)
 }

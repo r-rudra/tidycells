@@ -332,11 +332,15 @@ plot.cells <- function(
     connection_line_overlay_text_color = TRUE,
     # This is mainly for testing and development purposes
     allow_rc_df = FALSE,
+    rc_df_auto_txt_n_fill = TRUE,
     # This is for omitting NSE in fill (required internally)
     omit_NSE = FALSE,
     display_warning_as_plot = FALSE,
     scale_fill_values = NULL,
-    auto_round_values = FALSE) {
+    auto_round_values = FALSE,
+    declutter_based_on_value = FALSE,
+    unify_on_row_col = FALSE
+    ) {
 
   # Check if ggplot2 is available
   if(!pkg_is_available("ggplot2")) {
@@ -346,12 +350,29 @@ plot.cells <- function(
     return(invisible(NULL))
   }
 
+  if(declutter_based_on_value){
+    unify_on_row_col <- TRUE
+  }
+
   # This is mainly to assist in testing and development
   if(allow_rc_df){
     ignore_validation <- TRUE
-    if(!utils::hasName(x, "value")) {
-      x$value <- ""
+
+    val <- ""
+
+    if(rc_df_auto_txt_n_fill){
+
+      cht <- x |> purrr::map_lgl(is.character)
+      if(any(cht)){
+        val <- x[[which(cht)[1]]]
+      }
+
     }
+
+    if(!utils::hasName(x, "value")) {
+      x$value <- val
+    }
+
     if(missing(fill)) {
       fill <- "value"
     }
@@ -359,6 +380,43 @@ plot.cells <- function(
 
   if(auto_round_values){
     x$value <- util_auto_round(x$value)
+  }
+
+  if(unify_on_row_col){
+    dchk <- (x |> dplyr::distinct(.data$row, .data$col) |> NROW()) == NROW(x)
+    if(!dchk){
+      x <- x |>
+        dplyr::group_by(.data$row, .data$col) |>
+        dplyr::summarise(
+          # Apply mean to all numeric columns
+          dplyr::across(
+            tidyselect::where(is.numeric),
+            \(x) mean(x, na.rm = TRUE)
+          ),
+          # Apply paste logic to EVERYTHING ELSE (the default behavior)
+          dplyr::across(
+            !tidyselect::where(is.numeric),
+            \(x) unique(x) |> sort() |> paste0(collapse = "+")
+          ),
+          .groups = "drop"
+        )
+    }
+  }
+
+  if(declutter_based_on_value){
+    x <- x |>
+      dplyr::group_by(
+        dplyr::across(!c("row", "col")), .data$value) |>
+      dplyr::mutate(
+        drc = (.data$row - mean(.data$row, na.rm = TRUE))^2 +
+          (.data$col - mean(.data$col, na.rm = TRUE))^2) |>
+      dplyr::mutate(
+        value_declutter = dplyr::if_else(
+          .data$drc == min(.data$drc, na.rm = TRUE),
+          .data$value, "")) |>
+      dplyr::ungroup() |>
+      dplyr::select(-c("value","drc"))
+    colnames(x)[colnames(x)=="value_declutter"] <- "value"
   }
 
   # If ignore_validation is TRUE, skip validation
@@ -663,6 +721,8 @@ plot.cells <- function(
     if(connection_line_add_jitter){
       NR <- NROW(cell_connection_map)
       rng <- c(-0.15,0.15)
+      # Time dependent set seed to mimic non-controlled random nature
+      set.seed(Sys.time())
       cell_connection_map$row_from <- cell_connection_map$row_from + stats::runif(NR, rng[1],rng[2])
       cell_connection_map$row_to <- cell_connection_map$row_to + stats::runif(NR, rng[1],rng[2])
       cell_connection_map$col_from <- cell_connection_map$col_from + stats::runif(NR, rng[1],rng[2])
@@ -871,7 +931,8 @@ plot.cells_analysis <- function(
     max_txt_len = 18, txt_size = 2.5,
     focus_on_data_blocks = NULL,
     color_attrs_separately = FALSE,
-    show_values_in_cells = FALSE) {
+    show_values_in_cells = FALSE,
+    declutter = TRUE) {
 
   # Step 1: Convert cells analysis data for plotting
   conv_d <-  util_convert_cells_analysis_for_plot(
@@ -879,6 +940,7 @@ plot.cells_analysis <- function(
     attr_cols = attr_cols,
     focus_on_data_blocks = focus_on_data_blocks,
     color_attrs_separately = color_attrs_separately,
+    color_attrs_on_unified_rc = declutter,
     show_values_in_cells = show_values_in_cells)
 
   # Step 2: Generate the cell plot
@@ -886,7 +948,7 @@ plot.cells_analysis <- function(
   # Adjustment to supplied dot arguments
   dots <- list(...)
   ignored <- c("allow_rc_df", "fill", "max_txt_len",
-               "txt_size","scale_fill_values")
+               "txt_size","scale_fill_values", "declutter_based_on_value")
   dots <- dots[!(names(dots) %in% ignored)]
 
   # Display the combined data with the plot.cells function
@@ -898,7 +960,8 @@ plot.cells_analysis <- function(
       fill = "type",
       max_txt_len = max_txt_len,
       txt_size = txt_size,
-      scale_fill_values = conv_d$scale_fill_map
+      scale_fill_values = conv_d$scale_fill_map,
+      declutter_based_on_value = declutter
     ),
     dots
     )

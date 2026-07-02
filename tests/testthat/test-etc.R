@@ -44,11 +44,3 @@ test_that("infer_group_connected_blocks checks", {
   res_slow4 <- infer_group_connected_blocks_slow(df4)
   expect_equal(res_fast4, res_slow4)
 })
-
-test_that("dplyr things", {
-  f<- function(){
-    iris |> dplyr::group_by(.data$Species) |> dplyr::summarise(m = mean(.data$Sepal.Length))
-    TRUE
-  }
-  expect_true(f())
-})
